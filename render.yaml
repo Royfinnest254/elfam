@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: elfam
+    env: node
+    buildCommand: npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NEXT_PUBLIC_CONVEX_URL
+        sync: false
