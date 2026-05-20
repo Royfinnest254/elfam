@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Roboto, JetBrains_Mono } from "next/font/google";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import ConvexClientProvider from "./ConvexClientProvider";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-display",
-  style: ["normal"],
-  weight: ["400", "500"],
-});
-
-const interTight = Inter_Tight({
+const roboto = Roboto({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "700"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -25,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Elfam",
-  description: "Operational nerve centre and production ledger for Elfam Limited, Uasin Gishu County, Kenya.",
+  description: "Operational nerve centre and production ledger for Elfam Agribusiness Portal.",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" }
@@ -40,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexAuthNextjsServerProvider>
-      <html lang="en" className={`h-full ${fraunces.variable} ${interTight.variable} ${jetbrainsMono.variable}`}>
+      <html lang="en" className={`h-full ${roboto.variable} ${jetbrainsMono.variable}`}>
         <body
           className="font-sans antialiased h-full bg-paper text-ink"
         >

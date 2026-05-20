@@ -172,9 +172,6 @@ export default function Sidebar() {
             <span className="text-[10px] font-bold uppercase tracking-[0.09em] text-[#00869B] font-sans">
               {role} portal
             </span>
-            <span className="text-[10px] text-[#9CA3AF] font-sans">
-              Moiben, KE
-            </span>
           </div>
         </div>
 

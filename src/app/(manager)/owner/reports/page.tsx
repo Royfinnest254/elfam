@@ -47,7 +47,7 @@ export default function OwnerReportsPage() {
     doc.text(subTitleText, 20, 26);
 
     doc.setFontSize(9);
-    doc.text("Registry: Moiben Ledger", 20, 36);
+    doc.text("Farm Ledger", 20, 36);
     doc.text(`Report Date: ${new Date().toLocaleDateString("en-GB")}`, 20, 41);
     doc.text("Access State: Confidential", 20, 46);
 
@@ -62,8 +62,8 @@ export default function OwnerReportsPage() {
     doc.setFontSize(10);
     doc.setTextColor(94, 108, 132);
     const summaryText = reportType === "monthly"
-      ? `This management review outlines the combined livestock yield metrics, crop field allocations, and compliance parameters for Elfam Company Limited for ${selectedMonth}. The farm indicates stable performance across cereal contracts and dairy husbandry.`
-      : `This production audit details the specific performance logs of individual animals, average daily yield parameters, and veterinary quarantine locks in effect for ${selectedMonth} to ensure complete ISO 20022 and Oldonyo Dairies compliance.`;
+      ? `This management review outlines the combined livestock yield metrics, crop field allocations, and compliance parameters for this farm operation for ${selectedMonth}. The farm indicates stable performance across cereal contracts and dairy husbandry.`
+      : `This production audit details the specific performance logs of individual animals, average daily yield parameters, and veterinary quarantine locks in effect for ${selectedMonth} to ensure milk quality and safety compliance.`;
     
     const splitSummary = doc.splitTextToSize(summaryText, 170);
     doc.text(splitSummary, 20, 64);
@@ -116,20 +116,20 @@ export default function OwnerReportsPage() {
     doc.setTextColor(9, 30, 66);
     doc.text("Prepared by:", 20, 170);
     doc.setFont("helvetica", "normal");
-    doc.text("David Ngetich", 20, 175);
+    doc.text("Farm Manager", 20, 175);
     doc.setFontSize(8);
     doc.setTextColor(94, 108, 132);
-    doc.text("General Manager, Elfam Limited", 20, 179);
+    doc.text("General Manager", 20, 179);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(9, 30, 66);
     doc.text("Approved by:", 110, 170);
     doc.setFont("helvetica", "normal");
-    doc.text("Prof. Margaret Kamar", 110, 175);
+    doc.text("Farm Director", 110, 175);
     doc.setFontSize(8);
     doc.setTextColor(94, 108, 132);
-    doc.text("Director, Elfam Company Limited", 110, 179);
+    doc.text("Director", 110, 179);
 
     const filename = `Elfam_${reportType === "monthly" ? "Management_Review" : "Herd_Audit"}_${selectedMonth.replace(" ", "_")}.pdf`;
     doc.save(filename);
@@ -242,7 +242,7 @@ export default function OwnerReportsPage() {
               </p>
             </div>
             <div className="text-right text-xs font-semibold text-[#5E6C84] space-y-1">
-              <div>Registry: <span className="text-[#091E42] font-bold">Moiben Ledger</span></div>
+              <div>Registry: <span className="text-[#091E42] font-bold">Farm Ledger</span></div>
               <div>Report Date: <span className="text-[#091E42] font-bold">{new Date(simNow).toLocaleDateString("en-GB")}</span></div>
               <div>Month: <span className="text-primary font-bold uppercase">{selectedMonth}</span></div>
             </div>
@@ -253,8 +253,8 @@ export default function OwnerReportsPage() {
             <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-2">1. Executive Summary</h3>
             <p className="text-xs text-[#5E6C84] font-medium leading-relaxed">
               {reportType === "monthly"
-                ? `This management review outlines the combined livestock yield metrics, crop field allocations, and compliance parameters for Elfam Company Limited for ${selectedMonth}. The farm indicates stable performance across cereal contracts and dairy husbandry.`
-                : `This production audit details the specific performance logs of individual animals, average daily yield parameters, and veterinary quarantine locks in effect for ${selectedMonth} to ensure complete ISO 20022 and Oldonyo Dairies compliance.`}
+                ? `This management review outlines the combined livestock yield metrics, crop field allocations, and compliance parameters for this farm operation for ${selectedMonth}. The farm indicates stable performance across cereal contracts and dairy husbandry.`
+                : `This production audit details the specific performance logs of individual animals, average daily yield parameters, and veterinary quarantine locks in effect for ${selectedMonth} to ensure milk quality and safety compliance.`}
             </p>
           </div>
 
@@ -324,13 +324,13 @@ export default function OwnerReportsPage() {
           <div className="grid grid-cols-2 gap-12 pt-16 text-xs text-[#091E42] font-semibold">
             <div className="border-t border-[#DFE1E6] pt-4 space-y-1.5">
               <p><strong>Prepared by:</strong></p>
-              <p className="text-sm font-bold uppercase text-primary">David Ngetich</p>
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84]">General Manager, Elfam Limited</p>
+              <p className="text-sm font-bold uppercase text-primary">Farm Manager</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84]">General Manager</p>
             </div>
             <div className="border-t border-[#DFE1E6] pt-4 space-y-1.5">
               <p><strong>Approved by:</strong></p>
-              <p className="text-sm font-bold uppercase text-primary">Prof. Margaret Kamar</p>
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84]">Director, Elfam Company Limited</p>
+              <p className="text-sm font-bold uppercase text-primary">Farm Director</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84]">Director</p>
             </div>
           </div>
         </div>

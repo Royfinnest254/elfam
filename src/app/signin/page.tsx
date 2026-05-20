@@ -45,12 +45,6 @@ export default function SignInPage() {
     }
   };
 
-  const fillDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword("demo1234");
-    setFlow("signIn");
-    setError(null);
-  };
 
   return (
     <div className="min-h-screen w-screen bg-[#F4F5F7] flex flex-col md:flex-row font-sans text-[#091E42] selection:bg-primary-subtle overflow-hidden">
@@ -59,9 +53,6 @@ export default function SignInPage() {
         <div className="text-center space-y-4">
           <Wordmark size={36} tone="white" />
           <div className="h-[2px] w-12 bg-white/20 mx-auto" />
-          <span className="mono text-[10px] text-white/50 uppercase tracking-[0.04em] block">
-            Uasin Gishu County, Kenya
-          </span>
         </div>
       </div>
 
@@ -97,7 +88,7 @@ export default function SignInPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="input-field"
-                placeholder="email@elfam.co.ke"
+                placeholder="you@example.com"
               />
             </div>
 
@@ -158,14 +149,7 @@ export default function SignInPage() {
             </button>
           </form>
 
-          <div className="pt-4 border-t border-[#DFE1E6] space-y-3">
-            <p className="body-small text-muted">
-              Workers can sign in <button type="button" onClick={() => fillDemo("kibet@elfam.co.ke")} className="text-primary hover:underline font-medium bg-transparent border-none p-0 cursor-pointer">here</button> with a demo worker account.
-            </p>
-            <p className="body-small text-muted">
-              Demo accounts: &middot; <button type="button" onClick={() => fillDemo("margaret@elfam.co.ke")} className="text-primary hover:underline cursor-pointer bg-transparent">Margaret (Manager)</button> &middot; <button type="button" onClick={() => fillDemo("david@elfam.co.ke")} className="text-primary hover:underline cursor-pointer bg-transparent">David (Manager)</button>
-            </p>
-          </div>
+
 
           <div className="text-center">
             <button
@@ -177,7 +161,7 @@ export default function SignInPage() {
               }}
               className="label text-primary hover:underline cursor-pointer bg-transparent border-none p-0"
             >
-              {flow === "signIn" ? "Register with seeded email" : "Return to sign in"}
+              {flow === "signIn" ? "Create an account" : "Return to sign in"}
             </button>
           </div>
         </div>

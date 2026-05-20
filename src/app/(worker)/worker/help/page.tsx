@@ -64,7 +64,7 @@ export default function WorkerHelpPage() {
               </div>
             </div>
             <p className="body-small">
-              Report any physical injuries or signs of mastitis directly to David Ngetich before starting the AM or PM milking session.
+              Report any physical injuries or signs of mastitis directly to your manager before starting the AM or PM milking session.
             </p>
           </div>
         </div>

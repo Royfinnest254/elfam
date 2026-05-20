@@ -139,7 +139,7 @@ export default function WorkerCropsPage() {
       <div className="flex items-start gap-2.5 bg-teal/5 text-teal p-4 rounded-[4px] border border-teal/20">
         <Info className="h-4.5 w-4.5 shrink-0 mt-0.5" />
         <p className="body-small leading-relaxed">
-          <strong>Acreage Operations Note</strong>: Crop blocks represent the physical field boundary allocations for the Moiben farm sector. Workers log agricultural tasks (seeding, chemical applications, tillage, harvesting) directly to these blocks from the field logging portal.
+          <strong>Acreage Operations Note</strong>: Crop blocks represent the physical field boundary allocations for this farm. Workers log agricultural tasks (seeding, chemical applications, tillage, harvesting) directly to these blocks from the field logging portal.
         </p>
       </div>
 

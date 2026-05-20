@@ -41,12 +41,12 @@ function addPdfHeader(doc: any, title: string, subtitle: string) {
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
-  doc.text("ELFAM COMPANY LIMITED", 14, 13);
+  doc.text("FARM MANAGEMENT PORTAL", 14, 13);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  doc.setTextColor(0, 134, 155); // Teal
-  doc.text("Moiben, Uasin Gishu County, Kenya", 14, 20);
+  doc.setTextColor(180, 200, 220); // Light blue
+  doc.text("Operational Records", 14, 20);
 
   doc.setTextColor(192, 158, 90); // Gold
   doc.setFont("helvetica", "bold");
