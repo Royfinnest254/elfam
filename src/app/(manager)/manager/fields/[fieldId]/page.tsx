@@ -83,12 +83,12 @@ export default function FieldDetailPage() {
                 <div key={app._id} className="p-4 bg-paper-2 border border-rule">
                   <div className="flex justify-between items-start">
                     <div>
-                      <strong>{app.inputType}</strong> - {app.productName}
+                      <strong className="uppercase">{app.type}</strong> — {app.product}
                     </div>
-                    <span className="font-mono text-[10px] text-muted">{new Date(app.date).toLocaleDateString()}</span>
+                    <span className="font-mono text-[10px] text-muted">{new Date(app.date).toLocaleDateString("en-GB")}</span>
                   </div>
                   <div className="mt-2 font-mono text-[10px] text-navy">
-                    Quantity: {app.quantity} / Acre
+                    Rate: {app.rate}
                   </div>
                 </div>
               ))}
@@ -102,16 +102,21 @@ export default function FieldDetailPage() {
           {harvests.length === 0 ? (
             <p className="text-small text-muted italic">No harvest yields recorded for this block yet.</p>
           ) : (
-            <div className="space-y-3 font-mono text-small">
+            <div className="space-y-3 font-mono text-small font-sans">
               {harvests.map((h: any) => (
                 <div key={h._id} className="p-4 bg-paper-2 border border-rule">
                   <div className="flex justify-between">
-                    <span>Season: {h.season}</span>
-                    <span className="font-bold text-navy">{h.yieldBags} Bags</span>
+                    <span className="font-bold uppercase">{h.crop} Harvest</span>
+                    <span className="font-bold text-navy">{h.bags} Bags ({h.bagWeightKg} kg/bag)</span>
                   </div>
-                  <div className="text-[10px] text-muted mt-1">
-                    Quality grade: {h.qualityGrade} | Date: {new Date(h.date).toLocaleDateString()}
+                  <div className="text-[10px] text-muted mt-2">
+                    Date: {new Date(h.date).toLocaleDateString("en-GB")}
                   </div>
+                  {h.notes && (
+                    <div className="text-[11px] text-muted italic mt-1 font-sans">
+                      Notes: {h.notes}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

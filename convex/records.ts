@@ -29,6 +29,63 @@ export const getField = query({
   },
 });
 
+export const listAllHarvests = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("harvestRecords").collect();
+  },
+});
+
+export const logFieldPlanting = mutation({
+  args: {
+    fieldId: v.id("fields"),
+    plantedDate: v.number(),
+    expectedHarvestDate: v.union(v.number(), v.null()),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["worker", "manager"]);
+    await ctx.db.patch(args.fieldId, {
+      plantedDate: args.plantedDate,
+      expectedHarvestDate: args.expectedHarvestDate,
+      notes: args.notes,
+    });
+    return { success: true };
+  },
+});
+
+export const logFieldApplication = mutation({
+  args: {
+    fieldId: v.id("fields"),
+    date: v.number(),
+    type: v.union(v.literal("fertilizer"), v.literal("herbicide"), v.literal("pesticide"), v.literal("seed")),
+    product: v.string(),
+    rate: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await enforceRole(ctx, ["worker", "manager"]);
+    return await ctx.db.insert("fieldApplications", {
+      ...args,
+      appliedBy: user._id,
+    });
+  },
+});
+
+export const logFieldHarvest = mutation({
+  args: {
+    fieldId: v.id("fields"),
+    date: v.number(),
+    crop: v.string(),
+    bags: v.number(),
+    bagWeightKg: v.number(),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["worker", "manager"]);
+    return await ctx.db.insert("harvestRecords", args);
+  },
+});
+
 // --- 2. Contracts & Deliveries ---
 export const listContracts = query({
   args: {},
@@ -273,6 +330,7 @@ export const listAllTreatments = query({
 export const logTreatment = mutation({
   args: {
     cowId: v.id("cows"),
+    incidentId: v.optional(v.id("incidents")),
     date: v.number(),
     condition: v.string(),
     drugAdministered: v.string(),
@@ -291,6 +349,13 @@ export const logTreatment = mutation({
     await ctx.db.patch(args.cowId, {
       status: "treatment",
     });
+
+    if (args.incidentId) {
+      await ctx.db.patch(args.incidentId, {
+        status: "investigating",
+        notes: `Treatment initiated: Administered ${args.drugAdministered} (${args.dosage}) by staff.`,
+      });
+    }
 
     return await ctx.db.insert("treatments", {
       ...args,
@@ -415,6 +480,7 @@ export const addIncident = mutation({
   args: {
     title: v.string(),
     department: v.union(v.literal("dairy"), v.literal("cereal"), v.literal("machinery"), v.literal("infrastructure"), v.literal("general")),
+    cowId: v.optional(v.id("cows")),
     description: v.string(),
     reportedBy: v.id("users"),
     severity: v.union(v.literal("low"), v.literal("medium"), v.literal("critical")),
@@ -505,6 +571,51 @@ export const logMaintenance = mutation({
     return await ctx.db.insert("machineryMaintenance", args);
   },
 });
+
+export const createMachinery = mutation({
+  args: {
+    name: v.string(),
+    type: v.union(v.literal("tractor"), v.literal("harvester"), v.literal("milking_pump"), v.literal("vehicle"), v.literal("tool"), v.literal("supply"), v.literal("other")),
+    plateNumber: v.string(),
+    status: v.union(v.literal("operational"), v.literal("maintenance"), v.literal("broken")),
+    fuelType: v.union(v.literal("diesel"), v.literal("petrol"), v.literal("electric")),
+    nextServiceDate: v.number(),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["worker", "manager"]);
+    return await ctx.db.insert("machinery", args);
+  },
+});
+
+export const editMachinery = mutation({
+  args: {
+    id: v.id("machinery"),
+    name: v.string(),
+    type: v.union(v.literal("tractor"), v.literal("harvester"), v.literal("milking_pump"), v.literal("vehicle"), v.literal("tool"), v.literal("supply"), v.literal("other")),
+    plateNumber: v.string(),
+    status: v.union(v.literal("operational"), v.literal("maintenance"), v.literal("broken")),
+    fuelType: v.union(v.literal("diesel"), v.literal("petrol"), v.literal("electric")),
+    nextServiceDate: v.number(),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["manager"]);
+    const { id, ...data } = args;
+    await ctx.db.patch(id, data);
+    return { success: true };
+  },
+});
+
+export const deleteMachinery = mutation({
+  args: { id: v.id("machinery") },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["manager"]);
+    await ctx.db.delete(args.id);
+    return { success: true };
+  },
+});
+
 
 // --- 12. Rainfall Logs ---
 export const listRainfall = query({
@@ -612,538 +723,7 @@ export const clearDatabase = mutation({
   },
 });
 
-// ==================== NEW GENERALIZED AGRIBUSINESS MODULES ====================
 
-// --- 1. Generalized Livestock ---
-export const listLivestock = query({
-  args: { category: v.optional(v.string()) },
-  handler: async (ctx, args) => {
-    let q = ctx.db.query("livestock");
-    if (args.category !== undefined) {
-      return await q.withIndex("by_category", (dbQ) => dbQ.eq("category", args.category!)).collect();
-    }
-    return await q.collect();
-  },
-});
-
-export const getLivestock = query({
-  args: { id: v.id("livestock") },
-  handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
-  },
-});
-
-export const getLivestockByTag = query({
-  args: { tagNumber: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db.query("livestock").withIndex("by_tag", (q) => q.eq("tagNumber", args.tagNumber)).unique();
-  },
-});
-
-export const listLivestockProduction = query({
-  args: { livestockId: v.optional(v.id("livestock")), limit: v.optional(v.number()) },
-  handler: async (ctx, args) => {
-    const q = args.livestockId !== undefined
-      ? ctx.db.query("livestockProduction").withIndex("by_livestock_and_date", (dbQ) => dbQ.eq("livestockId", args.livestockId!))
-      : ctx.db.query("livestockProduction");
-    const limit = args.limit ?? 100;
-    return await q.order("desc").take(limit);
-  },
-});
-
-export const listLivestockHealth = query({
-  args: { livestockId: v.optional(v.id("livestock")) },
-  handler: async (ctx, args) => {
-    const q = args.livestockId !== undefined
-      ? ctx.db.query("livestockHealth").withIndex("by_livestock", (dbQ) => dbQ.eq("livestockId", args.livestockId!))
-      : ctx.db.query("livestockHealth");
-    return await q.order("desc").collect();
-  },
-});
-
-export const listLivestockBreeding = query({
-  args: { livestockId: v.optional(v.id("livestock")) },
-  handler: async (ctx, args) => {
-    const q = args.livestockId !== undefined
-      ? ctx.db.query("livestockBreeding").withIndex("by_livestock", (dbQ) => dbQ.eq("livestockId", args.livestockId!))
-      : ctx.db.query("livestockBreeding");
-    return await q.order("desc").collect();
-  },
-});
-
-// --- 2. Generalized Crops & Fields ---
-export const listCropBlocks = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("cropBlocks").collect();
-  },
-});
-
-export const getCropBlock = query({
-  args: { id: v.id("cropBlocks") },
-  handler: async (ctx, args) => {
-    const block = await ctx.db.get(args.id);
-    if (!block) return null;
-    const activities = await ctx.db.query("cropActivities").withIndex("by_block", (q) => q.eq("cropBlockId", block._id)).collect();
-    return { ...block, activities };
-  },
-});
-
-export const listCropActivities = query({
-  args: { cropBlockId: v.optional(v.id("cropBlocks")) },
-  handler: async (ctx, args) => {
-    const q = args.cropBlockId !== undefined
-      ? ctx.db.query("cropActivities").withIndex("by_block", (dbQ) => dbQ.eq("cropBlockId", args.cropBlockId!))
-      : ctx.db.query("cropActivities");
-    return await q.order("desc").collect();
-  },
-});
-
-// --- 3. Generalized Inventory ---
-export const listInventory = query({
-  args: { status: v.optional(v.union(v.literal("active"), v.literal("pending_approval"))) },
-  handler: async (ctx, args) => {
-    const status = args.status ?? "active";
-    return await ctx.db.query("inventory").filter((q) => q.eq(q.field("status"), status)).collect();
-  },
-});
-
-export const getInventoryItem = query({
-  args: { id: v.id("inventory") },
-  handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
-  },
-});
-
-export const listInventoryMovementsNew = query({
-  args: { inventoryId: v.optional(v.id("inventory")) },
-  handler: async (ctx, args) => {
-    const q = args.inventoryId !== undefined
-      ? ctx.db.query("inventoryMovements").withIndex("by_inventory", (dbQ) => dbQ.eq("inventoryId", args.inventoryId!))
-      : ctx.db.query("inventoryMovements");
-    const movements = await q.order("desc").collect();
-    const users = await ctx.db.query("users").collect();
-    const inventory = await ctx.db.query("inventory").collect();
-    const userMap = new Map(users.map((u) => [u._id, { name: u.name ?? "Unknown", role: u.role ?? "worker" }]));
-    const itemMap = new Map(inventory.map((i) => [i._id, { productName: i.productName, unit: i.unit, category: i.category }]));
-    return movements.map((m) => ({
-      ...m,
-      userName: userMap.get(m.performedBy)?.name ?? "Unknown",
-      userRole: userMap.get(m.performedBy)?.role ?? "worker",
-      productName: itemMap.get(m.inventoryId)?.productName ?? "Unknown Item",
-      unit: itemMap.get(m.inventoryId)?.unit ?? "",
-      category: itemMap.get(m.inventoryId)?.category ?? "",
-    }));
-  },
-});
-
-// --- 4. MUTATIONS (Strict Server-side Role Authorization) ---
-
-// --- Worker Mutations ---
-export const logLivestockProduction = mutation({
-  args: {
-    livestockId: v.id("livestock"),
-    category: v.string(),
-    type: v.string(),
-    quantity: v.number(),
-    date: v.string(),
-    flagged: v.boolean(),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const user = await enforceRole(ctx, ["worker"]);
-    if (args.quantity < 0) {
-      throw new Error("[LivestockProduction] logLivestockProduction failed: quantity cannot be negative");
-    }
-    return await ctx.db.insert("livestockProduction", {
-      ...args,
-      loggedBy: user._id,
-      loggedAt: Date.now(),
-    });
-  },
-});
-
-export const logLivestockHealth = mutation({
-  args: {
-    livestockId: v.id("livestock"),
-    category: v.string(),
-    date: v.number(),
-    condition: v.string(),
-    treatment: v.string(),
-    dosage: v.string(),
-    withholdingDays: v.number(),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const user = await enforceRole(ctx, ["worker"]);
-    const withholdingUntil = args.date + args.withholdingDays * 24 * 60 * 60 * 1000;
-    
-    if (args.withholdingDays > 0) {
-      await ctx.db.patch(args.livestockId, { status: "treatment" });
-    }
-
-    return await ctx.db.insert("livestockHealth", {
-      ...args,
-      withholdingUntil,
-      administeredBy: user._id,
-    });
-  },
-});
-
-export const logLivestockBreeding = mutation({
-  args: {
-    livestockId: v.id("livestock"),
-    category: v.string(),
-    date: v.number(),
-    type: v.union(v.literal("insemination"), v.literal("pregnancy_check"), v.literal("birth")),
-    status: v.union(v.literal("pregnant"), v.literal("open"), v.literal("successful"), v.literal("failed")),
-    details: v.string(),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const user = await enforceRole(ctx, ["worker"]);
-
-    if (args.type === "birth" && args.status === "successful") {
-      await ctx.db.patch(args.livestockId, { status: "active" });
-    }
-
-    return await ctx.db.insert("livestockBreeding", {
-      ...args,
-      performedBy: user._id,
-    });
-  },
-});
-
-export const logCropActivity = mutation({
-  args: {
-    cropBlockId: v.id("cropBlocks"),
-    type: v.union(v.literal("planting"), v.literal("application"), v.literal("harvesting")),
-    activityDate: v.number(),
-    productApplied: v.optional(v.string()),
-    rate: v.optional(v.string()),
-    quantityHarvested: v.optional(v.number()),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const user = await enforceRole(ctx, ["worker"]);
-
-    if (args.type === "planting") {
-      await ctx.db.patch(args.cropBlockId, { status: "planted", plantedDate: args.activityDate });
-    } else if (args.type === "harvesting") {
-      await ctx.db.patch(args.cropBlockId, { status: "harvested" });
-    }
-
-    return await ctx.db.insert("cropActivities", {
-      ...args,
-      loggedBy: user._id,
-    });
-  },
-});
-
-export const registerInventoryItem = mutation({
-  args: {
-    category: v.string(),
-    productName: v.string(),
-    unit: v.string(),
-    lowStockThreshold: v.number(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["worker"]);
-
-    const existing = await ctx.db.query("inventory")
-      .filter((q) => q.eq(q.field("productName"), args.productName))
-      .unique();
-    if (existing) {
-      throw new Error(`[Inventory] registerItem failed: product ${args.productName} is already registered`);
-    }
-
-    return await ctx.db.insert("inventory", {
-      ...args,
-      quantity: 0,
-      status: "pending_approval",
-      updatedAt: Date.now(),
-    });
-  },
-});
-
-export const logInventoryMovement = mutation({
-  args: {
-    inventoryId: v.id("inventory"),
-    type: v.union(v.literal("restock"), v.literal("withdrawal")),
-    quantity: v.number(),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const user = await enforceRole(ctx, ["worker"]);
-
-    if (args.quantity <= 0) {
-      throw new Error("[Inventory] Movement quantity must be greater than zero");
-    }
-
-    const item = await ctx.db.get(args.inventoryId);
-    if (!item) {
-      throw new Error("[Inventory] Product not found");
-    }
-
-    if (item.status !== "active") {
-      throw new Error("[Inventory] Product is pending approval and cannot be restocked or withdrawn");
-    }
-
-    const delta = args.type === "restock" ? args.quantity : -args.quantity;
-    const newQty = item.quantity + delta;
-    if (newQty < 0) {
-      throw new Error(`[Inventory] Insufficient stock: requested ${args.quantity} but only ${item.quantity} available`);
-    }
-
-    await ctx.db.patch(args.inventoryId, {
-      quantity: newQty,
-      updatedAt: Date.now(),
-    });
-
-    return await ctx.db.insert("inventoryMovements", {
-      inventoryId: args.inventoryId,
-      type: args.type,
-      quantity: args.quantity,
-      performedBy: user._id,
-      timestamp: Date.now(),
-      notes: args.notes,
-    });
-  },
-});
-
-// --- Manager Mutations ---
-export const addInventoryItem = mutation({
-  args: {
-    category: v.string(),
-    productName: v.string(),
-    unit: v.string(),
-    lowStockThreshold: v.number(),
-    initialQuantity: v.number(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-
-    const existing = await ctx.db.query("inventory")
-      .filter((q) => q.eq(q.field("productName"), args.productName))
-      .unique();
-    if (existing) {
-      throw new Error(`[Inventory] addInventoryItem failed: product ${args.productName} is already registered`);
-    }
-
-    return await ctx.db.insert("inventory", {
-      category: args.category,
-      productName: args.productName,
-      unit: args.unit,
-      lowStockThreshold: args.lowStockThreshold,
-      quantity: args.initialQuantity,
-      status: "active",
-      updatedAt: Date.now(),
-    });
-  },
-});
-
-export const approveInventoryItem = mutation({
-  args: { id: v.id("inventory") },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-
-    const item = await ctx.db.get(args.id);
-    if (!item || item.status !== "pending_approval") {
-      throw new Error("[Inventory] approveInventoryItem failed: item not found or not pending approval");
-    }
-
-    await ctx.db.patch(args.id, {
-      status: "active",
-      updatedAt: Date.now(),
-    });
-    return { success: true };
-  },
-});
-
-export const rejectInventoryItem = mutation({
-  args: { id: v.id("inventory") },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-
-    const item = await ctx.db.get(args.id);
-    if (!item || item.status !== "pending_approval") {
-      throw new Error("[Inventory] rejectInventoryItem failed: item not found or not pending approval");
-    }
-
-    await ctx.db.delete(args.id);
-    return { success: true };
-  },
-});
-
-export const updateInventoryThreshold = mutation({
-  args: { id: v.id("inventory"), threshold: v.number() },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-
-    const item = await ctx.db.get(args.id);
-    if (!item) {
-      throw new Error("[Inventory] updateInventoryThreshold failed: item not found");
-    }
-
-    await ctx.db.patch(args.id, {
-      lowStockThreshold: args.threshold,
-      updatedAt: Date.now(),
-    });
-    return { success: true };
-  },
-});
-
-export const createCropBlock = mutation({
-  args: {
-    name: v.string(),
-    category: v.string(),
-    crop: v.string(),
-    acres: v.number(),
-    status: v.union(v.literal("planted"), v.literal("growing"), v.literal("harvested"), v.literal("fallow")),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["worker", "manager"]);
-
-    return await ctx.db.insert("cropBlocks", {
-      ...args,
-      plantedDate: args.status === "planted" ? Date.now() : null,
-      expectedHarvestDate: null,
-    });
-  },
-});
-
-export const editCropBlock = mutation({
-  args: {
-    id: v.id("cropBlocks"),
-    name: v.string(),
-    category: v.string(),
-    crop: v.string(),
-    acres: v.number(),
-    status: v.union(v.literal("planted"), v.literal("growing"), v.literal("harvested"), v.literal("fallow")),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-
-    const { id, ...data } = args;
-    await ctx.db.patch(id, data);
-    return { success: true };
-  },
-});
-
-export const deleteCropBlock = mutation({
-  args: { id: v.id("cropBlocks") },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-    await ctx.db.delete(args.id);
-    return { success: true };
-  },
-});
-
-export const createLivestock = mutation({
-  args: {
-    category: v.string(),
-    tagNumber: v.string(),
-    name: v.string(),
-    breed: v.string(),
-    dateOfBirth: v.number(),
-    status: v.union(v.literal("active"), v.literal("treatment"), v.literal("dry"), v.literal("sold"), v.literal("deceased")),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["worker", "manager"]);
-
-    const existing = await ctx.db.query("livestock").withIndex("by_tag", (q) => q.eq("tagNumber", args.tagNumber)).unique();
-    if (existing) {
-      throw new Error(`[Livestock] createLivestock failed: tagNumber ${args.tagNumber} already exists`);
-    }
-
-    return await ctx.db.insert("livestock", args);
-  },
-});
-
-export const editLivestock = mutation({
-  args: {
-    id: v.id("livestock"),
-    category: v.string(),
-    tagNumber: v.string(),
-    name: v.string(),
-    breed: v.string(),
-    dateOfBirth: v.number(),
-    status: v.union(v.literal("active"), v.literal("treatment"), v.literal("dry"), v.literal("sold"), v.literal("deceased")),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-
-    const { id, ...data } = args;
-    await ctx.db.patch(id, data);
-    return { success: true };
-  },
-});
-
-export const deleteLivestock = mutation({
-  args: { id: v.id("livestock") },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-    await ctx.db.delete(args.id);
-    return { success: true };
-  },
-});
-
-export const createMachinery = mutation({
-  args: {
-    name: v.string(),
-    type: v.union(v.literal("tractor"), v.literal("harvester"), v.literal("milking_pump"), v.literal("vehicle"), v.literal("tool"), v.literal("supply"), v.literal("other")),
-    plateNumber: v.string(),
-    status: v.union(v.literal("operational"), v.literal("maintenance"), v.literal("broken")),
-    fuelType: v.union(v.literal("diesel"), v.literal("petrol"), v.literal("electric")),
-    nextServiceDate: v.number(),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["worker", "manager"]);
-    return await ctx.db.insert("machinery", args);
-  },
-});
-
-export const editMachinery = mutation({
-  args: {
-    id: v.id("machinery"),
-    name: v.string(),
-    type: v.union(v.literal("tractor"), v.literal("harvester"), v.literal("milking_pump"), v.literal("vehicle"), v.literal("tool"), v.literal("supply"), v.literal("other")),
-    plateNumber: v.string(),
-    status: v.union(v.literal("operational"), v.literal("maintenance"), v.literal("broken")),
-    fuelType: v.union(v.literal("diesel"), v.literal("petrol"), v.literal("electric")),
-    nextServiceDate: v.number(),
-    notes: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-    const { id, ...data } = args;
-    await ctx.db.patch(id, data);
-    return { success: true };
-  },
-});
-
-export const deleteMachinery = mutation({
-  args: { id: v.id("machinery") },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-    await ctx.db.delete(args.id);
-    return { success: true };
-  },
-});
-
-export const deleteInventoryItem = mutation({
-  args: { id: v.id("inventory") },
-  handler: async (ctx, args) => {
-    await enforceRole(ctx, ["manager"]);
-    await ctx.db.delete(args.id);
-    return { success: true };
-  },
-});
 
 // --- Requests System ---
 export const listRequests = query({
@@ -1207,6 +787,40 @@ export const deleteRequest = mutation({
   handler: async (ctx, args) => {
     await enforceRole(ctx, ["manager"]);
     await ctx.db.delete(args.id);
+    return { success: true };
+  },
+});
+
+export const healCow = mutation({
+  args: {
+    cowId: v.id("cows"),
+    incidentId: v.optional(v.id("incidents")),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["manager"]);
+    const cow = await ctx.db.get(args.cowId);
+    if (!cow) throw new Error("Cow not found");
+    await ctx.db.patch(args.cowId, {
+      status: "milking",
+    });
+    if (args.incidentId) {
+      await ctx.db.patch(args.incidentId, {
+        status: "resolved",
+        resolvedAt: Date.now(),
+        notes: args.notes || "Cow verified healed by supervisor.",
+      });
+    } else {
+      const incidents = await ctx.db.query("incidents").collect();
+      const cowIncidents = incidents.filter(i => i.cowId === args.cowId && i.status !== "resolved");
+      for (const inc of cowIncidents) {
+        await ctx.db.patch(inc._id, {
+          status: "resolved",
+          resolvedAt: Date.now(),
+          notes: args.notes || "Cow verified healed by supervisor.",
+        });
+      }
+    }
     return { success: true };
   },
 });

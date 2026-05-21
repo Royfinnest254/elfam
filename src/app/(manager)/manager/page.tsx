@@ -16,16 +16,16 @@ const LeafLogo = () => (
 export default function ManagerDashboardPage() {
   const user = useQuery(api.users.viewer);
   
-  // Generalized Queries
-  const livestock = useQuery(api.records.listLivestock, {});
-  const cropBlocks = useQuery(api.records.listCropBlocks, {});
-  const pendingItems = useQuery(api.records.listInventory, { status: "pending_approval" });
+  // Specific Cow & Field Queries
+  const cows = useQuery(api.cows.list, {});
+  const fields = useQuery(api.records.listFields, {});
+  const requests = useQuery(api.records.listRequests, {});
   const machinery = useQuery(api.records.listMachinery, {});
   const tasks = useQuery(api.records.listTasks, {});
   const completeTaskMutation = useMutation(api.records.completeTask);
 
   // Loading state
-  if (user === undefined || livestock === undefined || cropBlocks === undefined || pendingItems === undefined || machinery === undefined || tasks === undefined) {
+  if (user === undefined || cows === undefined || fields === undefined || requests === undefined || machinery === undefined || tasks === undefined) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center font-sans text-muted">
         <span className="body-small block">Loading dashboard statistics...</span>
@@ -34,14 +34,15 @@ export default function ManagerDashboardPage() {
   }
 
   // Aggregated Stats
-  const totalLivestock = livestock.length;
-  const categoriesCount = livestock.reduce((acc: Record<string, number>, item) => {
-    acc[item.category] = (acc[item.category] || 0) + 1;
+  const totalLivestock = cows.length;
+  const statusCount = cows.reduce((acc: Record<string, number>, item) => {
+    acc[item.status] = (acc[item.status] || 0) + 1;
     return acc;
   }, {});
 
-  const totalAcres = cropBlocks.reduce((sum, block) => sum + block.acres, 0);
-  const pendingApprovalsCount = pendingItems.length;
+  const totalAcres = fields.reduce((sum, field) => sum + field.acres, 0);
+  const pendingRequests = requests.filter(r => r.status === "pending");
+  const pendingRequestsCount = pendingRequests.length;
   const totalMachinery = machinery.length;
   const pendingTasks = tasks.filter(t => t.status !== "done");
 
@@ -71,25 +72,25 @@ export default function ManagerDashboardPage() {
       {/* Stats Grid */}
       <div className="border border-gray-200 bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-200">
         <div className="p-6 flex flex-col justify-between">
-          <span className="text-xs font-bold text-black uppercase tracking-wider block">Livestock Holdings¹</span>
-          <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">{totalLivestock} <span className="text-sm font-normal text-[#4B5563]">Head</span></span>
+          <span className="text-xs font-bold text-black uppercase tracking-wider block">Herd Size¹</span>
+          <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">{totalLivestock} <span className="text-sm font-normal text-[#4B5563]">Cows</span></span>
           <span className="text-xs text-[#4B5563] mt-2 block leading-relaxed">
-            {Object.entries(categoriesCount).map(([cat, count]) => `${cat}: ${count}`).join(" | ") || "No stock registered"}
+            {Object.entries(statusCount).map(([status, count]) => `${status}: ${count}`).join(" | ") || "No cows registered"}
           </span>
         </div>
 
         <div className="p-6 flex flex-col justify-between">
-          <span className="text-xs font-bold text-black uppercase tracking-wider block">Crop Acreage²</span>
+          <span className="text-xs font-bold text-black uppercase tracking-wider block">Field Acreage²</span>
           <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">{totalAcres} <span className="text-sm font-normal text-[#4B5563]">Acres</span></span>
-          <span className="text-xs text-[#4B5563] mt-2 block leading-relaxed">{cropBlocks.length} Active Blocks</span>
+          <span className="text-xs text-[#4B5563] mt-2 block leading-relaxed">{fields.length} Active Fields</span>
         </div>
 
         <div className="p-6 flex flex-col justify-between">
-          <span className="text-xs font-bold text-black uppercase tracking-wider block">Pending Approvals³</span>
-          <span className={`text-3xl font-bold mt-2 block tracking-tight font-sans ${pendingApprovalsCount > 0 ? "text-[#D93025]" : "text-black"}`}>
-            {pendingApprovalsCount} <span className="text-sm font-normal text-[#4B5563]">Items</span>
+          <span className="text-xs font-bold text-black uppercase tracking-wider block">Pending Requests³</span>
+          <span className={`text-3xl font-bold mt-2 block tracking-tight font-sans ${pendingRequestsCount > 0 ? "text-[#D93025]" : "text-black"}`}>
+            {pendingRequestsCount} <span className="text-sm font-normal text-[#4B5563]">Pending</span>
           </span>
-          <span className="text-xs text-[#4B5563] mt-2 block leading-relaxed">Awaiting manager review</span>
+          <span className="text-xs text-[#4B5563] mt-2 block leading-relaxed">Awaiting manager validation</span>
         </div>
 
         <div className="p-6 flex flex-col justify-between">
@@ -101,7 +102,7 @@ export default function ManagerDashboardPage() {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left: Active Work Orders & Pending Approvals */}
+        {/* Left: Active Work Orders & Pending Requests */}
         <div className="lg:col-span-8 space-y-8">
           {/* Tasks Panel */}
           <div className="border border-gray-200 bg-white p-6 space-y-6">
@@ -149,31 +150,31 @@ export default function ManagerDashboardPage() {
             )}
           </div>
 
-          {/* Pending Approval Items Panel */}
+          {/* Pending Staff Requests Panel */}
           <div className="border border-gray-200 bg-white p-6 space-y-6">
             <div className="flex justify-between items-center border-b border-gray-200 pb-4">
               <h3 className="text-lg font-bold text-black tracking-tight flex items-center gap-2">
                 <LeafLogo />
-                Pending Inventory Approvals
+                Pending Staff Requests
               </h3>
-              <Link href="/manager/inventory" className="btn-secondary h-8 px-3 rounded-[6px] text-xs flex items-center gap-1">
-                <span>Approve Queue</span>
+              <Link href="/manager/requests" className="btn-secondary h-8 px-3 rounded-[6px] text-xs flex items-center gap-1">
+                <span>Requests Queue</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
 
-            {pendingApprovalsCount === 0 ? (
-              <p className="body-small text-[#4B5563] italic">No pending items requiring review.</p>
+            {pendingRequestsCount === 0 ? (
+              <p className="body-small text-[#4B5563] italic">No pending requests requiring review.</p>
             ) : (
               <div className="space-y-3">
-                {pendingItems.map((item) => (
+                {pendingRequests.map((item) => (
                   <div key={item._id} className="flex items-center justify-between p-4 border border-gray-200 bg-white rounded-none">
                     <div>
-                      <span className="status-badge text-[9px] text-[#1A56DB] border-[#1A56DB]/20 bg-[#E8F0FE] block mb-1">
+                      <span className="status-badge text-[9px] text-[#1A56DB] border-[#1A56DB]/20 bg-[#E8F0FE] block mb-1 uppercase font-bold">
                         {item.category}
                       </span>
-                      <span className="text-xs font-bold text-black">{item.productName}</span>
-                      <span className="body-small text-[#4B5563] block font-medium">Unit: {item.unit} &middot; Low Stock Level: {item.lowStockThreshold}</span>
+                      <span className="text-xs font-bold text-black">{item.title}</span>
+                      <span className="body-small text-[#4B5563] block font-medium">Requested by: {item.requestedByName} &middot; {item.details}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="status-badge text-[9px] text-[#D93025] border-[#D93025]/20 bg-[#FCE8E6] font-bold">
@@ -195,11 +196,11 @@ export default function ManagerDashboardPage() {
               Ledger Shortcuts
             </h3>
             <div className="grid grid-cols-1 gap-3">
-              <Link href="/manager/livestock" className="flex items-center gap-3 p-3.5 bg-white hover:bg-[#E8F0FE]/50 border border-gray-200 hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
+              <Link href="/manager/herd" className="flex items-center gap-3 p-3.5 bg-white hover:bg-[#E8F0FE]/50 border border-gray-200 hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <Layers className="h-4 w-4 text-[#1A56DB] shrink-0 animate-none" />
-                <span>Livestock Status</span>
+                <span>Herd Status</span>
               </Link>
-              <Link href="/manager/crops" className="flex items-center gap-3 p-3.5 bg-white hover:bg-[#E8F0FE]/50 border border-gray-200 hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
+              <Link href="/manager/fields" className="flex items-center gap-3 p-3.5 bg-white hover:bg-[#E8F0FE]/50 border border-gray-200 hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <Map className="h-4 w-4 text-[#1A56DB] shrink-0 animate-none" />
                 <span>Crops & Fields Register</span>
               </Link>
@@ -222,9 +223,9 @@ export default function ManagerDashboardPage() {
 
       {/* Footnotes */}
       <footer className="mt-8 pt-4 border-t border-gray-100 text-[11px] text-[#4B5563] space-y-1">
-        <div>¹ Total count of livestock holdings currently recorded in the active herd database.</div>
-        <div>² Total acreage registered across all active crop management blocks.</div>
-        <div>³ Inventory items added by operations team awaiting manager review and validation.</div>
+        <div>¹ Total count of cows currently recorded in the active herd database.</div>
+        <div>² Total acreage registered across all active crop management fields.</div>
+        <div>³ Staff requests submitted by workers awaiting manager review and validation.</div>
         <div>⁴ Fleet count of registered machinery and auxiliary support vehicles.</div>
       </footer>
     </div>

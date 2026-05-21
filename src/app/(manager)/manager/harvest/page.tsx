@@ -5,10 +5,10 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 
 export default function ManagerHarvestPage() {
-  const cropBlocks = useQuery(api.records.listCropBlocks);
-  const cropActivities = useQuery(api.records.listCropActivities, {});
+  const fields = useQuery(api.records.listFields);
+  const harvests = useQuery(api.records.listAllHarvests);
 
-  if (cropBlocks === undefined || cropActivities === undefined) {
+  if (fields === undefined || harvests === undefined) {
     return (
       <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">
         Loading harvest registers...
@@ -16,20 +16,17 @@ export default function ManagerHarvestPage() {
     );
   }
 
-  // Filter only harvesting activities
-  const harvestActivities = cropActivities.filter(
-    (a: any) => a.type === "harvesting"
+  // Enrich with field name
+  const fieldMap = Object.fromEntries(
+    (fields ?? []).map((f: any) => [f._id, f])
   );
 
-  // Enrich with crop block name
-  const blockMap = Object.fromEntries(
-    (cropBlocks ?? []).map((b: any) => [b._id, b])
-  );
-
-  const enriched = harvestActivities.map((a: any) => ({
-    ...a,
-    block: blockMap[a.cropBlockId] ?? null,
+  const enriched = (harvests ?? []).map((h: any) => ({
+    ...h,
+    field: fieldMap[h.fieldId] ?? null,
   }));
+
+  const totalBags = enriched.reduce((sum: number, h: any) => sum + (h.bags ?? 0), 0);
 
   return (
     <div className="space-y-8 font-sans text-[#202124] pb-12">
@@ -41,7 +38,7 @@ export default function ManagerHarvestPage() {
           Cereal Harvest Register
         </h1>
         <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
-          Season records for harvested crop blocks
+          Season records for harvested crop fields
         </p>
       </header>
 
@@ -57,18 +54,18 @@ export default function ManagerHarvestPage() {
         </div>
         <div className="system-card p-6 flex flex-col justify-between">
           <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">
-            Total Quantity Harvested
+            Total Bags Harvested
           </span>
           <strong className="text-2xl font-black uppercase text-primary block mt-2">
-            {enriched.reduce((sum: number, a: any) => sum + (a.quantityHarvested ?? 0), 0).toLocaleString()}
+            {totalBags.toLocaleString()} <span className="text-xs font-normal">Bags</span>
           </strong>
         </div>
         <div className="system-card p-6 flex flex-col justify-between">
           <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">
-            Harvested Blocks
+            Harvested Fields
           </span>
           <strong className="text-2xl font-black uppercase text-[#202124] block mt-2">
-            {new Set(enriched.map((a: any) => a.cropBlockId)).size}
+            {new Set(enriched.map((h: any) => h.fieldId)).size}
           </strong>
         </div>
       </div>
@@ -93,41 +90,39 @@ export default function ManagerHarvestPage() {
             <table className="w-full text-left text-xs divide-y divide-[#DADCE0]">
               <thead>
                 <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider bg-[#F8F9FA]">
-                  <th className="p-4">Crop Block</th>
+                  <th className="p-4">Field</th>
                   <th className="p-4">Crop</th>
-                  <th className="p-4">Category</th>
-                  <th className="p-4">Qty Harvested</th>
-                  <th className="p-4">Activity Date</th>
+                  <th className="p-4">Bags Yield</th>
+                  <th className="p-4">Bag Weight</th>
+                  <th className="p-4">Date</th>
                   <th className="p-4">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DADCE0] font-medium text-[#202124]">
-                {enriched.map((activity: any) => (
+                {enriched.map((h: any) => (
                   <tr
-                    key={activity._id}
+                    key={h._id}
                     className="hover:bg-[#F8F9FA]/50 transition-colors"
                   >
                     <td className="p-4 font-bold text-[#202124]">
-                      {activity.block?.name ?? "Unknown Block"}
+                      {h.field?.name ?? "Unknown Field"}
                     </td>
                     <td className="p-4">
                       <span className="status-badge bg-primary-subtle text-primary border border-primary-subtle text-[9px] uppercase px-1.5 py-0.5">
-                        {activity.block?.crop ?? "—"}
+                        {h.crop ?? "—"}
                       </span>
                     </td>
-                    <td className="p-4 text-[#5F6368]">
-                      {activity.block?.category ?? "—"}
-                    </td>
                     <td className="p-4 font-mono font-bold text-primary">
-                      {activity.quantityHarvested != null
-                        ? activity.quantityHarvested.toLocaleString()
-                        : "—"}
+                      {h.bags != null ? h.bags.toLocaleString() : "—"}
                     </td>
                     <td className="p-4 text-[#5F6368]">
-                      {new Date(activity.activityDate).toLocaleDateString("en-GB")}
+                      {h.bagWeightKg != null ? `${h.bagWeightKg} kg` : "—"}
+                    </td>
+                    <td className="p-4 text-[#5F6368]">
+                      {new Date(h.date).toLocaleDateString("en-GB")}
                     </td>
                     <td className="p-4 text-[#5F6368] max-w-[200px] truncate">
-                      {activity.notes || "—"}
+                      {h.notes || "—"}
                     </td>
                   </tr>
                 ))}

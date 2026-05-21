@@ -7,11 +7,14 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function WorkerRecordLivestockPage() {
-  const livestock = useQuery(api.records.listLivestock, {});
+  const user = useQuery(api.users.viewer);
+  const livestock = useQuery(api.cows.list, {});
 
-  const logProduction = useMutation(api.records.logLivestockProduction);
-  const logHealth = useMutation(api.records.logLivestockHealth);
-  const logBreeding = useMutation(api.records.logLivestockBreeding);
+  const logMilking = useMutation(api.records.logMilkingSession);
+  const logHealth = useMutation(api.records.logTreatment);
+  const logService = useMutation(api.records.logService);
+  const logPregnancy = useMutation(api.records.logPregnancyDiagnosis);
+  const logCalving = useMutation(api.records.registerCalving);
 
   const [activeTab, setActiveTab] = useState<"production" | "health" | "breeding">("production");
 
@@ -37,10 +40,18 @@ export default function WorkerRecordLivestockPage() {
   const [breedStatus, setBreedStatus] = useState("pregnant");
   const [details, setDetails] = useState("");
 
-  if (livestock === undefined) {
+  if (livestock === undefined || user === undefined) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center font-sans text-muted">
         <span className="body-small block">Loading livestock assets...</span>
+      </div>
+    );
+  }
+
+  if (user === null) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center font-sans text-muted">
+        <span className="body-small block">User session not found. Please sign in.</span>
       </div>
     );
   }
@@ -73,19 +84,31 @@ export default function WorkerRecordLivestockPage() {
       return;
     }
 
+    if (prodType !== "milk") {
+      setErrorMsg("Only 'Milk (Litres)' production yield logging is supported in this dairy herd system.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await logProduction({
-        livestockId: selectedAnimalId as any,
-        category: animal.category,
-        type: prodType,
-        quantity: qty,
-        date: new Date().toISOString().split("T")[0],
-        notes,
+      const hour = new Date().getHours();
+      const currentSession = hour < 12 ? "AM" : "PM";
+      const todayStr = new Date().toISOString().split("T")[0];
+
+      const result = await logMilking({
+        cowId: selectedAnimalId as any,
+        session: currentSession,
+        date: todayStr,
+        litres: qty,
+        loggedBy: user._id,
         flagged: false,
       });
 
-      setStatusMsg("VERIFIED: Yield successfully added to database ledger.");
+      if (result.flagged) {
+        setStatusMsg(`VERIFIED: Yield logged, but FLAGGED for active withholding! ${result.message || ""}`);
+      } else {
+        setStatusMsg("VERIFIED: Yield successfully added to database ledger.");
+      }
       handleResetForm();
     } catch (err: any) {
       console.error(err);
@@ -116,13 +139,13 @@ export default function WorkerRecordLivestockPage() {
     setSubmitting(true);
     try {
       await logHealth({
-        livestockId: selectedAnimalId as any,
-        category: animal.category,
+        cowId: selectedAnimalId as any,
         date: Date.now(),
         condition: condition.trim(),
-        treatment: treatment.trim(),
+        drugAdministered: treatment.trim(),
         dosage: dosage.trim(),
         withholdingDays: whDays,
+        administeredBy: user._id,
         notes,
       });
 
@@ -149,17 +172,50 @@ export default function WorkerRecordLivestockPage() {
 
     setSubmitting(true);
     try {
-      await logBreeding({
-        livestockId: selectedAnimalId as any,
-        category: animal.category,
-        date: Date.now(),
-        type: breedType as any,
-        status: breedStatus as any,
-        details: details.trim(),
-        notes,
-      });
+      if (breedType === "insemination") {
+        await logService({
+          cowId: selectedAnimalId as any,
+          date: Date.now(),
+          type: "AI",
+          bullOrSemenCode: details.trim() || "Unknown",
+          performedBy: user._id,
+          notes: notes,
+        });
+        setStatusMsg("VERIFIED: Artificial Insemination service logged successfully.");
+      } else if (breedType === "pregnancy_check") {
+        const resultVal = breedStatus === "pregnant" ? "pregnant" : breedStatus === "open" ? "open" : "uncertain";
+        const expectedCalvingDate = resultVal === "pregnant" ? Date.now() + 280 * 24 * 60 * 60 * 1000 : null;
+        
+        await logPregnancy({
+          cowId: selectedAnimalId as any,
+          date: Date.now(),
+          result: resultVal,
+          expectedCalvingDate,
+          performedBy: user._id,
+        });
+        setStatusMsg(`VERIFIED: Pregnancy checkup result (${resultVal}) logged successfully.`);
+      } else if (breedType === "birth") {
+        let calfSex: "M" | "F" = "F";
+        if (details.toUpperCase().includes("MALE") || details.toUpperCase().includes("BULL") || details.toUpperCase().includes(" M ")) {
+          calfSex = "M";
+        }
+        
+        const tagMatch = details.match(/(?:EL-)?\d{4}/i);
+        const calfTagNumber = tagMatch ? tagMatch[0] : null;
+        const complications = breedStatus === "failed" ? (details || "Parturition failed / complications") : "";
 
-      setStatusMsg("VERIFIED: Breeding record logged successfully.");
+        await logCalving({
+          cowId: selectedAnimalId as any,
+          date: Date.now(),
+          calfSex,
+          calfTagNumber,
+          sireInfo: "AI / Past service",
+          complications,
+          notes: notes || details,
+        });
+        setStatusMsg("VERIFIED: Calving and newborn registration logged successfully.");
+      }
+
       handleResetForm();
     } catch (err: any) {
       console.error(err);
@@ -236,7 +292,7 @@ export default function WorkerRecordLivestockPage() {
                 <option value="">-- Choose Animal --</option>
                 {livestock.map((item) => (
                   <option key={item._id} value={item._id}>
-                    [{item.category}] Tag {item.tagNumber} - {item.name}
+                    Tag {item.tagNumber} - {item.name} ({item.breed})
                   </option>
                 ))}
               </select>
@@ -309,7 +365,7 @@ export default function WorkerRecordLivestockPage() {
                 <option value="">-- Choose Animal --</option>
                 {livestock.map((item) => (
                   <option key={item._id} value={item._id}>
-                    [{item.category}] Tag {item.tagNumber} - {item.name}
+                    Tag {item.tagNumber} - {item.name} ({item.breed})
                   </option>
                 ))}
               </select>
@@ -407,7 +463,7 @@ export default function WorkerRecordLivestockPage() {
                 <option value="">-- Choose Animal --</option>
                 {livestock.map((item) => (
                   <option key={item._id} value={item._id}>
-                    [{item.category}] Tag {item.tagNumber} - {item.name}
+                    Tag {item.tagNumber} - {item.name} ({item.breed})
                   </option>
                 ))}
               </select>

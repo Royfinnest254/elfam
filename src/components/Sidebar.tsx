@@ -23,8 +23,8 @@ import {
 
 const managerNav = [
   { name: "Dashboard",  href: "/manager",           icon: Home },
-  { name: "Livestock",  href: "/manager/livestock",  icon: Layers },
-  { name: "Crops",      href: "/manager/crops",      icon: Map },
+  { name: "Herd",       href: "/manager/herd",      icon: Layers },
+  { name: "Fields",     href: "/manager/fields",    icon: Map },
   { name: "Inventory",  href: "/manager/inventory",  icon: ClipboardList },
   { name: "Equipment",  href: "/manager/equipment",  icon: Tractor },
   { name: "Requests",   href: "/manager/requests",   icon: FileText },
@@ -33,13 +33,14 @@ const managerNav = [
 ];
 
 const workerNav = [
-  { name: "Dashboard",  href: "/worker",            icon: Home },
-  { name: "Livestock",  href: "/worker/livestock",   icon: Layers },
-  { name: "Crops",      href: "/worker/crops",       icon: Map },
-  { name: "Inventory",  href: "/worker/inventory",   icon: ClipboardList },
-  { name: "Equipment",  href: "/worker/equipment",   icon: Tractor },
-  { name: "Requests",   href: "/worker/requests",    icon: FileText },
-  { name: "Tasks",      href: "/worker/tasks",       icon: ClipboardCheck },
+  { name: "Dashboard",    href: "/worker",              icon: Home },
+  { name: "Milk Logging", href: "/worker/milk",         icon: Layers },
+  { name: "Field Log",    href: "/worker/record/crops", icon: Map },
+  { name: "Health Log",   href: "/worker/record/health", icon: ClipboardCheck },
+  { name: "Inventory",    href: "/worker/inventory",    icon: ClipboardList },
+  { name: "Equipment",    href: "/worker/equipment",    icon: Tractor },
+  { name: "Requests",     href: "/worker/requests",     icon: FileText },
+  { name: "Tasks",        href: "/worker/tasks",        icon: ClipboardCheck },
 ];
 
 function NavItem({
@@ -101,6 +102,7 @@ export default function Sidebar() {
 
   const role = user?.role ?? "worker";
   const navItems = role === "worker" ? workerNav : managerNav;
+  const settingsHref = role === "worker" ? "/worker/settings" : "/settings";
 
   return (
     <>
@@ -132,8 +134,8 @@ export default function Sidebar() {
                 onClick={() => setMobileMenuOpen(false)}
               />
             ))}
-            <NavItem
-              item={{ name: "Settings", href: "/settings", icon: Settings }}
+             <NavItem
+              item={{ name: "Settings", href: settingsHref, icon: Settings }}
               pathname={pathname}
               onClick={() => setMobileMenuOpen(false)}
             />
@@ -178,7 +180,7 @@ export default function Sidebar() {
 
           <div className="pt-2 mt-2 border-t border-gray-200">
             <NavItem
-              item={{ name: "Settings", href: "/settings", icon: Settings }}
+              item={{ name: "Settings", href: settingsHref, icon: Settings }}
               pathname={pathname}
             />
           </div>
@@ -201,7 +203,7 @@ export default function Sidebar() {
               </p>
             </div>
             <Link
-              href="/settings"
+              href={settingsHref}
               title="Settings"
               className="p-1.5 rounded-none hover:bg-gray-100 text-[#4B5563] hover:text-black transition-colors shrink-0"
             >

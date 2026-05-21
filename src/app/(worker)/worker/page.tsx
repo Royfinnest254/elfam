@@ -138,13 +138,13 @@ export default function WorkerDashboardPage() {
           Station Logging Hub²
         </span>
         <div className="grid grid-cols-1 md:grid-cols-3 border-t border-l border-gray-200">
-          <Link href="/worker/record/livestock" className="flex items-center justify-between p-4 bg-white border-r border-b border-gray-200 hover:bg-[#E8F0FE]/50 transition-colors">
+          <Link href="/worker/milk" className="flex items-center justify-between p-4 bg-white border-r border-b border-gray-200 hover:bg-[#E8F0FE]/50 transition-colors">
             <div className="flex items-center gap-3">
               <div className="p-2 border border-[#1A56DB]/10 bg-[#E8F0FE]/30">
                 <Layers className="h-5 w-5 text-[#1A56DB]" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-black block">Livestock Production</span>
+                <span className="text-xs font-bold text-black block">Milk Logging</span>
                 <span className="body-small text-[#4B5563]">Log daily yields & treatments</span>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function WorkerDashboardPage() {
                 <Map className="h-5 w-5 text-[#1A56DB]" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-black block">Crops & Harvesting</span>
+                <span className="text-xs font-bold text-black block">Field Log</span>
                 <span className="body-small text-[#4B5563]">Log seeding, spraying & yields</span>
               </div>
             </div>

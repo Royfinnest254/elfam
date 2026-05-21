@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
-import { Download, Printer, FileText, BarChart2, Package, Tractor, Leaf, ChevronDown } from "lucide-react";
+import { Download, Printer, FileText, BarChart2, Package, Tractor, Leaf } from "lucide-react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -17,10 +17,10 @@ declare module "jspdf" {
 type ReportType = "farm_summary" | "inventory_usage" | "financial" | "livestock" | "crops" | "machinery";
 
 const REPORT_OPTIONS: { value: ReportType; label: string; icon: React.ElementType; desc: string }[] = [
-  { value: "farm_summary",    label: "Farm Asset Summary",      icon: BarChart2,  desc: "Total counts of all livestock, crops, inventory and equipment on the farm" },
+  { value: "farm_summary",    label: "Farm Asset Summary",      icon: BarChart2,  desc: "Total counts of all herd cows, fields, inventory and equipment on the farm" },
   { value: "inventory_usage", label: "Inventory Usage Log",     icon: Package,    desc: "All withdrawals and restocks with date, item, quantity and person who acted" },
-  { value: "livestock",       label: "Livestock Registry",      icon: Leaf,       desc: "Complete livestock register broken down by category and status" },
-  { value: "crops",           label: "Crop Field Registry",     icon: Leaf,       desc: "All crop blocks with acreage, crop type, category and current status" },
+  { value: "livestock",       label: "Herd Registry",           icon: Leaf,       desc: "Complete cow registry broken down by breed and status" },
+  { value: "crops",           label: "Field Crop Registry",     icon: Leaf,       desc: "All cereal crop fields with acreage, crop type, and crop status" },
   { value: "machinery",       label: "Machinery Fleet Report",  icon: Tractor,    desc: "All registered machines with type, status and next service date" },
   { value: "financial",       label: "Financial Ledger",        icon: FileText,   desc: "Income, expenses and net balance with full transaction audit log" },
 ];
@@ -36,7 +36,7 @@ function formatDateTime(ts: number) {
 function addPdfHeader(doc: any, title: string, subtitle: string) {
   // Navy bar
   doc.setFillColor(15, 27, 45);
-  doc.rect(0, 0, 210, 32, "F");
+  doc.rect(0, 0, doc.internal.pageSize.width, 32, "F");
 
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
@@ -57,7 +57,7 @@ function addPdfHeader(doc: any, title: string, subtitle: string) {
   doc.setTextColor(200, 200, 200);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  doc.text(`Generated: ${new Date().toLocaleString("en-GB")}`, 196, 13, { align: "right" });
+  doc.text(`Generated: ${new Date().toLocaleString("en-GB")}`, doc.internal.pageSize.width - 14, 13, { align: "right" });
 
   // Subtitle line
   doc.setTextColor(94, 108, 132);
@@ -71,21 +71,22 @@ function addPdfHeader(doc: any, title: string, subtitle: string) {
 // ─── PDF Footer (on every page) ────────────────────────────────────────────────
 function addPdfFooter(doc: any) {
   const count = doc.internal.getNumberOfPages();
+  const width = doc.internal.pageSize.width;
+  const height = doc.internal.pageSize.height;
   for (let i = 1; i <= count; i++) {
     doc.setPage(i);
-    const h = doc.internal.pageSize.height;
     doc.setFontSize(7);
     doc.setTextColor(150);
-    doc.line(14, h - 18, 196, h - 18);
-    doc.text("ELFAM COMPANY LIMITED — Confidential Farm Management Record", 14, h - 13);
-    doc.text(`Page ${i} of ${count}`, 196, h - 13, { align: "right" });
+    doc.line(14, height - 18, width - 14, height - 18);
+    doc.text("ELFAM COMPANY LIMITED — Confidential Farm Management Record", 14, height - 13);
+    doc.text(`Page ${i} of ${count}`, width - 14, height - 13, { align: "right" });
     // Signature block on first page only
     if (i === 1) {
       doc.setFontSize(8);
       doc.setTextColor(94, 108, 132);
-      doc.text("Prepared by:", 14, h - 7);
-      doc.text("Role: Operations Manager", 60, h - 7);
-      doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 140, h - 7);
+      doc.text("Prepared by:", 14, height - 7);
+      doc.text("Role: Operations Manager", 60, height - 7);
+      doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, width - 60);
     }
   }
 }
@@ -98,18 +99,18 @@ function generateFarmSummaryPDF(data: any) {
 
   const { livestock, cropBlocks, inventory, machinery } = data;
 
-  // Livestock by category
+  // Livestock by breed
   const lwCats = livestock.reduce((acc: Record<string, number>, a: any) => {
-    acc[a.category] = (acc[a.category] || 0) + 1;
+    acc[a.breed] = (acc[a.breed] || 0) + 1;
     return acc;
   }, {});
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(15, 27, 45);
-  doc.text("1. Livestock Summary", 14, y + 2);
+  doc.text("1. Herd Summary (by Breed)", 14, y + 2);
   autoTable(doc, {
     startY: y + 6,
-    head: [["Category", "Total Head"]],
+    head: [["Breed", "Total Head"]],
     body: Object.entries(lwCats).map(([cat, cnt]) => [cat, `${cnt} Head`]),
     theme: "striped",
     headStyles: { fillColor: [15, 27, 45], textColor: 255, fontSize: 9, fontStyle: "bold" },
@@ -122,12 +123,12 @@ function generateFarmSummaryPDF(data: any) {
   const totalAcres = cropBlocks.reduce((s: number, b: any) => s + b.acres, 0);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  doc.text("2. Crop Blocks Summary", 14, y);
+  doc.text("2. Fields Crop Summary", 14, y);
   autoTable(doc, {
     startY: y + 4,
-    head: [["Block Name", "Category", "Crop", "Acres", "Status"]],
-    body: cropBlocks.map((b: any) => [b.name, b.category, b.crop.toUpperCase(), `${b.acres} acres`, b.status]),
-    foot: [["", "", "TOTAL ACREAGE", `${totalAcres} acres`, ""]],
+    head: [["Field Name", "Crop Type", "Acres", "Planted Date"]],
+    body: cropBlocks.map((b: any) => [b.name, b.crop.toUpperCase(), `${b.acres} acres`, b.plantedDate ? formatDate(b.plantedDate) : "—"]),
+    foot: [["", "TOTAL ACREAGE", `${totalAcres} acres`, ""]],
     theme: "striped",
     headStyles: { fillColor: [0, 134, 155], textColor: 255, fontSize: 9, fontStyle: "bold" },
     footStyles: { fillColor: [240, 242, 245], textColor: [15, 27, 45], fontStyle: "bold" },
@@ -195,16 +196,15 @@ function generateInventoryUsagePDF(movements: any[]) {
   doc.text("Withdrawals", 14, y);
   autoTable(doc, {
     startY: y + 4,
-    head: [["Date & Time", "Product", "Category", "Qty Withdrawn", "Person (Name)", "Role", "Notes"]],
+    head: [["Date & Time", "ProductName", "Type", "Qty Withdrawn", "Person (Name)", "Notes"]],
     body: withdrawals.length === 0
-      ? [["No withdrawals recorded", "", "", "", "", "", ""]]
+      ? [["No withdrawals recorded", "", "", "", "", ""]]
       : withdrawals.map((m) => [
           formatDateTime(m.timestamp),
           m.productName,
-          m.category,
+          m.itemType.toUpperCase(),
           `${m.quantity} ${m.unit}`,
           m.userName,
-          m.userRole,
           m.notes || "—",
         ]),
     theme: "grid",
@@ -221,16 +221,15 @@ function generateInventoryUsagePDF(movements: any[]) {
   doc.text("Restocks", 14, y);
   autoTable(doc, {
     startY: y + 4,
-    head: [["Date & Time", "Product", "Category", "Qty Added", "Person (Name)", "Role", "Notes"]],
+    head: [["Date & Time", "ProductName", "Type", "Qty Added", "Person (Name)", "Notes"]],
     body: restocks.length === 0
-      ? [["No restocks recorded", "", "", "", "", "", ""]]
+      ? [["No restocks recorded", "", "", "", "", ""]]
       : restocks.map((m) => [
           formatDateTime(m.timestamp),
           m.productName,
-          m.category,
+          m.itemType.toUpperCase(),
           `${m.quantity} ${m.unit}`,
           m.userName,
-          m.userRole,
           m.notes || "—",
         ]),
     theme: "grid",
@@ -245,11 +244,11 @@ function generateInventoryUsagePDF(movements: any[]) {
 
 function generateLivestockPDF(livestock: any[]) {
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-  let y = addPdfHeader(doc, "Livestock Registry Report", "Complete livestock register by category with status and identification");
+  let y = addPdfHeader(doc, "Herd Registry Report", "Complete cow register by breed with status and tag identification");
 
-  const categories = livestock.map((a) => a.category).filter((val, idx, self) => self.indexOf(val) === idx);
+  const categories = livestock.map((a) => a.breed).filter((val, idx, self) => self.indexOf(val) === idx);
   for (const cat of categories) {
-    const group = livestock.filter((a) => a.category === cat);
+    const group = livestock.filter((a) => a.breed === cat);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(15, 27, 45);
@@ -268,24 +267,25 @@ function generateLivestockPDF(livestock: any[]) {
   }
 
   addPdfFooter(doc);
-  doc.save(`Elfam_Livestock_Registry_${new Date().toISOString().split("T")[0]}.pdf`);
+  doc.save(`Elfam_Herd_Registry_${new Date().toISOString().split("T")[0]}.pdf`);
 }
 
 function generateCropsPDF(cropBlocks: any[]) {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  let y = addPdfHeader(doc, "Crop Field Registry Report", "All registered crop blocks with acreage, crop type and current status");
+  let y = addPdfHeader(doc, "Field Crop Registry Report", "All registered crop fields with acreage, crop type and planting logs");
 
   const totalAcres = cropBlocks.reduce((s, b) => s + b.acres, 0);
   autoTable(doc, {
     startY: y,
-    head: [["Block Name", "Category", "Crop", "Acres", "Status", "Planted Date", "Notes"]],
+    head: [["Field Name", "Crop Type", "Acres", "Planted Date", "Expected Harvest", "Notes"]],
     body: cropBlocks.map((b) => [
-      b.name, b.category, b.crop.toUpperCase(),
-      `${b.acres} acres`, b.status,
+      b.name, b.crop.toUpperCase(),
+      `${b.acres} acres`,
       b.plantedDate ? formatDate(b.plantedDate) : "—",
+      b.expectedHarvestDate ? formatDate(b.expectedHarvestDate) : "—",
       b.notes || "—",
     ]),
-    foot: [["", "", "TOTAL", `${totalAcres} acres`, "", "", ""]],
+    foot: [["", "TOTAL", `${totalAcres} acres`, "", "", ""]],
     theme: "striped",
     headStyles: { fillColor: [15, 27, 45], textColor: 255, fontSize: 9, fontStyle: "bold" },
     footStyles: { fillColor: [240, 242, 245], fontStyle: "bold" },
@@ -294,7 +294,7 @@ function generateCropsPDF(cropBlocks: any[]) {
   });
 
   addPdfFooter(doc);
-  doc.save(`Elfam_Crops_Registry_${new Date().toISOString().split("T")[0]}.pdf`);
+  doc.save(`Elfam_Fields_Registry_${new Date().toISOString().split("T")[0]}.pdf`);
 }
 
 function generateMachineryPDF(machinery: any[]) {
@@ -360,15 +360,16 @@ export default function ManagerReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportType>("farm_summary");
   const [generating, setGenerating] = useState(false);
 
-  const livestock = useQuery(api.records.listLivestock, {});
-  const cropBlocks = useQuery(api.records.listCropBlocks, {});
-  const inventory = useQuery(api.records.listInventory, { status: "active" });
+  const livestock = useQuery(api.cows.list, {});
+  const cropBlocks = useQuery(api.records.listFields, {});
+  const feedInventory = useQuery(api.records.listFeedInventory, {});
+  const vetInventory = useQuery(api.records.listVetInventory, {});
   const machinery = useQuery(api.records.listMachinery, {});
   const transactions = useQuery(api.records.listTransactions, {});
-  const movements = useQuery(api.records.listInventoryMovementsNew, {});
+  const movements = useQuery(api.records.listInventoryMovements, {});
 
-  const loading = livestock === undefined || cropBlocks === undefined || inventory === undefined
-    || machinery === undefined || transactions === undefined || movements === undefined;
+  const loading = livestock === undefined || cropBlocks === undefined || feedInventory === undefined
+    || vetInventory === undefined || machinery === undefined || transactions === undefined || movements === undefined;
 
   if (loading) {
     return (
@@ -378,9 +379,15 @@ export default function ManagerReportsPage() {
     );
   }
 
+  // Combine feed and vet inventory
+  const combinedInventory = [
+    ...(feedInventory || []).map(f => ({ ...f, category: "Feed", productName: f.product, lowStockThreshold: 5 })),
+    ...(vetInventory || []).map(v => ({ ...v, category: "Veterinary", productName: v.product, lowStockThreshold: v.lowStockThreshold })),
+  ];
+
   // Derived stats for preview
   const lwCats = livestock!.reduce((acc: Record<string, number>, a) => {
-    acc[a.category] = (acc[a.category] || 0) + 1; return acc;
+    acc[a.breed] = (acc[a.breed] || 0) + 1; return acc;
   }, {});
   const totalIncome = transactions!.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const totalExpense = transactions!.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
@@ -392,7 +399,7 @@ export default function ManagerReportsPage() {
     setGenerating(true);
     try {
       if (selectedReport === "farm_summary") {
-        generateFarmSummaryPDF({ livestock: livestock!, cropBlocks: cropBlocks!, inventory: inventory!, machinery: machinery! });
+        generateFarmSummaryPDF({ livestock: livestock!, cropBlocks: cropBlocks!, inventory: combinedInventory, machinery: machinery! });
       } else if (selectedReport === "inventory_usage") {
         generateInventoryUsagePDF(movements!);
       } else if (selectedReport === "livestock") {
@@ -475,10 +482,10 @@ export default function ManagerReportsPage() {
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Total Livestock", value: livestock!.length, unit: "head" },
-              { label: "Crop Blocks",     value: cropBlocks!.length, unit: `blocks / ${totalAcres} acres` },
-              { label: "Inventory Items", value: inventory!.length, unit: "products" },
-              { label: "Machinery",       value: machinery!.length, unit: "machines" },
+              { label: "Total Cows (Herd)", value: livestock!.length, unit: "head" },
+              { label: "Crop Fields",      value: cropBlocks!.length, unit: `fields / ${totalAcres} acres` },
+              { label: "Inventory Products", value: combinedInventory.length, unit: "items" },
+              { label: "Machinery Fleet",  value: machinery!.length, unit: "machines" },
             ].map((s) => (
               <div key={s.label} className="system-card p-5 text-center">
                 <p className="text-xs-label mb-1">{s.label}</p>
@@ -487,15 +494,15 @@ export default function ManagerReportsPage() {
               </div>
             ))}
           </div>
-          {/* Livestock by category */}
+          {/* Herd by breed */}
           <div className="system-card overflow-hidden">
             <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
-              <h3 className="text-xs-label">Livestock by Category</h3>
+              <h3 className="text-xs-label">Herd by Breed</h3>
             </div>
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
-                  <th className="px-5 py-2.5 text-left text-xs-label">Category</th>
+                  <th className="px-5 py-2.5 text-left text-xs-label">Breed</th>
                   <th className="px-5 py-2.5 text-right text-xs-label">Head Count</th>
                 </tr>
               </thead>
@@ -507,7 +514,7 @@ export default function ManagerReportsPage() {
                   </tr>
                 ))}
                 {Object.keys(lwCats).length === 0 && (
-                  <tr><td colSpan={2} className="px-5 py-6 text-center text-[#5F6368] text-xs">No livestock registered</td></tr>
+                  <tr><td colSpan={2} className="px-5 py-6 text-center text-[#5F6368] text-xs">No cows registered</td></tr>
                 )}
               </tbody>
             </table>
@@ -526,10 +533,10 @@ export default function ManagerReportsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F1F3F4]">
-                {inventory!.map((i) => {
+                {combinedInventory.map((i, idx) => {
                   const low = i.quantity <= i.lowStockThreshold;
                   return (
-                    <tr key={i._id} className="hover:bg-[#F8F9FA]">
+                    <tr key={idx} className="hover:bg-[#F8F9FA]">
                       <td className="px-5 py-3 font-semibold text-[#202124]">{i.productName}</td>
                       <td className="px-5 py-3 text-[#5F6368]">{i.category}</td>
                       <td className="px-5 py-3 font-mono font-bold text-[#1A56DB]">{i.quantity.toFixed(1)} {i.unit}</td>
@@ -540,7 +547,7 @@ export default function ManagerReportsPage() {
                     </tr>
                   );
                 })}
-                {inventory!.length === 0 && (
+                {combinedInventory.length === 0 && (
                   <tr><td colSpan={5} className="px-5 py-6 text-center text-[#5F6368] text-xs">No inventory items</td></tr>
                 )}
               </tbody>
@@ -572,7 +579,7 @@ export default function ManagerReportsPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
-                    {["Date & Time", "Type", "Product", "Category", "Quantity", "Person", "Role", "Notes"].map((h) => (
+                    {["Date & Time", "Type", "Product", "Item Type", "Quantity", "Person", "Notes"].map((h) => (
                       <th key={h} className="px-4 py-2.5 text-left text-xs-label whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -585,15 +592,14 @@ export default function ManagerReportsPage() {
                         <span className={`status-badge ${m.type === "withdrawal" ? "status-out" : "status-ok"}`}>{m.type}</span>
                       </td>
                       <td className="px-4 py-3 font-semibold text-[#202124]">{m.productName}</td>
-                      <td className="px-4 py-3 text-[#5F6368]">{m.category}</td>
+                      <td className="px-4 py-3 text-[#5F6368] capitalize">{m.itemType}</td>
                       <td className="px-4 py-3 font-mono font-bold text-[#1A56DB]">{m.quantity} {m.unit}</td>
                       <td className="px-4 py-3 font-semibold text-[#5F6368]">{m.userName}</td>
-                      <td className="px-4 py-3 text-[#5F6368] capitalize">{m.userRole}</td>
                       <td className="px-4 py-3 text-[#5F6368]">{m.notes || "—"}</td>
                     </tr>
                   ))}
                   {movements!.length === 0 && (
-                    <tr><td colSpan={8} className="px-5 py-8 text-center text-[#5F6368] text-xs">No movements recorded yet</td></tr>
+                    <tr><td colSpan={7} className="px-5 py-8 text-center text-[#5F6368] text-xs">No movements recorded yet</td></tr>
                   )}
                 </tbody>
               </table>
@@ -606,13 +612,13 @@ export default function ManagerReportsPage() {
       {selectedReport === "livestock" && (
         <div className="system-card overflow-hidden">
           <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
-            <h3 className="text-xs-label">Livestock Registry — {livestock!.length} total</h3>
+            <h3 className="text-xs-label">Herd Registry — {livestock!.length} total cows</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
-                  {["Tag No.", "Name", "Category", "Breed", "Date of Birth", "Status"].map((h) => (
+                  {["Tag No.", "Name", "Breed", "Date of Birth", "Status"].map((h) => (
                     <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                   ))}
                 </tr>
@@ -622,14 +628,13 @@ export default function ManagerReportsPage() {
                   <tr key={a._id} className="hover:bg-[#F8F9FA]">
                     <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{a.tagNumber}</td>
                     <td className="px-5 py-3 font-semibold text-[#202124]">{a.name}</td>
-                    <td className="px-5 py-3 text-[#5F6368]">{a.category}</td>
                     <td className="px-5 py-3 text-[#5F6368]">{a.breed}</td>
                     <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{formatDate(a.dateOfBirth)}</td>
                     <td className="px-5 py-3"><span className="status-badge status-ok capitalize">{a.status}</span></td>
                   </tr>
                 ))}
                 {livestock!.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#5F6368] text-xs">No livestock registered</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-8 text-center text-[#5F6368] text-xs">No cows registered</td></tr>
                 )}
               </tbody>
             </table>
@@ -641,13 +646,13 @@ export default function ManagerReportsPage() {
       {selectedReport === "crops" && (
         <div className="system-card overflow-hidden">
           <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
-            <h3 className="text-xs-label">Crop Blocks — {cropBlocks!.length} blocks / {totalAcres} total acres</h3>
+            <h3 className="text-xs-label">Crop Fields — {cropBlocks!.length} fields / {totalAcres} total acres</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
-                  {["Block Name", "Category", "Crop", "Acres", "Status", "Planted Date"].map((h) => (
+                  {["Field Name", "Crop Type", "Acres", "Planted Date", "Expected Harvest"].map((h) => (
                     <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                   ))}
                 </tr>
@@ -656,15 +661,14 @@ export default function ManagerReportsPage() {
                 {cropBlocks!.map((b) => (
                   <tr key={b._id} className="hover:bg-[#F8F9FA]">
                     <td className="px-5 py-3 font-semibold text-[#202124]">{b.name}</td>
-                    <td className="px-5 py-3 text-[#5F6368]">{b.category}</td>
                     <td className="px-5 py-3 font-mono text-xs uppercase text-[#1A56DB] font-bold">{b.crop}</td>
                     <td className="px-5 py-3 font-mono font-bold text-[#1A56DB]">{b.acres} ac</td>
-                    <td className="px-5 py-3"><span className="status-badge status-ok capitalize">{b.status}</span></td>
                     <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{b.plantedDate ? formatDate(b.plantedDate) : "—"}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{b.expectedHarvestDate ? formatDate(b.expectedHarvestDate) : "—"}</td>
                   </tr>
                 ))}
                 {cropBlocks!.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#5F6368] text-xs">No crop blocks registered</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-8 text-center text-[#5F6368] text-xs">No fields registered</td></tr>
                 )}
               </tbody>
             </table>

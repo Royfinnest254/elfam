@@ -1,32 +1,183 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
-import { Check } from "lucide-react";
+import { Check, AlertTriangle, Delete } from "lucide-react";
 
+/* ── Custom Numpad ─────────────────────────────────────────────────────── */
+function Numpad({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const press = (key: string) => {
+    if (key === "DEL") {
+      onChange(value.slice(0, -1));
+      return;
+    }
+    if (key === "CLR") {
+      onChange("");
+      return;
+    }
+    // Only allow one decimal point
+    if (key === "." && value.includes(".")) return;
+    // Max one decimal place
+    if (value.includes(".") && value.split(".")[1]?.length >= 1) return;
+    // Prevent leading zero issues
+    if (value === "0" && key !== ".") {
+      onChange(key);
+      return;
+    }
+    if (value.length >= 5) return; // cap at 5 chars e.g. "999.9"
+    onChange(value + key);
+  };
+
+  const keys = [
+    ["7", "8", "9"],
+    ["4", "5", "6"],
+    ["1", "2", "3"],
+    ["CLR", "0", "."],
+  ];
+
+  return (
+    <div className="space-y-1">
+      {keys.map((row, ri) => (
+        <div key={ri} className="grid grid-cols-3 gap-1">
+          {row.map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => press(k)}
+              className={`h-14 rounded-none border font-mono text-base font-black transition-colors cursor-pointer select-none
+                ${
+                  k === "CLR"
+                    ? "border-[#DADCE0] bg-[#F8F9FA] text-[#D93025] hover:bg-[#FFEBE6] text-xs tracking-widest"
+                    : "border-[#DADCE0] bg-white text-[#202124] hover:bg-[#E8F0FE]/50 hover:border-[#1A56DB]/30"
+                }`}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
+      ))}
+      {/* Delete button full-width */}
+      <button
+        type="button"
+        onClick={() => press("DEL")}
+        className="w-full h-11 border border-[#DADCE0] bg-[#F8F9FA] text-[#5F6368] hover:bg-[#DADCE0]/50 rounded-none flex items-center justify-center gap-2 transition-colors cursor-pointer"
+      >
+        <Delete className="h-4 w-4" />
+        <span className="text-[10px] font-black uppercase tracking-widest">Backspace</span>
+      </button>
+    </div>
+  );
+}
+
+/* ── Withholding Banner ─────────────────────────────────────────────────── */
+function WithholdingBanner({ message }: { message: string }) {
+  return (
+    <div className="bg-[#FFEBE6] border-l-4 border-[#D93025] p-4 flex gap-3 items-start">
+      <AlertTriangle className="h-5 w-5 text-[#D93025] shrink-0 mt-0.5" />
+      <div>
+        <p className="text-[11px] font-black uppercase tracking-wider text-[#D93025] mb-0.5">
+          Milk Withholding Active
+        </p>
+        <p className="text-xs font-semibold text-[#D93025]">{message}</p>
+        <p className="text-[10px] font-bold text-[#D93025] mt-1 uppercase tracking-wider">
+          Do NOT add to bulk tank. Discard separately.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ── Main Page ──────────────────────────────────────────────────────────── */
 export default function WorkerMilkEntryPage() {
   const user = useQuery(api.users.viewer);
   const cows = useQuery(api.cows.list, {});
+  const now = Date.now();
+  const activeWithholdings = useQuery(api.cows.getActiveWithholdings, { now });
   const logMilkingMutation = useMutation(api.records.logMilkingSession);
 
   const [cowId, setCowId] = useState("");
   const [session, setSession] = useState<"AM" | "PM">("AM");
   const [litres, setLitres] = useState("");
+  const [tagSearch, setTagSearch] = useState("");
 
   const [success, setSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [withholdingAlert, setWithholdingAlert] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const activeCows = cows?.filter((c: any) => c.status === "milking" || c.status === "treatment") ?? [];
+  const activeCows = useMemo(
+    () => cows?.filter((c: any) => c.status === "milking" || c.status === "treatment") ?? [],
+    [cows]
+  );
+
+  // Build withholding map keyed by cowId
+  const withholdingMap = useMemo(() => {
+    const map = new Map<string, any>();
+    activeWithholdings?.forEach((w: any) => {
+      map.set(w.cow._id, w);
+    });
+    return map;
+  }, [activeWithholdings]);
+
+  // Filtered cows for tag search
+  const filteredCows = useMemo(() => {
+    if (!tagSearch.trim()) return activeCows;
+    const q = tagSearch.toUpperCase();
+    return activeCows.filter(
+      (c: any) =>
+        c.tagNumber.toUpperCase().includes(q) ||
+        c.name.toUpperCase().includes(q)
+    );
+  }, [activeCows, tagSearch]);
+
+  const selectedCow = useMemo(
+    () => cows?.find((c: any) => c._id === cowId) ?? null,
+    [cows, cowId]
+  );
+
+  // Check if selected cow is under withholding
+  const selectedWithholding = cowId ? withholdingMap.get(cowId) : null;
+
+  const handleSelectCow = (id: string) => {
+    setCowId(id);
+    setWithholdingAlert(null);
+    setError(null);
+    setSuccess(false);
+    setLitres("");
+    // Check withholding immediately on cow selection
+    const wh = withholdingMap.get(id);
+    if (wh) {
+      const cow = cows?.find((c: any) => c._id === id);
+      const d = new Date(wh.treatment.withholdingUntil);
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const dateStr = `${d.getDate()} ${months[d.getMonth()]}`;
+      setWithholdingAlert(
+        `${cow?.tagNumber ?? "EL-?"} ${cow?.name ?? ""} — milk withheld until ${dateStr}. Do not add to bulk tank.`
+      );
+    }
+  };
 
   const handleLog = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
 
-    if (!cowId || !litres || !user) {
-      setError("Please select a cow and input the yield litres.");
+    if (!cowId || !litres || !user || user === null) {
+      setError("Please select a cow and enter the yield amount.");
+      return;
+    }
+
+    const litresNum = parseFloat(litres);
+    if (isNaN(litresNum) || litresNum <= 0) {
+      setError("Yield must be a positive number (e.g. 12.5).");
       return;
     }
 
@@ -40,22 +191,25 @@ export default function WorkerMilkEntryPage() {
         cowId: cowId as any,
         session,
         date: new Date().toISOString().split("T")[0],
-        litres: parseFloat(litres),
+        litres: litresNum,
         loggedBy: user._id,
         flagged,
       });
 
-      if (result.flagged) {
-        setError(result.message || "Withholding warning: yield flagged due to active medication.");
+      if (result.flagged && result.message) {
+        setWithholdingAlert(result.message);
         setSuccess(false);
       } else {
         setSuccess(true);
-        setError(null);
-        // Clear success banner after 3 seconds
-        setTimeout(() => setSuccess(false), 3000);
+        setSuccessMsg(
+          `VERIFIED: ${cow.tagNumber} (${cow.name}) — ${session} yield of ${litresNum}L committed to bulk tank ledger.`
+        );
+        setTimeout(() => setSuccess(false), 4000);
       }
       setLitres("");
       setCowId("");
+      setTagSearch("");
+      setWithholdingAlert(null);
     } catch (e: any) {
       setError(e.message || "Failed to submit yield record.");
     } finally {
@@ -63,8 +217,12 @@ export default function WorkerMilkEntryPage() {
     }
   };
 
-  if (cows === undefined || user === undefined) {
-    return <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">Loading data registry...</div>;
+  if (cows === undefined || user === undefined || user === null || activeWithholdings === undefined) {
+    return (
+      <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">
+        Loading data registry...
+      </div>
+    );
   }
 
   return (
@@ -74,77 +232,169 @@ export default function WorkerMilkEntryPage() {
           Daily Log Portal
         </span>
         <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
-          Enter Daily Milk
+          Commit Milk Yield
         </h1>
-        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">Mobile session entries for AM and PM yields</p>
+        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
+          AM & PM session entries · Withholding auto-enforced
+        </p>
       </header>
 
-      <div className="max-w-xl system-card p-6 space-y-6">
-        {success && (
-          <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
-            <Check className="h-4 w-4 text-[#1E8E3E]" />
-            <span>Yield saved successfully.</span>
-          </div>
-        )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Left: Cow Selector */}
+        <div className="system-card p-5 space-y-4">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#5F6368] border-b border-[#DADCE0] pb-3">
+            1 — Select Cow
+          </h2>
 
-        {error && (
-          <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4 rounded-xl">
-            [Error] {error}
-          </div>
-        )}
-
-        <form onSubmit={handleLog} className="space-y-4">
+          {/* Tag Search */}
           <div>
-            <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Cow</label>
-            <select
-              value={cowId}
-              onChange={(e) => setCowId(e.target.value)}
-              className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
-            >
-              <option value="">-- Choose Cow Tag --</option>
-              {activeCows.map((c: any) => (
-                <option key={c._id} value={c._id}>
-                  {c.tagNumber} ({c.name}) {c.status === "treatment" ? "[Medicated]" : ""}
-                </option>
+            <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">
+              Search by Tag or Name
+            </label>
+            <input
+              type="text"
+              value={tagSearch}
+              onChange={(e) => setTagSearch(e.target.value)}
+              placeholder="e.g. EL-008 or Chepkoech"
+              className="w-full h-10 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-none transition-colors"
+            />
+          </div>
+
+          {/* Cow List */}
+          <div className="max-h-64 overflow-y-auto border border-[#DADCE0] divide-y divide-[#DADCE0] custom-scrollbar">
+            {filteredCows.length === 0 ? (
+              <p className="p-4 text-xs text-[#5F6368] italic">
+                No active cows match your search.
+              </p>
+            ) : (
+              filteredCows.map((c: any) => {
+                const isWithholding = withholdingMap.has(c._id);
+                const isSelected = cowId === c._id;
+                return (
+                  <button
+                    key={c._id}
+                    type="button"
+                    onClick={() => handleSelectCow(c._id)}
+                    className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer
+                      ${isSelected
+                        ? "bg-[#E8F0FE] border-l-4 border-[#1A56DB]"
+                        : isWithholding
+                        ? "bg-[#FFEBE6]/30 hover:bg-[#FFEBE6]/60"
+                        : "bg-white hover:bg-[#F8F9FA]"
+                      }`}
+                  >
+                    <div>
+                      <span className="text-xs font-black text-[#202124] block">
+                        {c.tagNumber}
+                        {isWithholding && (
+                          <span className="ml-2 text-[9px] font-black text-[#D93025] uppercase tracking-widest bg-[#FFEBE6] px-1.5 py-0.5 border border-[#FFBDAD]">
+                            WITHHELD
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[10px] text-[#5F6368] font-semibold">
+                        {c.name} · {c.breed}
+                      </span>
+                    </div>
+                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border 
+                      ${c.status === "treatment"
+                        ? "bg-[#FFEBE6] text-[#D93025] border-[#FFBDAD]"
+                        : "bg-[#E8F0FE] text-[#1A56DB] border-[#A8C7FA]"
+                      }`}>
+                      {c.status}
+                    </span>
+                  </button>
+                );
+              })
+            )}
+          </div>
+
+          {/* Session Toggle */}
+          <div>
+            <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">
+              Session
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {(["AM", "PM"] as const).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSession(s)}
+                  className={`h-11 text-xs font-black uppercase tracking-widest border transition-colors cursor-pointer
+                    ${session === s
+                      ? "bg-[#202124] text-white border-[#202124]"
+                      : "bg-white text-[#5F6368] border-[#DADCE0] hover:bg-[#F8F9FA]"
+                    }`}
+                >
+                  {s === "AM" ? "AM · Morning" : "PM · Evening"}
+                </button>
               ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Session</label>
-              <select
-                value={session}
-                onChange={(e) => setSession(e.target.value as any)}
-                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
-              >
-                <option value="AM">AM (Morning)</option>
-                <option value="PM">PM (Evening)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Yield Litres</label>
-              <input
-                type="number"
-                step="0.1"
-                placeholder="e.g. 12.4"
-                value={litres}
-                onChange={(e) => setLitres(e.target.value)}
-                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
-              />
             </div>
           </div>
+        </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full btn-primary h-12 text-[11px] rounded-[18px] mt-4 uppercase tracking-wider"
-          >
-            {submitting ? "Writing to database..." : "Commit Milk Yield"}
-          </button>
-        </form>
+        {/* Right: Numpad & Commit */}
+        <div className="system-card p-5 space-y-4">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#5F6368] border-b border-[#DADCE0] pb-3">
+            2 — Enter Litres
+          </h2>
+
+          {/* Live Display */}
+          <div className="bg-[#F8F9FA] border border-[#DADCE0] px-6 py-4 text-center">
+            {selectedCow ? (
+              <p className="text-[10px] font-black uppercase tracking-widest text-[#5F6368] mb-1">
+                {selectedCow.tagNumber} · {selectedCow.name} · {session}
+              </p>
+            ) : (
+              <p className="text-[10px] font-black uppercase tracking-widest text-[#DADCE0] mb-1">
+                Select a cow first
+              </p>
+            )}
+            <div className="font-mono text-5xl font-black text-[#202124] tracking-tight leading-none">
+              {litres || "0"}
+              <span className="text-lg text-[#5F6368] ml-1">L</span>
+            </div>
+          </div>
+
+          {/* Withholding Alert (shown inline before commit) */}
+          {withholdingAlert && (
+            <WithholdingBanner message={withholdingAlert} />
+          )}
+
+          {/* Success Banner */}
+          {success && (
+            <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 flex items-start gap-2">
+              <Check className="h-4 w-4 shrink-0 mt-0.5" />
+              <span>{successMsg}</span>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4">
+              [Error] {error}
+            </div>
+          )}
+
+          {/* Numpad */}
+          <Numpad value={litres} onChange={setLitres} />
+
+          {/* Commit Button */}
+          <form onSubmit={handleLog}>
+            <button
+              type="submit"
+              disabled={submitting || !cowId || !litres}
+              className="w-full btn-primary h-14 text-[11px] rounded-none mt-2 uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting
+                ? "Writing to database..."
+                : selectedWithholding
+                ? "⚠ Log Withheld Milk (Flag)"
+                : "Commit Milk Yield"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
-

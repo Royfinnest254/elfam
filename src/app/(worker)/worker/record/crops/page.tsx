@@ -7,24 +7,28 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function WorkerRecordCropsPage() {
-  const cropBlocks = useQuery(api.records.listCropBlocks);
-  const logCropActivity = useMutation(api.records.logCropActivity);
+  const fields = useQuery(api.records.listFields);
+  const logFieldPlanting = useMutation(api.records.logFieldPlanting);
+  const logFieldApplication = useMutation(api.records.logFieldApplication);
+  const logFieldHarvest = useMutation(api.records.logFieldHarvest);
 
   const [selectedBlockId, setSelectedBlockId] = useState("");
   const [activityType, setActivityType] = useState<"planting" | "application" | "harvesting">("planting");
+  const [appType, setAppType] = useState<"fertilizer" | "herbicide" | "pesticide" | "seed">("fertilizer");
   const [productApplied, setProductApplied] = useState("");
   const [rate, setRate] = useState("");
-  const [quantityHarvested, setQuantityHarvested] = useState("");
+  const [harvestedBags, setHarvestedBags] = useState("");
+  const [bagWeight, setBagWeight] = useState("90");
   const [notes, setNotes] = useState("");
 
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (cropBlocks === undefined) {
+  if (fields === undefined) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center font-sans text-muted">
-        <span className="body-small block">Loading crop blocks...</span>
+        <span className="body-small block">Loading fields...</span>
       </div>
     );
   }
@@ -33,7 +37,8 @@ export default function WorkerRecordCropsPage() {
     setSelectedBlockId("");
     setProductApplied("");
     setRate("");
-    setQuantityHarvested("");
+    setHarvestedBags("");
+    setBagWeight("90");
     setNotes("");
   };
 
@@ -43,27 +48,50 @@ export default function WorkerRecordCropsPage() {
     setErrorMsg(null);
 
     if (!selectedBlockId) {
-      setErrorMsg("Please select a crop block field.");
-      return;
-    }
-
-    const qtyHarvested = activityType === "harvesting" ? parseFloat(quantityHarvested) : undefined;
-    if (activityType === "harvesting" && (qtyHarvested === undefined || isNaN(qtyHarvested) || qtyHarvested < 0)) {
-      setErrorMsg("Please enter a valid harvest quantity.");
+      setErrorMsg("Please select a field.");
       return;
     }
 
     setSubmitting(true);
     try {
-      await logCropActivity({
-        cropBlockId: selectedBlockId as any,
-        type: activityType,
-        activityDate: Date.now(),
-        productApplied: activityType === "application" ? productApplied.trim() : undefined,
-        rate: activityType === "application" ? rate.trim() : undefined,
-        quantityHarvested: qtyHarvested,
-        notes: notes.trim(),
-      });
+      if (activityType === "planting") {
+        await logFieldPlanting({
+          fieldId: selectedBlockId as any,
+          plantedDate: Date.now(),
+          expectedHarvestDate: Date.now() + 120 * 24 * 60 * 60 * 1000,
+          notes: notes.trim(),
+        });
+      } else if (activityType === "application") {
+        if (!productApplied || !rate) {
+          setErrorMsg("Chemical product and application rate are required.");
+          setSubmitting(false);
+          return;
+        }
+        await logFieldApplication({
+          fieldId: selectedBlockId as any,
+          date: Date.now(),
+          type: appType,
+          product: productApplied.trim(),
+          rate: rate.trim(),
+        });
+      } else if (activityType === "harvesting") {
+        const bagsNum = parseInt(harvestedBags, 10);
+        const weightNum = parseFloat(bagWeight);
+        if (isNaN(bagsNum) || bagsNum <= 0 || isNaN(weightNum) || weightNum <= 0) {
+          setErrorMsg("Please enter valid bags and weight.");
+          setSubmitting(false);
+          return;
+        }
+        const selectedField = fields?.find((f) => f._id === selectedBlockId);
+        await logFieldHarvest({
+          fieldId: selectedBlockId as any,
+          date: Date.now(),
+          crop: selectedField ? selectedField.crop : "wheat",
+          bags: bagsNum,
+          bagWeightKg: weightNum,
+          notes: notes.trim(),
+        });
+      }
 
       setStatusMsg("VERIFIED: Field operation logged successfully.");
       handleResetForm();
@@ -138,58 +166,90 @@ export default function WorkerRecordCropsPage() {
               className="input-field bg-white cursor-pointer"
               required
             >
-              <option value="">-- Choose Crop Block --</option>
-              {cropBlocks.map((block) => (
-                <option key={block._id} value={block._id}>
-                  {block.name} - {block.crop.toUpperCase()} ({block.acres} Acres)
+              <option value="">-- Choose Field --</option>
+              {fields.map((field) => (
+                <option key={field._id} value={field._id}>
+                  {field.name} - {field.crop.toUpperCase()} ({field.acres} Acres)
                 </option>
               ))}
             </select>
           </div>
 
           {activityType === "application" && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="prod-applied-input" className="label text-[#5F6368]">Chemical / Inputs Applied</label>
-                <input
-                  type="text"
-                  id="prod-applied-input"
-                  value={productApplied}
-                  onChange={(e) => setProductApplied(e.target.value)}
-                  className="input-field"
-                  placeholder="e.g. NPK Fertilizer, Herbicide X"
+                <label htmlFor="app-type-select" className="label text-[#5F6368]">Application Type</label>
+                <select
+                  id="app-type-select"
+                  value={appType}
+                  onChange={(e) => setAppType(e.target.value as any)}
+                  className="input-field bg-white cursor-pointer"
                   required
-                />
+                >
+                  <option value="fertilizer">Fertilizer</option>
+                  <option value="herbicide">Herbicide</option>
+                  <option value="pesticide">Pesticide</option>
+                  <option value="seed">Seed</option>
+                </select>
               </div>
 
-              <div className="space-y-1">
-                <label htmlFor="rate-input" className="label text-[#5F6368]">Application Rate</label>
-                <input
-                  type="text"
-                  id="rate-input"
-                  value={rate}
-                  onChange={(e) => setRate(e.target.value)}
-                  className="input-field"
-                  placeholder="e.g. 50 kg/acre, 2L/ha"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label htmlFor="prod-applied-input" className="label text-[#5F6368]">Chemical / Inputs Applied</label>
+                  <input
+                    type="text"
+                    id="prod-applied-input"
+                    value={productApplied}
+                    onChange={(e) => setProductApplied(e.target.value)}
+                    className="input-field"
+                    placeholder="e.g. NPK Fertilizer, Herbicide X"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="rate-input" className="label text-[#5F6368]">Application Rate</label>
+                  <input
+                    type="text"
+                    id="rate-input"
+                    value={rate}
+                    onChange={(e) => setRate(e.target.value)}
+                    className="input-field"
+                    placeholder="e.g. 50 kg/acre, 2L/ha"
+                    required
+                  />
+                </div>
               </div>
             </div>
           )}
 
           {activityType === "harvesting" && (
-            <div className="space-y-1">
-              <label htmlFor="qty-harvested-input" className="label text-[#5F6368]">Quantity Harvested (Tonnes)</label>
-              <input
-                type="number"
-                id="qty-harvested-input"
-                step="0.01"
-                value={quantityHarvested}
-                onChange={(e) => setQuantityHarvested(e.target.value)}
-                className="input-field"
-                placeholder="e.g. 12.5"
-                required
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label htmlFor="bags-input" className="label text-[#5F6368]">Bags Harvested</label>
+                <input
+                  type="number"
+                  id="bags-input"
+                  value={harvestedBags}
+                  onChange={(e) => setHarvestedBags(e.target.value)}
+                  className="input-field"
+                  placeholder="e.g. 150"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="weight-input" className="label text-[#5F6368]">Bag Weight (Kg)</label>
+                <input
+                  type="number"
+                  id="weight-input"
+                  value={bagWeight}
+                  onChange={(e) => setBagWeight(e.target.value)}
+                  className="input-field"
+                  placeholder="e.g. 90"
+                  required
+                />
+              </div>
             </div>
           )}
 
