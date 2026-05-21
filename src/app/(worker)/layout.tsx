@@ -17,11 +17,15 @@ export default function WorkerLayout({
   useEffect(() => {
     if (user === null) {
       router.push("/signin");
-    } else if (user && user.role !== "worker") {
-      if (user.role === "owner") {
-        router.push("/owner");
-      } else if (user.role === "manager") {
-        router.push("/manager");
+    } else if (user) {
+      if (!user.profileSetupComplete) {
+        router.push("/onboarding");
+      } else if (user.role !== "worker") {
+        if (user.role === "owner") {
+          router.push("/owner");
+        } else if (user.role === "manager") {
+          router.push("/manager");
+        }
       }
     }
   }, [user, router]);
@@ -36,7 +40,7 @@ export default function WorkerLayout({
     );
   }
 
-  if (user === null || user.role !== "worker") {
+  if (user === null || !user.profileSetupComplete || user.role !== "worker") {
     return null;
   }
 

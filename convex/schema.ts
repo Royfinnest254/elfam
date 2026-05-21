@@ -11,6 +11,7 @@ export default defineSchema({
     role: v.optional(v.union(v.literal("owner"), v.literal("manager"), v.literal("worker"))), // Keep owner for transitional read compatibility
     phone: v.optional(v.string()),
     joinedAt: v.optional(v.number()),
+    profileSetupComplete: v.optional(v.boolean()),
   }).index("by_email", ["email"]),
   
   // ==================== NEW GENERALIZED SCHEMA ====================

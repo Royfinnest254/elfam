@@ -17,9 +17,13 @@ export default function ManagerLayout({
   useEffect(() => {
     if (user === null) {
       router.push("/signin");
-    } else if (user && user.role !== "manager" && user.role !== "owner") {
-      // Redirect workers to their portal
-      router.push("/worker");
+    } else if (user) {
+      if (!user.profileSetupComplete) {
+        router.push("/onboarding");
+      } else if (user.role !== "manager" && user.role !== "owner") {
+        // Redirect workers to their portal
+        router.push("/worker");
+      }
     }
   }, [user, router]);
 
@@ -31,7 +35,7 @@ export default function ManagerLayout({
     );
   }
 
-  if (user === null || (user.role !== "manager" && user.role !== "owner")) {
+  if (user === null || !user.profileSetupComplete || (user.role !== "manager" && user.role !== "owner")) {
     return null;
   }
 

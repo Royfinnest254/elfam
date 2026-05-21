@@ -10,7 +10,58 @@ export const viewer = query({
     if (userId === null) {
       return null;
     }
-    return await ctx.db.get(userId);
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      return null;
+    }
+    let imageUrl: string | undefined = undefined;
+    if (user.image) {
+      try {
+        const url = await ctx.storage.getUrl(user.image);
+        if (url) {
+          imageUrl = url;
+        }
+      } catch (err) {
+        console.error("Failed to get storage URL for user image", err);
+      }
+    }
+    return { ...user, imageUrl };
+  },
+});
+
+// Generate an upload URL for PFP
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (userId === null) {
+      throw new Error("[Auth] generateUploadUrl failed: Unauthenticated session");
+    }
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+// Update the user's profile details
+export const updateProfile = mutation({
+  args: {
+    name: v.string(),
+    phone: v.string(),
+    image: v.optional(v.string()), // storageId
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (userId === null) {
+      throw new Error("[Auth] updateProfile failed: Unauthenticated session");
+    }
+    const updateData: any = {
+      name: args.name,
+      phone: args.phone,
+      profileSetupComplete: true,
+    };
+    if (args.image !== undefined) {
+      updateData.image = args.image;
+    }
+    await ctx.db.patch(userId, updateData);
   },
 });
 

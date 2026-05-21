@@ -13,7 +13,9 @@ export default function RootPage() {
     if (user === null) {
       router.replace("/signin");
     } else if (user) {
-      if (user.role === "owner" || user.role === "manager") {
+      if (!user.profileSetupComplete) {
+        router.replace("/onboarding");
+      } else if (user.role === "owner" || user.role === "manager") {
         router.replace("/manager");
       } else {
         router.replace("/worker");
