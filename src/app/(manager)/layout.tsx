@@ -37,8 +37,8 @@ export default function ManagerLayout({
 
   return (
     <div
-      className="flex flex-col md:flex-row md:h-screen md:w-screen md:overflow-hidden"
-      style={{ backgroundColor: "#F8F9FA" }}
+      className="flex flex-col md:flex-row md:h-screen md:w-screen md:overflow-hidden bg-white"
+      style={{ backgroundColor: "#FFFFFF" }}
     >
       {/* Sidebar */}
       <Sidebar />

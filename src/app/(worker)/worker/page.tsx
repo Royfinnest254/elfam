@@ -14,6 +14,13 @@ import {
   PlusCircle 
 } from "lucide-react";
 
+const LeafLogo = () => (
+  <svg className="w-5 h-5 text-[#1A56DB] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2a15 15 0 0 0-9 13 15 15 0 0 0 18 0 15 15 0 0 0-9-13Z" />
+    <path d="M12 2v20" />
+  </svg>
+);
+
 export default function WorkerDashboardPage() {
   const user = useQuery(api.users.viewer);
   const tasks = useQuery(api.records.listTasks);
@@ -99,24 +106,25 @@ export default function WorkerDashboardPage() {
   const myReportedIncidents = incidents?.filter((inc) => inc.reportedBy === user?._id) ?? [];
 
   return (
-    <div className="max-w-[1024px] mx-auto p-4 md:p-6 space-y-6 pb-20">
+    <div className="max-w-[1024px] mx-auto p-4 md:p-6 space-y-6 pb-20 bg-white">
       {/* Mobile Top Header Shell */}
-      <header className="flex justify-between items-center border-b border-[#DADCE0] pb-4">
+      <header className="flex justify-between items-center border-b border-gray-200 pb-4">
         <div>
-          <span className="label block mb-1 text-teal">
+          <span className="text-xs font-bold uppercase tracking-wider block mb-1 text-[#4B5563]">
             Worker Operations Portal
           </span>
-          <h1 className="text-2xl font-normal text-[#1A56DB] tracking-tight">
-            Station Checklist
+          <h1 className="text-2xl font-bold text-black tracking-tight flex items-center gap-2">
+            <LeafLogo />
+            Station Checklist¹
           </h1>
-          <p className="body-small text-[#5F6368] font-semibold uppercase tracking-wider mt-0.5">
+          <p className="body-small text-[#4B5563] font-semibold uppercase tracking-wider mt-0.5">
             Crew: {user?.name || "Active Crew Member"}
           </p>
         </div>
         <button
           type="button"
           onClick={handleSignOut}
-          className="btn-secondary h-9 px-3 rounded-[6px] text-xs flex items-center gap-1.5 cursor-pointer border-[#DADCE0]"
+          className="btn-secondary h-9 px-3 rounded-none text-xs flex items-center gap-1.5 cursor-pointer border-gray-200 text-[#4B5563] hover:bg-gray-50 hover:text-black transition-colors"
         >
           <LogOut className="h-3.5 w-3.5" />
           <span>Sign Out</span>
@@ -125,58 +133,59 @@ export default function WorkerDashboardPage() {
 
       {/* Quick Action Logger Shortcuts (Mobile-optimized cards) */}
       <div className="space-y-3">
-        <span className="label text-[#5F6368] block">
-          Station Logging Hub
+        <span className="text-xs font-bold uppercase tracking-wider block text-black flex items-center gap-2">
+          <LeafLogo />
+          Station Logging Hub²
         </span>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/worker/record/livestock" className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] hover:border-teal rounded-none transition-colors">
+        <div className="grid grid-cols-1 md:grid-cols-3 border-t border-l border-gray-200">
+          <Link href="/worker/record/livestock" className="flex items-center justify-between p-4 bg-white border-r border-b border-gray-200 hover:bg-[#E8F0FE]/50 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="p-2 border border-teal/10 bg-teal/5">
-                <Layers className="h-5 w-5 text-teal" />
+              <div className="p-2 border border-[#1A56DB]/10 bg-[#E8F0FE]/30">
+                <Layers className="h-5 w-5 text-[#1A56DB]" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-[#1A56DB] block">Livestock Production</span>
-                <span className="body-small text-[#5F6368]">Log daily yields & treatments</span>
+                <span className="text-xs font-bold text-black block">Livestock Production</span>
+                <span className="body-small text-[#4B5563]">Log daily yields & treatments</span>
               </div>
             </div>
-            <PlusCircle className="h-5 w-5 text-teal" />
+            <PlusCircle className="h-5 w-5 text-[#1A56DB]" />
           </Link>
 
-          <Link href="/worker/record/crops" className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] hover:border-teal rounded-none transition-colors">
+          <Link href="/worker/record/crops" className="flex items-center justify-between p-4 bg-white border-r border-b border-gray-200 hover:bg-[#E8F0FE]/50 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="p-2 border border-teal/10 bg-teal/5">
-                <Map className="h-5 w-5 text-teal" />
+              <div className="p-2 border border-[#1A56DB]/10 bg-[#E8F0FE]/30">
+                <Map className="h-5 w-5 text-[#1A56DB]" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-[#1A56DB] block">Crops & Harvesting</span>
-                <span className="body-small text-[#5F6368]">Log seeding, spraying & yields</span>
+                <span className="text-xs font-bold text-black block">Crops & Harvesting</span>
+                <span className="body-small text-[#4B5563]">Log seeding, spraying & yields</span>
               </div>
             </div>
-            <PlusCircle className="h-5 w-5 text-teal" />
+            <PlusCircle className="h-5 w-5 text-[#1A56DB]" />
           </Link>
 
-          <Link href="/worker/record/inventory" className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] hover:border-teal rounded-none transition-colors">
+          <Link href="/worker/record/inventory" className="flex items-center justify-between p-4 bg-white border-r border-b border-gray-200 hover:bg-[#E8F0FE]/50 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="p-2 border border-teal/10 bg-teal/5">
-                <ClipboardList className="h-5 w-5 text-teal" />
+              <div className="p-2 border border-[#1A56DB]/10 bg-[#E8F0FE]/30">
+                <ClipboardList className="h-5 w-5 text-[#1A56DB]" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-[#1A56DB] block">Store Inventory</span>
-                <span className="body-small text-[#5F6368]">Log restocks & withdrawals</span>
+                <span className="text-xs font-bold text-black block">Store Inventory</span>
+                <span className="body-small text-[#4B5563]">Log restocks & withdrawals</span>
               </div>
             </div>
-            <PlusCircle className="h-5 w-5 text-teal" />
+            <PlusCircle className="h-5 w-5 text-[#1A56DB]" />
           </Link>
         </div>
       </div>
 
       {successMsg && (
-        <div className="text-teal text-xs font-bold bg-teal/5 border border-teal/20 p-4 rounded-[4px]">
+        <div className="text-[#1E8E3E] text-xs font-bold bg-[#E6F4EA] border border-[#A8D5B5] p-4 rounded-none">
           {successMsg}
         </div>
       )}
       {errorMsg && (
-        <div className="text-alert text-xs font-bold bg-alert/5 border border-alert/20 p-4 rounded-[4px]">
+        <div className="text-[#D93025] text-xs font-bold bg-[#FCE8E6] border border-[#F5C6C3] p-4 rounded-none">
           {errorMsg}
         </div>
       )}
@@ -185,13 +194,14 @@ export default function WorkerDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Active Tasks List */}
         <div className="lg:col-span-8 space-y-4">
-          <div className="system-card p-6 space-y-6 rounded-none">
-            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
-              My Assigned Operations Checklist
+          <div className="border border-gray-200 bg-white p-6 space-y-6">
+            <h3 className="text-lg font-bold text-black tracking-tight border-b border-gray-200 pb-4 flex items-center gap-2">
+              <LeafLogo />
+              My Assigned Operations Checklist³
             </h3>
 
             {myTasks.length === 0 ? (
-              <p className="body-small text-[#5F6368] italic">
+              <p className="body-small text-[#4B5563] italic">
                 No duties currently assigned to your station.
               </p>
             ) : (
@@ -201,28 +211,37 @@ export default function WorkerDashboardPage() {
                   return (
                     <div
                       key={task._id}
-                      className={`p-4 border flex justify-between items-center rounded-none transition-all ${
-                        isDone ? "bg-[#F8F9FA]/60 border-[#DADCE0] opacity-60" : "bg-white border-[#DADCE0]"
+                      className={`p-4 border flex justify-between items-center transition-all ${
+                        isDone ? "bg-white border-gray-200 opacity-60" : "bg-white border-gray-200"
                       }`}
                     >
-                      <div className="space-y-1">
-                        <span
-                          className={`text-xs font-bold block ${
-                            isDone ? "line-through text-[#7A869A]" : "text-[#1A56DB]"
-                          }`}
-                        >
-                          {task.title}
-                        </span>
-                        <p className="body-small text-[#5F6368] font-medium">{task.description}</p>
-                        <span className="mono text-[9px] text-[#7A869A] uppercase tracking-wider block font-semibold">
-                          DUE BY: {new Date(task.dueDate).toLocaleDateString("en-GB")}
-                        </span>
+                      <div className="flex items-start gap-3">
+                        <div className={`mt-0.5 flex items-center justify-center w-5 h-5 rounded-full border shrink-0 ${
+                          isDone ? "border-[#4B5563] bg-black text-white" : "border-black bg-white text-black"
+                        }`}>
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="space-y-1">
+                          <span
+                            className={`text-xs font-bold block ${
+                              isDone ? "line-through text-[#4B5563]" : "text-black"
+                            }`}
+                          >
+                            {task.title}
+                          </span>
+                          <p className="body-small text-[#4B5563] font-medium">{task.description}</p>
+                          <span className="mono text-[9px] text-[#4B5563] uppercase tracking-wider block font-semibold">
+                            DUE BY: {new Date(task.dueDate).toLocaleDateString("en-GB")}
+                          </span>
+                        </div>
                       </div>
                       {!isDone && (
                         <button
                           type="button"
                           onClick={() => handleResolve(task._id)}
-                          className="h-8 px-3 bg-[#1A56DB] hover:bg-[#1A56DB]/90 text-white text-[10px] font-bold uppercase tracking-wider rounded-[4px] transition-colors cursor-pointer"
+                          className="h-8 px-3 bg-[#1A56DB] hover:bg-[#103FA8] text-white text-[10px] font-bold uppercase tracking-wider rounded-none transition-colors cursor-pointer"
                         >
                           Mark Done
                         </button>
@@ -237,14 +256,15 @@ export default function WorkerDashboardPage() {
 
         {/* Quick Incident Reporter */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="system-card p-6 space-y-6 rounded-none">
-            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
-              Report Field Incident
+          <div className="border border-gray-200 bg-white p-6 space-y-6">
+            <h3 className="text-lg font-bold text-black tracking-tight border-b border-gray-200 pb-4 flex items-center gap-2">
+              <LeafLogo />
+              Report Field Incident⁴
             </h3>
 
             <form onSubmit={handleReportIncident} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="inc-title-input" className="label text-[#5F6368]">Incident Title / Issue</label>
+                <label htmlFor="inc-title-input" className="label text-[#4B5563] font-bold">Incident Title / Issue</label>
                 <input
                   type="text"
                   id="inc-title-input"
@@ -252,18 +272,18 @@ export default function WorkerDashboardPage() {
                   placeholder="e.g. Broken water pipe"
                   value={incTitle}
                   onChange={(e) => setIncTitle(e.target.value)}
-                  className="input-field"
+                  className="input-field rounded-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="inc-dept-select" className="label text-[#5F6368]">Department</label>
+                  <label htmlFor="inc-dept-select" className="label text-[#4B5563] font-bold">Department</label>
                   <select
                     id="inc-dept-select"
                     value={incDept}
                     onChange={(e) => setIncDept(e.target.value as any)}
-                    className="input-field bg-white cursor-pointer"
+                    className="input-field bg-white cursor-pointer rounded-none"
                   >
                     <option value="dairy">Dairy / Livestock</option>
                     <option value="cereal">Crops / Fields</option>
@@ -274,12 +294,12 @@ export default function WorkerDashboardPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="inc-severity-select" className="label text-[#5F6368]">Severity</label>
+                  <label htmlFor="inc-severity-select" className="label text-[#4B5563] font-bold">Severity</label>
                   <select
                     id="inc-severity-select"
                     value={incSeverity}
                     onChange={(e) => setIncSeverity(e.target.value as any)}
-                    className="input-field bg-white cursor-pointer"
+                    className="input-field bg-white cursor-pointer rounded-none"
                   >
                     <option value="low">Low Risk</option>
                     <option value="medium">Medium Risk</option>
@@ -289,7 +309,7 @@ export default function WorkerDashboardPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="inc-desc-input" className="label text-[#5F6368]">Describe the Issue</label>
+                <label htmlFor="inc-desc-input" className="label text-[#4B5563] font-bold">Describe the Issue</label>
                 <textarea
                   id="inc-desc-input"
                   rows={3}
@@ -297,14 +317,14 @@ export default function WorkerDashboardPage() {
                   placeholder="Include specific location, affected animals..."
                   value={incDesc}
                   onChange={(e) => setIncDesc(e.target.value)}
-                  className="input-field min-h-[80px] py-2"
+                  className="input-field min-h-[80px] py-2 rounded-none"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-primary w-full disabled:opacity-50 h-11 text-xs"
+                className="btn-primary w-full disabled:opacity-50 h-11 text-xs rounded-none"
               >
                 {submitting ? "Reporting..." : "Report Field Issue"}
               </button>
@@ -314,20 +334,21 @@ export default function WorkerDashboardPage() {
       </div>
 
       {/* Reported Incidents Log */}
-      <div className="system-card p-6 space-y-4 rounded-none">
-        <h3 className="text-lg font-normal text-[#1A56DB] border-b border-[#DADCE0] pb-4">
-          My Reported Incidents Log
+      <div className="border border-gray-200 bg-white p-6 space-y-4">
+        <h3 className="text-lg font-bold text-black border-b border-gray-200 pb-4 flex items-center gap-2">
+          <LeafLogo />
+          My Reported Incidents Log⁵
         </h3>
 
         {myReportedIncidents.length === 0 ? (
-          <p className="body-small text-[#5F6368] italic">
+          <p className="body-small text-[#4B5563] italic">
             No incidents reported by your station.
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#DADCE0] text-[10px] font-semibold text-[#5F6368] uppercase tracking-wider">
+                <tr className="border-b border-gray-200 text-[10px] font-semibold text-[#4B5563] uppercase tracking-wider">
                   <th className="pb-3">Date</th>
                   <th className="pb-3">Incident Title</th>
                   <th className="pb-3">Dept</th>
@@ -336,25 +357,25 @@ export default function WorkerDashboardPage() {
                   <th className="pb-3">Latest Resolution Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DADCE0] text-[#1A56DB] font-medium">
+              <tbody className="divide-y divide-gray-200 text-black font-medium">
                 {myReportedIncidents.map((inc) => {
                   const isResolved = inc.status === "resolved";
                   const isInvestigating = inc.status === "investigating";
                   const isCritical = inc.severity === "critical";
 
                   return (
-                    <tr key={inc._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
-                      <td className="py-3 font-mono text-[10px] text-[#5F6368]">
+                    <tr key={inc._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="py-3 font-mono text-[10px] text-[#4B5563]">
                         {new Date(inc.reportedAt).toLocaleDateString("en-GB")}
                       </td>
-                      <td className="py-3 font-bold">{inc.title}</td>
-                      <td className="py-3 uppercase text-[9px] text-[#5F6368]">{inc.department}</td>
+                      <td className="py-3 font-bold text-black">{inc.title}</td>
+                      <td className="py-3 uppercase text-[9px] text-[#4B5563]">{inc.department}</td>
                       <td className="py-3">
                         <span
                           className={`status-badge text-[9px] uppercase ${
                             isCritical
-                              ? "bg-alert/5 border-alert/20 text-alert"
-                              : "bg-[#5F6368]/5 border-[#5F6368]/20 text-[#5F6368]"
+                              ? "bg-[#FCE8E6] border-[#F5C6C3] text-[#D93025]"
+                              : "bg-white border-gray-200 text-[#4B5563]"
                           }`}
                         >
                           {inc.severity}
@@ -364,16 +385,16 @@ export default function WorkerDashboardPage() {
                         <span
                           className={`mono text-[9px] font-black uppercase inline-flex items-center gap-1 ${
                             isResolved
-                              ? "text-teal"
+                              ? "text-[#1E8E3E]"
                               : isInvestigating
-                              ? "text-[#5F6368]"
-                              : "text-alert"
+                              ? "text-[#4B5563]"
+                              : "text-[#D93025]"
                           }`}
                         >
                           {isResolved ? "RESOLVED" : isInvestigating ? "INVESTIGATING" : "PENDING"}
                         </span>
                       </td>
-                      <td className="py-3 text-[#5F6368] italic max-w-[200px] truncate">
+                      <td className="py-3 text-[#4B5563] italic max-w-[200px] truncate">
                         {inc.notes || "Pending triage review"}
                       </td>
                     </tr>
@@ -384,6 +405,15 @@ export default function WorkerDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Footnotes */}
+      <footer className="mt-8 pt-4 border-t border-gray-100 text-[11px] text-[#4B5563] space-y-1">
+        <div>¹ Main operational view listing crew name and active crew station indicators.</div>
+        <div>² Quick logger links for registering livestock, crop harvests, and store inventory updates.</div>
+        <div>³ Active operational duties and assignments dispatched to your account.</div>
+        <div>⁴ Direct logging form for reporting machinery faults or infrastructure issues.</div>
+        <div>⁵ Real-time operational history of incidents filed by your user session.</div>
+      </footer>
     </div>
   );
 }

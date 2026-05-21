@@ -8,6 +8,13 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "rec
 import { TrendingUp, TrendingDown, ClipboardList, Layers, Tractor, ShieldAlert, FileText } from "lucide-react";
 import { getFarmClock, milkYieldByDate, yieldChartSeries } from "@/lib/farmClock";
 
+const LeafLogo = () => (
+  <svg className="w-5 h-5 text-[#1A56DB] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2a15 15 0 0 0-9 13 15 15 0 0 0 18 0 15 15 0 0 0-9-13Z" />
+    <path d="M12 2v20" />
+  </svg>
+);
+
 export default function OwnerDashboardPage() {
   const { now, yesterdayDateStr, yesterday } = getFarmClock();
   const cows = useQuery(api.cows.getHerdDashboard, { now, yesterdayDateStr });
@@ -33,8 +40,8 @@ export default function OwnerDashboardPage() {
     rainfallLogs === undefined
   ) {
     return (
-      <div className="font-mono text-xs text-[#5F6368] uppercase tracking-widest p-8">
-        Loading executive dashboard...
+      <div className="min-h-[50vh] flex items-center justify-center font-sans text-muted">
+        <span className="body-small block uppercase tracking-wider font-semibold">Loading executive dashboard...</span>
       </div>
     );
   }
@@ -134,7 +141,7 @@ export default function OwnerDashboardPage() {
         type: "treatment",
         date: t.date,
         title: `Treatment Started`,
-        desc: `${cowName} adminstered ${t.drugAdministered} for ${t.condition}. Withholding: ${t.withholdingDays} days.`,
+        desc: `${cowName} administered ${t.drugAdministered} for ${t.condition}. Withholding: ${t.withholdingDays} days.`,
       });
     });
 
@@ -175,96 +182,103 @@ export default function OwnerDashboardPage() {
   const averageYieldPerCow = cowsMilking > 0 ? yesterdayYield / cowsMilking : 0;
 
   return (
-    <div className="space-y-8 font-sans text-[#202124] pb-12">
+    <div className="space-y-8 pb-12 bg-white text-[#4B5563]">
       {/* Page Title & Header */}
-      <header className="border-b border-[#DADCE0] pb-6">
-        <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
+      <header className="border-b border-gray-200 pb-6">
+        <span className="text-xs font-bold uppercase tracking-wider block mb-2 text-[#4B5563]">
           Executive Command Portal
         </span>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
+        <h1 className="text-3xl font-bold text-black tracking-tight flex items-center gap-2.5">
+          <LeafLogo />
           Overview
         </h1>
-        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
+        <p className="text-xs text-[#4B5563] mt-1 uppercase tracking-wider font-semibold">
           This week at Elfam, as of {new Date(now).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
         </p>
       </header>
 
       {/* Section 1: Yesterday at a glance */}
       <section className="space-y-4">
-        <h3 className="text-xs font-black uppercase tracking-wider text-[#5F6368]">Yesterday at a glance</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <h3 className="text-lg font-bold text-black tracking-tight flex items-center gap-2">
+          <LeafLogo />
+          Yesterday at a glance
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border-t border-l border-gray-200">
           {/* Card 1: Yesterday's Yield */}
-          <div className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-2">
-            <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">Yesterday's Yield</span>
-            <div className="text-3xl font-black text-[#202124] font-mono">
-              {yesterdayYield.toFixed(1)} <span className="text-xs font-bold text-[#5F6368]">L</span>
-            </div>
-            <div className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatWoW(yieldWoW, "L").color}`}>
+          <div className="p-6 bg-white border-r border-b border-gray-200 flex flex-col justify-between">
+            <span className="text-xs font-bold text-black uppercase tracking-wider block">Yesterday's Yield¹</span>
+            <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">
+              {yesterdayYield.toFixed(1)} <span className="text-sm font-normal text-[#4B5563]">L</span>
+            </span>
+            <span className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatWoW(yieldWoW, "L").color}`}>
               <span className="text-xs">{formatWoW(yieldWoW, "L").icon}</span> {formatWoW(yieldWoW, "L").text}
-            </div>
+            </span>
           </div>
 
           {/* Card 2: Cows Milking */}
-          <div className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-2">
-            <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">Cows Milking</span>
-            <div className="text-3xl font-black text-[#202124] font-mono">
+          <div className="p-6 bg-white border-r border-b border-gray-200 flex flex-col justify-between">
+            <span className="text-xs font-bold text-black uppercase tracking-wider block">Cows Milking²</span>
+            <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">
               {cowsMilking}
-            </div>
-            <div className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatWoW(cowsMilkingWoW).color}`}>
+            </span>
+            <span className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatWoW(cowsMilkingWoW).color}`}>
               <span className="text-xs">{formatWoW(cowsMilkingWoW).icon}</span> {formatWoW(cowsMilkingWoW).text}
-            </div>
+            </span>
           </div>
 
           {/* Card 3: Under Treatment */}
-          <div className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-2">
-            <span className="text-[11px] font-black text-[#D93025] uppercase tracking-wider block">Under Treatment</span>
-            <div className="text-3xl font-black text-[#D93025] font-mono">
+          <div className="p-6 bg-white border-r border-b border-gray-200 flex flex-col justify-between">
+            <span className="text-xs font-bold text-black uppercase tracking-wider block">Under Treatment³</span>
+            <span className={`text-3xl font-bold mt-2 block tracking-tight font-sans ${underTreatment > 0 ? "text-[#D93025]" : "text-black"}`}>
               {underTreatment}
-            </div>
-            <div className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatTreatmentWoW(treatmentWoW).color}`}>
+            </span>
+            <span className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatTreatmentWoW(treatmentWoW).color}`}>
               <span className="text-xs">{formatTreatmentWoW(treatmentWoW).icon}</span> {formatTreatmentWoW(treatmentWoW).text}
-            </div>
+            </span>
           </div>
 
           {/* Card 4: Barley Delivered */}
-          <div className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-2">
-            <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">Barley Delivered</span>
-            <div className="text-3xl font-black text-[#202124] font-mono">
-              {barleyDelivered} <span className="text-xs font-bold text-[#5F6368]">Bags</span>
-            </div>
-            <div className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatWoW(deliveriesWoW, "Bags").color}`}>
+          <div className="p-6 bg-white border-r border-b border-gray-200 flex flex-col justify-between">
+            <span className="text-xs font-bold text-black uppercase tracking-wider block">Barley Delivered⁴</span>
+            <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">
+              {barleyDelivered} <span className="text-sm font-normal text-[#4B5563]">Bags</span>
+            </span>
+            <span className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider ${formatWoW(deliveriesWoW, "Bags").color}`}>
               <span className="text-xs">{formatWoW(deliveriesWoW, "Bags").icon}</span> {formatWoW(deliveriesWoW, "Bags").text}
-            </div>
+            </span>
           </div>
 
           {/* Card 5: Rainfall */}
-          <div className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-2">
-            <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">Rainfall (Latest)</span>
-            <div className="text-3xl font-black text-primary font-mono">
-              {latestRain ? latestRain.amountMm.toFixed(1) : "0.0"} <span className="text-xs font-bold text-[#5F6368]">mm</span>
-            </div>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-[#5F6368] uppercase tracking-wider">
+          <div className="p-6 bg-white border-r border-b border-gray-200 flex flex-col justify-between">
+            <span className="text-xs font-bold text-black uppercase tracking-wider block">Rainfall⁵</span>
+            <span className="text-3xl font-bold text-black mt-2 block tracking-tight font-sans">
+              {latestRain ? latestRain.amountMm.toFixed(1) : "0.0"} <span className="text-sm font-normal text-[#4B5563]">mm</span>
+            </span>
+            <span className="text-[11px] font-bold text-[#4B5563] uppercase tracking-wider">
               {latestRain ? `Date: ${latestRain.date}` : "No logs recorded"}
-            </div>
+            </span>
           </div>
         </div>
       </section>
 
       {/* Section 2: This week yield chart */}
-      <section className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#DADCE0] pb-4">
+      <section className="border border-gray-200 p-6 bg-white space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
           <div>
-            <h3 className="text-sm font-black uppercase tracking-wider text-[#202124]">Daily yield, last {chartRange} days</h3>
-            <span className="text-[11px] text-[#5F6368] uppercase tracking-wider font-bold">Consolidated milking tank logs</span>
+            <h3 className="text-lg font-bold text-black tracking-tight flex items-center gap-2">
+              <LeafLogo />
+              Daily yield, last {chartRange} days
+            </h3>
+            <span className="text-xs text-[#4B5563] uppercase tracking-wider font-semibold">Consolidated milking tank logs</span>
           </div>
-          <div className="flex border border-[#DADCE0] rounded-xl overflow-hidden bg-[#F8F9FA]">
+          <div className="flex border border-gray-200 bg-white">
             {([7, 30, 60] as const).map((range) => (
               <button
                 key={range}
                 type="button"
                 onClick={() => setChartRange(range)}
-                className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                  chartRange === range ? "bg-primary text-white" : "text-[#5F6368] hover:text-[#202124] hover:bg-[#E3E6EC]"
+                className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer border-r last:border-r-0 border-gray-200 ${
+                  chartRange === range ? "bg-black text-white" : "text-[#4B5563] hover:text-black hover:bg-gray-50"
                 }`}
               >
                 {range} days
@@ -275,47 +289,41 @@ export default function OwnerDashboardPage() {
 
         <div className="h-[240px] w-full">
           {chartData.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-xs text-[#5F6368] font-medium">
+            <div className="h-full flex items-center justify-center text-xs text-[#4B5563] font-medium">
               No milking sessions logged yet for this period.
             </div>
           ) : (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorLitres" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1A56DB" stopOpacity={0.08} />
-                  <stop offset="95%" stopColor="#1A56DB" stopOpacity={0.0} />
-                </linearGradient>
-              </defs>
               <XAxis 
                 dataKey="date" 
                 tickLine={false} 
                 axisLine={false} 
-                tick={{ fill: "#7A869A", fontSize: 10, fontFamily: "monospace" }} 
+                tick={{ fill: "#4B5563", fontSize: 10, fontFamily: "var(--font-sans), Inter, sans-serif" }} 
               />
               <YAxis 
                 tickLine={false} 
                 axisLine={false} 
-                tick={{ fill: "#7A869A", fontSize: 10, fontFamily: "monospace" }} 
+                tick={{ fill: "#4B5563", fontSize: 10, fontFamily: "var(--font-sans), Inter, sans-serif" }} 
               />
               <Tooltip 
                 contentStyle={{
                   backgroundColor: "#FFFFFF",
-                  border: "1px solid #DADCE0",
-                  borderRadius: "12px",
+                  border: "1px solid #E5E7EB",
+                  borderRadius: "0px",
                   fontSize: "11px",
                   fontWeight: "bold",
-                  color: "#202124",
-                  fontFamily: "sans-serif"
+                  color: "#000000",
+                  fontFamily: "var(--font-sans), Inter, sans-serif"
                 }}
               />
               <Area 
                 type="monotone" 
                 dataKey="litres" 
                 stroke="#1A56DB" 
-                strokeWidth={2} 
-                fillOpacity={1} 
-                fill="url(#colorLitres)" 
+                strokeWidth={1.5} 
+                fillOpacity={0.05} 
+                fill="#1A56DB" 
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -326,23 +334,24 @@ export default function OwnerDashboardPage() {
       {/* Grid for Section 3 & 4 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Section 3: What changed this week */}
-        <section className="lg:col-span-6 bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-4">
-          <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
+        <section className="lg:col-span-6 bg-white border border-gray-200 p-6 space-y-4">
+          <h3 className="text-lg font-bold text-black tracking-tight flex items-center gap-2 border-b border-gray-200 pb-3">
+            <LeafLogo />
             What changed this week
           </h3>
           <div className="space-y-4 max-h-[360px] overflow-y-auto pr-2 custom-scrollbar">
             {sortedEvents.length === 0 ? (
-              <p className="text-xs text-[#5F6368] italic font-semibold py-4 text-center">
+              <p className="text-xs text-[#4B5563] italic font-semibold py-4 text-center">
                 No events recorded this week.
               </p>
             ) : (
               sortedEvents.map((evt) => (
                 <div key={evt.id} className="flex gap-4 items-start text-xs font-semibold">
-                  <div className={`p-2 rounded-xl mt-0.5 shrink-0 ${
-                    evt.type === "calving" ? "bg-[#E3FCEF] text-[#1E8E3E]" :
-                    evt.type === "treatment" ? "bg-[#FFEBE6] text-[#D93025]" :
-                    evt.type === "clear" ? "bg-[#E3FCEF] text-[#1E8E3E]" :
-                    "bg-primary-subtle text-primary"
+                  <div className={`p-2 border mt-0.5 shrink-0 rounded-none ${
+                    evt.type === "calving" ? "bg-[#E6F4EA] text-[#1E8E3E] border-[#A8D5B5]" :
+                    evt.type === "treatment" ? "bg-[#FCE8E6] text-[#D93025] border-[#F5C6C3]" :
+                    evt.type === "clear" ? "bg-[#E6F4EA] text-[#1E8E3E] border-[#A8D5B5]" :
+                    "bg-[#E8F0FE] text-[#1A56DB] border-[#1A56DB]/20"
                   }`}>
                     {evt.type === "calving" && <Layers className="h-4.5 w-4.5" />}
                     {evt.type === "treatment" && <ShieldAlert className="h-4.5 w-4.5" />}
@@ -351,12 +360,12 @@ export default function OwnerDashboardPage() {
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-[#202124]">{evt.title}</span>
-                      <span className="text-[10px] text-[#7A869A] font-mono">
+                      <span className="font-bold text-black">{evt.title}</span>
+                      <span className="text-[10px] text-[#4B5563] font-sans">
                         {new Date(evt.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
                       </span>
                     </div>
-                    <p className="text-xs text-[#5F6368] font-medium leading-relaxed">
+                    <p className="text-xs text-[#4B5563] font-medium leading-relaxed">
                       {evt.desc}
                     </p>
                   </div>
@@ -367,62 +376,63 @@ export default function OwnerDashboardPage() {
         </section>
 
         {/* Section 4: Operations summary */}
-        <section className="lg:col-span-6 bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-4">
-          <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
+        <section className="lg:col-span-6 bg-white border border-gray-200 p-6 space-y-4">
+          <h3 className="text-lg font-bold text-black tracking-tight flex items-center gap-2 border-b border-gray-200 pb-3">
+            <LeafLogo />
             Operations summary
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 border-t border-l border-gray-200">
             {/* Dairy Card */}
-            <div className="bg-[#F8F9FA] border border-[#DADCE0] p-4 rounded-xl space-y-2">
-              <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">Dairy</span>
-              <div className="space-y-1 text-xs font-semibold text-[#202124]">
+            <div className="p-4 bg-white border-r border-b border-gray-200 space-y-2">
+              <span className="text-[10px] font-black text-[#4B5563] uppercase tracking-wider block">Dairy</span>
+              <div className="space-y-1 text-xs text-[#4B5563]">
                 <div className="flex justify-between">
                   <span>Milking</span>
-                  <span className="font-bold">{cowsMilking}</span>
+                  <span className="font-bold text-black">{cowsMilking}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Avg Yield</span>
-                  <span className="font-bold font-mono">{averageYieldPerCow.toFixed(1)} L</span>
+                  <span className="font-bold text-black font-sans">{averageYieldPerCow.toFixed(1)} L</span>
                 </div>
               </div>
             </div>
 
             {/* Cereals Card */}
-            <div className="bg-[#F8F9FA] border border-[#DADCE0] p-4 rounded-xl space-y-2">
-              <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">Cereals</span>
-              <div className="space-y-1 text-xs font-semibold text-[#202124]">
+            <div className="p-4 bg-white border-r border-b border-gray-200 space-y-2">
+              <span className="text-[10px] font-black text-[#4B5563] uppercase tracking-wider block">Cereals</span>
+              <div className="space-y-1 text-xs text-[#4B5563]">
                 <div className="flex justify-between">
                   <span>Contracts</span>
-                  <span className="font-bold">{activeContractsCount}</span>
+                  <span className="font-bold text-black">{activeContractsCount}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Progress</span>
-                  <span className="font-bold font-mono">{barleyDelivered} Bags</span>
+                  <span className="font-bold text-black font-sans">{barleyDelivered} Bags</span>
                 </div>
               </div>
             </div>
 
             {/* Land Card */}
-            <div className="bg-[#F8F9FA] border border-[#DADCE0] p-4 rounded-xl space-y-2">
-              <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">Land</span>
-              <div className="space-y-1 text-xs font-semibold text-[#202124]">
+            <div className="p-4 bg-white border-r border-b border-gray-200 space-y-2">
+              <span className="text-[10px] font-black text-[#4B5563] uppercase tracking-wider block">Land</span>
+              <div className="space-y-1 text-xs text-[#4B5563]">
                 <div className="flex justify-between">
                   <span>Total</span>
-                  <span className="font-bold font-mono">{totalAcreage} Ac</span>
+                  <span className="font-bold text-black font-sans">{totalAcreage} Ac</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Contracts Value</span>
-                  <span className="font-bold font-mono text-primary">KES {(contractValue / 1000000).toFixed(1)}M</span>
+                  <span>Valuation</span>
+                  <span className="font-bold text-black font-sans">KES {(contractValue / 1000000).toFixed(1)}M</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#DADCE0] flex justify-between items-center text-xs">
-            <span className="font-bold text-[#5F6368]">Full operational details</span>
+          <div className="pt-4 border-t border-gray-200 flex justify-between items-center text-xs">
+            <span className="font-bold text-[#4B5563]">Full operational details</span>
             <Link 
               href="/owner/reports" 
-              className="text-primary hover:underline font-black uppercase tracking-wider text-[10px] flex items-center gap-1"
+              className="text-[#1A56DB] hover:underline font-black uppercase tracking-wider text-[10px] flex items-center gap-1"
             >
               <FileText className="h-3.5 w-3.5" />
               <span>Print Audit Report</span>
@@ -430,6 +440,15 @@ export default function OwnerDashboardPage() {
           </div>
         </section>
       </div>
+
+      {/* Footnotes */}
+      <footer className="mt-8 pt-4 border-t border-gray-100 text-[11px] text-[#4B5563] space-y-1">
+        <div>¹ Total litres of milk yield recorded yesterday from active herd milking sessions.</div>
+        <div>² Active milking cow count from yesterday's recorded milkings.</div>
+        <div>³ Cows currently under active medical withholding restrictions (milk discarded).</div>
+        <div>⁴ Accumulated bags of barley dispatched this season under active contract.</div>
+        <div>⁵ Most recent rainfall depth measured on the farm weather station.</div>
+      </footer>
     </div>
   );
 }

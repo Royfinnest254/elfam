@@ -9,18 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ── Google-style palette ────────────────────
-        ink:        "#202124",         // near-black primary text
-        paper:      "#FFFFFF",
-        "paper-2":  "#F8F9FA",         // app canvas
-        rule:       "#DADCE0",         // Google divider
+        // ── Monochromatic / Max Contrast Layout ────────────────────
+        ink:        "#000000",         // pure bold black primary text
+        paper:      "#FFFFFF",         // pure solid white background
+        "paper-2":  "#FFFFFF",         // app canvas (pure solid white)
+        rule:       "#E5E7EB",         // very light gray divider
         navy:       "#1A56DB",         // deep blue primary
         teal:       "#1A56DB",         // aliased → same blue
         gold:       "#5F6368",         // neutralised
         alert:      "#D93025",         // Google red
-        muted:      "#5F6368",         // Google secondary text grey
-        background: "#F8F9FA",
-        surface:    "#FFFFFF",
+        muted:      "#4B5563",         // charcoal gray secondary text
+        background: "#FFFFFF",         // pure solid white background
+        surface:    "#FFFFFF",         // pure solid white surface
         primary: {
           DEFAULT: "#1A56DB",
           dark:    "#103FA8",
@@ -36,10 +36,10 @@ const config: Config = {
         danger:  "#D93025",
       },
       fontFamily: {
-        // Roboto loaded via next/font/google into --font-sans
-        display: ["var(--font-sans)", "Roboto", "system-ui", "sans-serif"],
-        sans:    ["var(--font-sans)", "Roboto", "system-ui", "sans-serif"],
-        mono:    ["var(--font-mono)", "Roboto Mono", "monospace"],
+        // Inter loaded via next/font/google into --font-sans
+        display: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        sans:    ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        mono:    ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
       fontSize: {
         display: ["30px", { lineHeight: "1.15", letterSpacing: "0", fontWeight: "500" }],

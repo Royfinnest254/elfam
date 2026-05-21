@@ -64,18 +64,18 @@ function NavItem({
       onClick={onClick}
       id={`nav-${item.href.replace(/\//g, "-")}`}
       className={`
-        group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
+        group flex items-center gap-3 px-3 py-2 rounded-none text-sm font-medium
         transition-colors duration-100
         ${
           isActive
             ? "bg-[#E8F0FE] text-[#1A56DB]"
-            : "text-[#5F6368] hover:bg-[#F1F3F4] hover:text-[#202124]"
+            : "text-[#4B5563] hover:bg-gray-50 hover:text-black"
         }
       `}
     >
       <Icon
         className={`h-4 w-4 shrink-0 transition-colors ${
-          isActive ? "text-[#1A56DB]" : "text-[#9AA0A6] group-hover:text-[#5F6368]"
+          isActive ? "text-[#1A56DB]" : "text-[#4B5563] group-hover:text-black"
         }`}
       />
       <span className="flex-1 truncate">{item.name}</span>
@@ -105,7 +105,7 @@ export default function Sidebar() {
   return (
     <>
       {/* ── Mobile top bar ──────────────────────────── */}
-      <header className="md:hidden w-full bg-white border-b border-[#DADCE0] px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+      <header className="md:hidden w-full bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
           <span className="text-[#1A56DB] font-semibold tracking-[0.15em] select-none text-[16px] font-sans">
             Elfam
@@ -114,7 +114,7 @@ export default function Sidebar() {
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-lg hover:bg-[#F1F3F4] text-[#5F6368] transition-colors"
+          className="p-2 rounded-none hover:bg-gray-50 text-[#4B5563] transition-colors"
         >
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -139,11 +139,11 @@ export default function Sidebar() {
             />
           </nav>
 
-          <div className="mt-6 pt-4 border-t border-[#DADCE0]">
+          <div className="mt-6 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={handleSignOut}
-              className="w-full flex items-center justify-center gap-2 h-10 rounded-lg border border-[#DADCE0] text-[#5F6368] text-sm font-medium hover:bg-[#F8F9FA] hover:text-[#202124] transition-colors"
+              className="w-full flex items-center justify-center gap-2 h-10 rounded-none border border-gray-200 text-[#4B5563] text-sm font-medium hover:bg-gray-50 hover:text-black transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Sign Out
@@ -154,18 +154,17 @@ export default function Sidebar() {
 
       {/* ── Desktop sidebar ─────────────────────────── */}
       <aside
-        className="hidden md:flex flex-col w-[240px] shrink-0 h-screen sticky top-0 z-20 bg-white border-r border-[#DADCE0]"
-        style={{ boxShadow: "1px 0 0 #DADCE0" }}
+        className="hidden md:flex flex-col w-[240px] shrink-0 h-screen sticky top-0 z-20 bg-white border-r border-gray-200"
       >
         {/* Logo block */}
-        <div className="px-5 py-4 border-b border-[#DADCE0]">
+        <div className="px-5 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2.5 mb-2">
             <span className="text-[#1A56DB] font-semibold tracking-[0.15em] select-none text-[17px] font-sans">
               Elfam
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#5F6368] font-sans">
+            <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#4B5563] font-sans">
               {role} portal
             </span>
           </div>
@@ -177,7 +176,7 @@ export default function Sidebar() {
             <NavItem key={item.href} item={item} pathname={pathname} />
           ))}
 
-          <div className="pt-2 mt-2 border-t border-[#DADCE0]">
+          <div className="pt-2 mt-2 border-t border-gray-200">
             <NavItem
               item={{ name: "Settings", href: "/settings", icon: Settings }}
               pathname={pathname}
@@ -185,41 +184,41 @@ export default function Sidebar() {
           </div>
         </nav>
 
-          {/* User footer */}
-          <div className="px-3 pb-4 border-t border-[#DADCE0] pt-3 space-y-3">
-            <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-[#F8F9FA]">
-              <div className="w-7 h-7 rounded-full bg-[#1A73E8] flex items-center justify-center shrink-0">
-                <span className="text-white text-[10px] font-medium select-none">
-                  {(user?.name ?? "U").charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-medium text-[#202124] truncate leading-tight">
-                  {user?.name ?? "User"}
-                </p>
-                <p className="text-[11px] text-[#5F6368] truncate leading-tight">
-                  {user?.email ?? "loading..."}
-                </p>
-              </div>
-              <Link
-                href="/settings"
-                title="Settings"
-                className="p-1.5 rounded-md hover:bg-[#DADCE0] text-[#9AA0A6] hover:text-[#5F6368] transition-colors shrink-0"
-              >
-                <Settings className="h-3.5 w-3.5" />
-              </Link>
+        {/* User footer */}
+        <div className="px-3 pb-4 border-t border-gray-200 pt-3 space-y-3">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-none border border-gray-200 bg-white">
+            <div className="w-7 h-7 rounded-full bg-[#1A56DB] flex items-center justify-center shrink-0">
+              <span className="text-white text-[10px] font-medium select-none">
+                {(user?.name ?? "U").charAt(0).toUpperCase()}
+              </span>
             </div>
-
-            <button
-              type="button"
-              id="signout-btn"
-              onClick={handleSignOut}
-              className="w-full flex items-center justify-center gap-2 h-9 rounded-lg border border-[#DADCE0] text-[#5F6368] text-[12px] font-medium hover:bg-[#F8F9FA] hover:text-[#202124] transition-colors"
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] font-medium text-black truncate leading-tight">
+                {user?.name ?? "User"}
+              </p>
+              <p className="text-[11px] text-[#4B5563] truncate leading-tight">
+                {user?.email ?? "loading..."}
+              </p>
+            </div>
+            <Link
+              href="/settings"
+              title="Settings"
+              className="p-1.5 rounded-none hover:bg-gray-100 text-[#4B5563] hover:text-black transition-colors shrink-0"
             >
-              <LogOut className="h-3.5 w-3.5" />
-              Sign Out
-            </button>
+              <Settings className="h-3.5 w-3.5" />
+            </Link>
           </div>
+
+          <button
+            type="button"
+            id="signout-btn"
+            onClick={handleSignOut}
+            className="w-full flex items-center justify-center gap-2 h-9 rounded-none border border-gray-200 text-[#4B5563] text-[12px] font-medium hover:bg-gray-50 hover:text-black transition-colors"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Sign Out
+          </button>
+        </div>
       </aside>
     </>
   );
