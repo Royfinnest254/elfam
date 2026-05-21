@@ -56,30 +56,30 @@ export default function ManagerCalvingsPage() {
   };
 
   if (calvings === undefined || cows === undefined) {
-    return <div className="text-xs text-[#5E6C84] uppercase font-black tracking-widest p-8 font-sans">Loading calving logs...</div>;
+    return <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">Loading calving logs...</div>;
   }
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
-        <span className="text-[10px] font-black uppercase text-[#5E6C84] tracking-[0.2em] block mb-2">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
+      <header className="border-b border-[#DADCE0] pb-6">
+        <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
           Dairy Operations
         </span>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#091E42]">
+        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
           Calving Records
         </h1>
-        <p className="text-xs text-[#5E6C84] font-semibold mt-1 uppercase tracking-wider">Registry of historical calvings and newborn heifer tracking</p>
+        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">Registry of historical calvings and newborn heifer tracking</p>
       </header>
 
       {success && (
-        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#006644] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
-          <Check className="h-4 w-4 text-[#006644]" />
+        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
+          <Check className="h-4 w-4 text-[#1E8E3E]" />
           <span>Calving successfully recorded and newborn registered.</span>
         </div>
       )}
 
       {error && (
-        <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#BF2600] text-xs font-semibold p-4 rounded-xl">
+        <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4 rounded-xl">
           [Error] {error}
         </div>
       )}
@@ -87,23 +87,23 @@ export default function ManagerCalvingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Calving logs list */}
         <div className="lg:col-span-7 system-card p-6 space-y-6">
-          <h3 className="text-base font-black uppercase tracking-tight text-[#091E42] border-b border-[#DFE1E6] pb-4">Calvings Archive</h3>
+          <h3 className="text-base font-black uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">Calvings Archive</h3>
           {calvings.length === 0 ? (
-            <p className="text-xs text-[#5E6C84] italic font-semibold">No calving events on file.</p>
+            <p className="text-xs text-[#5F6368] italic font-semibold">No calving events on file.</p>
           ) : (
-            <div className="space-y-3 font-semibold text-xs text-[#5E6C84]">
+            <div className="space-y-3 font-semibold text-xs text-[#5F6368]">
               {calvings.map((c: any) => {
                 const dam = cows.find((cow: any) => cow._id === c.cowId);
                 return (
-                  <div key={c._id} className="p-4 bg-[#F4F5F7] border border-[#DFE1E6] rounded-[18px]">
+                  <div key={c._id} className="p-4 bg-[#F8F9FA] border border-[#DADCE0] rounded-[18px]">
                     <div className="flex justify-between items-start">
                       <div>
-                        <strong className="text-[#091E42]">Dam: {dam?.tagNumber ?? "Unknown"} ({dam?.name ?? "Cow"})</strong>
+                        <strong className="text-[#202124]">Dam: {dam?.tagNumber ?? "Unknown"} ({dam?.name ?? "Cow"})</strong>
                         <p className="text-[10px] text-primary mt-1">Calf sex: {c.calfSex} | Tag: {c.calfTagNumber ?? "Not tagged"}</p>
                       </div>
                       <span className="text-[9px] font-black uppercase text-[#7A869A] tracking-wider">{new Date(c.date).toLocaleDateString()}</span>
                     </div>
-                    {c.complications && <p className="text-[10px] text-[#BF2600] font-black uppercase tracking-wider mt-2">Complications: {c.complications}</p>}
+                    {c.complications && <p className="text-[10px] text-[#D93025] font-black uppercase tracking-wider mt-2">Complications: {c.complications}</p>}
                   </div>
                 );
               })}
@@ -113,14 +113,14 @@ export default function ManagerCalvingsPage() {
 
         {/* Log Calving Form */}
         <div className="lg:col-span-5 system-card p-6 space-y-6">
-          <h3 className="text-base font-black uppercase tracking-tight text-[#091E42] border-b border-[#DFE1E6] pb-4">Record Calving Event</h3>
+          <h3 className="text-base font-black uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">Record Calving Event</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Select Dam (Mother)</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Dam (Mother)</label>
               <select
                 value={cowId}
                 onChange={(e) => setCowId(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
                 <option value="">-- Choose Cow --</option>
                 {activeCows.map((c: any) => (
@@ -131,58 +131,58 @@ export default function ManagerCalvingsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Calf Sex</label>
+                <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Calf Sex</label>
                 <select
                   value={calfSex}
                   onChange={(e) => setCalfSex(e.target.value as any)}
-                  className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                  className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
                 >
                   <option value="F">Female (Heifer)</option>
                   <option value="M">Male (Bull)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Calf Tag (If tagged)</label>
+                <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Calf Tag (If tagged)</label>
                 <input
                   type="text"
                   placeholder="e.g. EL-0099"
                   value={calfTagNumber}
                   onChange={(e) => setCalfTagNumber(e.target.value)}
-                  className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                  className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Sire (Father) Info</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Sire (Father) Info</label>
               <input
                 type="text"
                 placeholder="Semen code or bull code..."
                 value={sireInfo}
                 onChange={(e) => setSireInfo(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Complications (If any)</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Complications (If any)</label>
               <input
                 type="text"
                 placeholder="Dystocia, retained placenta..."
                 value={complications}
                 onChange={(e) => setComplications(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Notes</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Notes</label>
               <input
                 type="text"
                 placeholder="Newborn health, weight..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
 

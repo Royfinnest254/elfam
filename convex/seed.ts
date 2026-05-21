@@ -1,4 +1,5 @@
 import { mutation } from "./_generated/server";
+import { enforceRole } from "./auth";
 
 /**
  * Database reset utility.
@@ -13,6 +14,7 @@ import { mutation } from "./_generated/server";
 export default mutation({
   args: {},
   handler: async (ctx) => {
+    await enforceRole(ctx, ["manager"]);
     const tables = [
       "users",
       "authSessions",

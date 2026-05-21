@@ -48,14 +48,14 @@ export default function ManagerDashboardPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
+      <header className="border-b border-[#DADCE0] pb-6">
         <span className="label block mb-2 text-teal">
           System Overview
         </span>
-        <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+        <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
           Welcome, {user?.name || "Operations Manager"}
         </h1>
-        <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+        <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
           Operations & Management Control Console | Elfam Agribusiness Ledger
         </p>
       </header>
@@ -63,31 +63,31 @@ export default function ManagerDashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="system-card p-6 border-l-4 border-teal flex flex-col justify-between">
-          <span className="label text-[#5E6C84] block">Livestock Holdings</span>
-          <span className="text-3xl font-normal text-[#0F1B2D] mt-2 block mono">{totalLivestock} Head</span>
-          <span className="body-small text-[#5E6C84] mt-2 block">
+          <span className="label text-[#5F6368] block">Livestock Holdings</span>
+          <span className="text-3xl font-normal text-[#1A56DB] mt-2 block mono">{totalLivestock} Head</span>
+          <span className="body-small text-[#5F6368] mt-2 block">
             {Object.entries(categoriesCount).map(([cat, count]) => `${cat}: ${count}`).join(" | ") || "No stock registered"}
           </span>
         </div>
 
         <div className="system-card p-6 border-l-4 border-gold flex flex-col justify-between">
-          <span className="label text-[#5E6C84] block">Crop Acreage</span>
-          <span className="text-3xl font-normal text-[#0F1B2D] mt-2 block mono">{totalAcres} Acres</span>
-          <span className="body-small text-[#5E6C84] mt-2 block">{cropBlocks.length} Active Blocks</span>
+          <span className="label text-[#5F6368] block">Crop Acreage</span>
+          <span className="text-3xl font-normal text-[#1A56DB] mt-2 block mono">{totalAcres} Acres</span>
+          <span className="body-small text-[#5F6368] mt-2 block">{cropBlocks.length} Active Blocks</span>
         </div>
 
         <div className="system-card p-6 border-l-4 border-alert flex flex-col justify-between">
-          <span className="label text-[#5E6C84] block">Pending Approvals</span>
-          <span className={`text-3xl font-normal mt-2 block mono ${pendingApprovalsCount > 0 ? "text-alert" : "text-[#0F1B2D]"}`}>
+          <span className="label text-[#5F6368] block">Pending Approvals</span>
+          <span className={`text-3xl font-normal mt-2 block mono ${pendingApprovalsCount > 0 ? "text-alert" : "text-[#1A56DB]"}`}>
             {pendingApprovalsCount} Items
           </span>
-          <span className="body-small text-[#5E6C84] mt-2 block">Awaiting manager review</span>
+          <span className="body-small text-[#5F6368] mt-2 block">Awaiting manager review</span>
         </div>
 
         <div className="system-card p-6 border-l-4 border-teal flex flex-col justify-between">
-          <span className="label text-[#5E6C84] block">Machinery Fleet</span>
-          <span className="text-3xl font-normal text-[#0F1B2D] mt-2 block mono">{totalMachinery} Active</span>
-          <span className="body-small text-[#5E6C84] mt-2 block">Equipment & machinery registered</span>
+          <span className="label text-[#5F6368] block">Machinery Fleet</span>
+          <span className="text-3xl font-normal text-[#1A56DB] mt-2 block mono">{totalMachinery} Active</span>
+          <span className="body-small text-[#5F6368] mt-2 block">Equipment & machinery registered</span>
         </div>
       </div>
 
@@ -97,8 +97,8 @@ export default function ManagerDashboardPage() {
         <div className="lg:col-span-8 space-y-8">
           {/* Tasks Panel */}
           <div className="system-card p-6 space-y-6">
-            <div className="flex justify-between items-center border-b border-[#DFE1E6] pb-4">
-              <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <div className="flex justify-between items-center border-b border-[#DADCE0] pb-4">
+              <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
                 Active Work Orders
               </h3>
               <Link href="/manager/tasks" className="btn-secondary h-8 px-3 rounded-[6px] text-xs flex items-center gap-1">
@@ -108,15 +108,15 @@ export default function ManagerDashboardPage() {
             </div>
 
             {pendingTasks.length === 0 ? (
-              <p className="body-small text-[#5E6C84] italic">All tasks successfully resolved.</p>
+              <p className="body-small text-[#5F6368] italic">All tasks successfully resolved.</p>
             ) : (
               <div className="space-y-3">
                 {pendingTasks.slice(0, 5).map((task) => (
-                  <div key={task._id} className="flex items-center justify-between p-4 bg-[#F4F5F7] border border-[#DFE1E6] rounded-none">
+                  <div key={task._id} className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] rounded-none">
                     <div className="space-y-1">
-                      <span className="text-xs font-bold text-[#0F1B2D]">{task.title}</span>
-                      <p className="body-small text-[#5E6C84] font-medium">{task.description}</p>
-                      <span className="mono text-[10px] text-[#5E6C84] uppercase tracking-wider block">
+                      <span className="text-xs font-bold text-[#1A56DB]">{task.title}</span>
+                      <p className="body-small text-[#5F6368] font-medium">{task.description}</p>
+                      <span className="mono text-[10px] text-[#5F6368] uppercase tracking-wider block">
                         Due: {new Date(task.dueDate).toLocaleDateString()}
                       </span>
                     </div>
@@ -135,8 +135,8 @@ export default function ManagerDashboardPage() {
 
           {/* Pending Approval Items Panel */}
           <div className="system-card p-6 space-y-6">
-            <div className="flex justify-between items-center border-b border-[#DFE1E6] pb-4">
-              <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <div className="flex justify-between items-center border-b border-[#DADCE0] pb-4">
+              <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
                 Pending Inventory Approvals
               </h3>
               <Link href="/manager/inventory" className="btn-secondary h-8 px-3 rounded-[6px] text-xs flex items-center gap-1">
@@ -146,17 +146,17 @@ export default function ManagerDashboardPage() {
             </div>
 
             {pendingApprovalsCount === 0 ? (
-              <p className="body-small text-[#5E6C84] italic">No pending items requiring review.</p>
+              <p className="body-small text-[#5F6368] italic">No pending items requiring review.</p>
             ) : (
               <div className="space-y-3">
                 {pendingItems.map((item) => (
-                  <div key={item._id} className="flex items-center justify-between p-4 bg-[#F4F5F7] border border-[#DFE1E6] rounded-none">
+                  <div key={item._id} className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] rounded-none">
                     <div>
                       <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5 block mb-1">
                         {item.category}
                       </span>
-                      <span className="text-xs font-bold text-[#0F1B2D]">{item.productName}</span>
-                      <span className="body-small text-[#5E6C84] block font-medium">Unit: {item.unit} &middot; Low Stock Level: {item.lowStockThreshold}</span>
+                      <span className="text-xs font-bold text-[#1A56DB]">{item.productName}</span>
+                      <span className="body-small text-[#5F6368] block font-medium">Unit: {item.unit} &middot; Low Stock Level: {item.lowStockThreshold}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="status-badge text-[9px] text-alert border-alert/20 bg-alert/5 font-bold">
@@ -173,27 +173,27 @@ export default function ManagerDashboardPage() {
         {/* Right: Quick Links / Access Panels */}
         <div className="lg:col-span-4 space-y-8">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
               Ledger Shortcuts
             </h3>
             <div className="grid grid-cols-1 gap-3">
-              <Link href="/manager/livestock" className="flex items-center gap-3 p-3.5 bg-[#F4F5F7] hover:bg-[#00869B]/5 border border-[#DFE1E6] hover:border-[#00869B] transition-colors rounded-none text-xs font-medium text-[#0F1B2D]">
+              <Link href="/manager/livestock" className="flex items-center gap-3 p-3.5 bg-[#F8F9FA] hover:bg-[#1A56DB]/5 border border-[#DADCE0] hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <Layers className="h-4 w-4 text-teal animate-none" />
                 <span>Livestock Status</span>
               </Link>
-              <Link href="/manager/crops" className="flex items-center gap-3 p-3.5 bg-[#F4F5F7] hover:bg-[#00869B]/5 border border-[#DFE1E6] hover:border-[#00869B] transition-colors rounded-none text-xs font-medium text-[#0F1B2D]">
+              <Link href="/manager/crops" className="flex items-center gap-3 p-3.5 bg-[#F8F9FA] hover:bg-[#1A56DB]/5 border border-[#DADCE0] hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <Map className="h-4 w-4 text-teal animate-none" />
                 <span>Crops & Fields Register</span>
               </Link>
-              <Link href="/manager/inventory" className="flex items-center gap-3 p-3.5 bg-[#F4F5F7] hover:bg-[#00869B]/5 border border-[#DFE1E6] hover:border-[#00869B] transition-colors rounded-none text-xs font-medium text-[#0F1B2D]">
+              <Link href="/manager/inventory" className="flex items-center gap-3 p-3.5 bg-[#F8F9FA] hover:bg-[#1A56DB]/5 border border-[#DADCE0] hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <ClipboardList className="h-4 w-4 text-teal animate-none" />
                 <span>Store Inventory Control</span>
               </Link>
-              <Link href="/manager/equipment" className="flex items-center gap-3 p-3.5 bg-[#F4F5F7] hover:bg-[#00869B]/5 border border-[#DFE1E6] hover:border-[#00869B] transition-colors rounded-none text-xs font-medium text-[#0F1B2D]">
+              <Link href="/manager/equipment" className="flex items-center gap-3 p-3.5 bg-[#F8F9FA] hover:bg-[#1A56DB]/5 border border-[#DADCE0] hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <Tractor className="h-4 w-4 text-teal animate-none" />
                 <span>Equipment Registry</span>
               </Link>
-              <Link href="/manager/reports" className="flex items-center gap-3 p-3.5 bg-[#F4F5F7] hover:bg-[#00869B]/5 border border-[#DFE1E6] hover:border-[#00869B] transition-colors rounded-none text-xs font-medium text-[#0F1B2D]">
+              <Link href="/manager/reports" className="flex items-center gap-3 p-3.5 bg-[#F8F9FA] hover:bg-[#1A56DB]/5 border border-[#DADCE0] hover:border-[#1A56DB] transition-colors rounded-none text-xs font-medium text-[#1A56DB]">
                 <FileText className="h-4 w-4 text-teal animate-none" />
                 <span>Export Reports Console</span>
               </Link>

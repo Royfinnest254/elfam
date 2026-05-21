@@ -71,7 +71,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-4">
+      <header className="border-b border-[#DADCE0] pb-4">
         <span className="label text-muted block mb-1">
           System Config
         </span>
@@ -83,22 +83,22 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Profile Card */}
         <div className="card space-y-4">
-          <h3 className="border-b border-[#DFE1E6] pb-2">
+          <h3 className="border-b border-[#DADCE0] pb-2">
             Ledger Profile File
           </h3>
 
           <div className="space-y-3 body-small text-muted">
-            <div className="flex justify-between border-b border-[#DFE1E6] pb-2">
+            <div className="flex justify-between border-b border-[#DADCE0] pb-2">
               <span className="label">Full Name</span>
-              <span className="text-[#091E42] font-medium">
+              <span className="text-[#202124] font-medium">
                 {user?.name ?? "Registry User"}
               </span>
             </div>
-            <div className="flex justify-between border-b border-[#DFE1E6] pb-2">
+            <div className="flex justify-between border-b border-[#DADCE0] pb-2">
               <span className="label">Email Address</span>
-              <span className="mono text-[#091E42]">{user?.email ?? "—"}</span>
+              <span className="mono text-[#202124]">{user?.email ?? "—"}</span>
             </div>
-            <div className="flex justify-between border-b border-[#DFE1E6] pb-2">
+            <div className="flex justify-between border-b border-[#DADCE0] pb-2">
               <span className="label">System Role</span>
               <span className="badge border-primary text-primary font-medium">
                 {user?.role ?? "—"}
@@ -106,25 +106,25 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-between pb-1">
               <span className="label">Staff Phone</span>
-              <span className="mono text-[#091E42]">{user?.phone ?? "—"}</span>
+              <span className="mono text-[#202124]">{user?.phone ?? "—"}</span>
             </div>
           </div>
         </div>
 
         {/* Password Reset Card */}
         <div className="card space-y-4">
-          <h3 className="border-b border-[#DFE1E6] pb-2">
+          <h3 className="border-b border-[#DADCE0] pb-2">
             Change Access Password
           </h3>
 
           {error && (
-            <div className="border border-[#FFBDAD] text-[#BF2600] text-xs p-3 rounded-[4px]">
+            <div className="border border-[#FFBDAD] text-[#D93025] text-xs p-3 rounded-[4px]">
               [Error] {error}
             </div>
           )}
 
           {success && (
-            <div className="border border-[#ABF5D1] text-[#006644] text-[11px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
+            <div className="border border-[#ABF5D1] text-[#1E8E3E] text-[11px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
               {success}
             </div>
           )}
@@ -178,14 +178,14 @@ export default function SettingsPage() {
       </div>
 
       {/* Danger/Action Zone */}
-      <div className="border-t border-[#DFE1E6] pt-4">
+      <div className="border-t border-[#DADCE0] pt-4">
         <h3 className="label text-muted mb-3">
           Session Terminate
         </h3>
         <button
           type="button"
           onClick={handleSignOut}
-          className="btn-secondary border-[#FFBDAD] hover:bg-[#FFEBE6] text-[#BF2600]"
+          className="btn-secondary border-[#FFBDAD] hover:bg-[#FFEBE6] text-[#D93025]"
         >
           Sign Out of System
         </button>

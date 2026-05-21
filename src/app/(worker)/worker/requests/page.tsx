@@ -20,7 +20,7 @@ export default function WorkerRequestsPage() {
 
   if (requests === undefined) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center text-[#6B7280] text-sm">
+      <div className="min-h-[50vh] flex items-center justify-center text-[#5F6368] text-sm">
         Loading requests ledger...
       </div>
     );
@@ -62,15 +62,15 @@ export default function WorkerRequestsPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <header className="border-b border-[#DADCE0] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <span className="label block mb-2 text-teal">
             Operations Support
           </span>
-          <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+          <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
             Requests & Support Issues
           </h1>
-          <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+          <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
             Submit resource requests or report maintenance issues to management
           </p>
         </div>
@@ -98,19 +98,19 @@ export default function WorkerRequestsPage() {
 
       {/* Requests Logs */}
       <div className="system-card p-6 space-y-4">
-        <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+        <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
           All Requests
         </h3>
         {requests.length === 0 ? (
           <div className="py-16 text-center">
             <FileText className="h-10 w-10 text-[#D1D5DB] mx-auto mb-3" />
-            <p className="text-sm text-[#6B7280]">No requests submitted yet.</p>
+            <p className="text-sm text-[#5F6368]">No requests submitted yet.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                   <th className="py-3 px-4">Date</th>
                   <th className="py-3 px-4">Title / Purpose</th>
                   <th className="py-3 px-4">Category</th>
@@ -119,10 +119,10 @@ export default function WorkerRequestsPage() {
                   <th className="py-3 px-4">Manager Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+              <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                 {requests.map((req) => (
-                  <tr key={req._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono text-[#5E6C84]">
+                  <tr key={req._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
+                    <td className="py-3.5 px-4 font-mono text-[#5F6368]">
                       {new Date(req.requestedAt).toLocaleDateString("en-GB")}
                     </td>
                     <td className="py-3.5 px-4 font-bold">{req.title}</td>
@@ -131,19 +131,19 @@ export default function WorkerRequestsPage() {
                         {req.category}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-normal text-[#5E6C84]">{req.details}</td>
+                    <td className="py-3.5 px-4 font-normal text-[#5F6368]">{req.details}</td>
                     <td className="py-3.5 px-4">
                       <span className={`status-badge text-[9px] border uppercase font-bold ${
                         req.status === "approved"
                           ? "text-teal border-teal/20 bg-teal/5"
                           : req.status === "rejected"
                           ? "text-alert border-alert/20 bg-alert/5"
-                          : "text-[#C09E5A] border-[#C09E5A]/20 bg-[#C09E5A]/5"
+                          : "text-[#5F6368] border-[#5F6368]/20 bg-[#5F6368]/5"
                       }`}>
                         {req.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-normal text-[#5E6C84] italic">
+                    <td className="py-3.5 px-4 font-normal text-[#5F6368] italic">
                       {req.notes || "—"}
                     </td>
                   </tr>
@@ -156,14 +156,14 @@ export default function WorkerRequestsPage() {
 
       {/* New Request Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-[#091E42]/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0F1B2D] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
-            <div className="flex justify-between items-start border-b border-[#DFE1E6] pb-3">
-              <h2 className="text-xl font-normal text-[#0F1B2D]">Submit New Request</h2>
+        <div className="fixed inset-0 bg-[#202124]/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#1A56DB] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
+            <div className="flex justify-between items-start border-b border-[#DADCE0] pb-3">
+              <h2 className="text-xl font-normal text-[#1A56DB]">Submit New Request</h2>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="text-[#5E6C84] hover:text-[#0F1B2D] text-lg font-bold"
+                className="text-[#5F6368] hover:text-[#1A56DB] text-lg font-bold"
               >
                 &times;
               </button>
@@ -171,7 +171,7 @@ export default function WorkerRequestsPage() {
 
             <form onSubmit={handleSubmitRequest} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="req-title" className="label text-[#5E6C84]">Title / Purpose *</label>
+                <label htmlFor="req-title" className="label text-[#5F6368]">Title / Purpose *</label>
                 <input
                   type="text"
                   id="req-title"
@@ -184,7 +184,7 @@ export default function WorkerRequestsPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="req-cat" className="label text-[#5E6C84]">Category Group *</label>
+                <label htmlFor="req-cat" className="label text-[#5F6368]">Category Group *</label>
                 <select
                   id="req-cat"
                   className="input-field bg-white"
@@ -198,7 +198,7 @@ export default function WorkerRequestsPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="req-details" className="label text-[#5E6C84]">Request Details *</label>
+                <label htmlFor="req-details" className="label text-[#5F6368]">Request Details *</label>
                 <textarea
                   id="req-details"
                   className="input-field min-h-[100px] py-2"
@@ -209,7 +209,7 @@ export default function WorkerRequestsPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DFE1E6]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#DADCE0]">
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={submitting} className="btn-primary">
                   {submitting ? "Submitting..." : "Submit Request"}

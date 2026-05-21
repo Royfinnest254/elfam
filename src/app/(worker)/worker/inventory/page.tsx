@@ -125,14 +125,14 @@ export default function WorkerInventoryPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
+      <header className="border-b border-[#DADCE0] pb-6">
         <span className="label block mb-2 text-teal">
           Store & Stock Control
         </span>
-        <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+        <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
           Store Inventory
         </h1>
-        <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+        <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
           Log stock movements and propose new inventory additions for validation
         </p>
       </header>
@@ -155,24 +155,24 @@ export default function WorkerInventoryPage() {
         {/* Left: Active Stock levels table */}
         <div className="lg:col-span-7 space-y-6">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
               Active Store Stock
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                  <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                     <th className="py-3 px-4">Product Name</th>
                     <th className="py-3 px-4">Category</th>
                     <th className="py-3 px-4 text-right">Quantity</th>
                     <th className="py-3 px-4">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+                <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                   {activeInventory.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="py-8 text-center text-[#5E6C84] italic">
+                      <td colSpan={4} className="py-8 text-center text-[#5F6368] italic">
                         No active inventory items found. Propose items to get started.
                       </td>
                     </tr>
@@ -180,7 +180,7 @@ export default function WorkerInventoryPage() {
                     activeInventory.map((item) => {
                       const isLow = item.quantity <= item.lowStockThreshold;
                       return (
-                        <tr key={item._id} className={`hover:bg-[#F4F5F7]/40 transition-colors ${isLow ? "bg-[#FF5630]/5" : ""}`}>
+                        <tr key={item._id} className={`hover:bg-[#F8F9FA]/40 transition-colors ${isLow ? "bg-[#D93025]/5" : ""}`}>
                           <td className="py-3.5 px-4 font-bold">{item.productName}</td>
                           <td className="py-3.5 px-4">
                             <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5">
@@ -213,17 +213,17 @@ export default function WorkerInventoryPage() {
           {/* Pending items check (Oversight info) */}
           {pendingInventory.length > 0 && (
             <div className="system-card p-6 space-y-4">
-              <h4 className="text-xs font-bold text-[#0F1B2D] uppercase tracking-wider">
+              <h4 className="text-xs font-bold text-[#1A56DB] uppercase tracking-wider">
                 My Pending Proposals Queue ({pendingInventory.length})
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {pendingInventory.map((item) => (
-                  <div key={item._id} className="p-3 bg-[#F4F5F7] border border-[#DFE1E6] text-xs">
-                    <span className="font-bold text-[#0F1B2D] block">{item.productName}</span>
-                    <span className="text-[10px] text-[#5E6C84] uppercase tracking-wider block mt-1">
+                  <div key={item._id} className="p-3 bg-[#F8F9FA] border border-[#DADCE0] text-xs">
+                    <span className="font-bold text-[#1A56DB] block">{item.productName}</span>
+                    <span className="text-[10px] text-[#5F6368] uppercase tracking-wider block mt-1">
                       Cat: {item.category} &bull; Alert Target: {item.lowStockThreshold} {item.unit}
                     </span>
-                    <span className="status-badge text-[9px] text-[#C09E5A] border-[#C09E5A]/20 bg-[#C09E5A]/5 mt-2 block w-fit font-bold">
+                    <span className="status-badge text-[9px] text-[#5F6368] border-[#5F6368]/20 bg-[#5F6368]/5 mt-2 block w-fit font-bold">
                       AWAITING REVIEW
                     </span>
                   </div>
@@ -236,7 +236,7 @@ export default function WorkerInventoryPage() {
         {/* Right: Operational Logging Actions */}
         <div className="lg:col-span-5 space-y-6">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
               Store Control Panel
             </h3>
 
@@ -251,8 +251,8 @@ export default function WorkerInventoryPage() {
                 }}
                 className={`py-2 text-xs font-semibold border rounded-[6px] transition-colors cursor-pointer ${
                   activeTab === "movement"
-                    ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-                    : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+                    ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+                    : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
                 }`}
               >
                 Stock Movement
@@ -266,8 +266,8 @@ export default function WorkerInventoryPage() {
                 }}
                 className={`py-2 text-xs font-semibold border rounded-[6px] transition-colors cursor-pointer ${
                   activeTab === "propose"
-                    ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-                    : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+                    ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+                    : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
                 }`}
               >
                 Propose Item
@@ -278,7 +278,7 @@ export default function WorkerInventoryPage() {
             {activeTab === "movement" ? (
               <form onSubmit={handleLogMovement} className="space-y-4">
                 <div className="space-y-1">
-                  <label htmlFor="inventory-item-select" className="label text-[#5E6C84]">Select Store Product</label>
+                  <label htmlFor="inventory-item-select" className="label text-[#5F6368]">Select Store Product</label>
                   <select
                     id="inventory-item-select"
                     value={selectedInventoryId}
@@ -297,7 +297,7 @@ export default function WorkerInventoryPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label htmlFor="move-type-select" className="label text-[#5E6C84]">Action Type</label>
+                    <label htmlFor="move-type-select" className="label text-[#5F6368]">Action Type</label>
                     <select
                       id="move-type-select"
                       value={movementType}
@@ -311,7 +311,7 @@ export default function WorkerInventoryPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label htmlFor="move-qty-input" className="label text-[#5E6C84]">Quantity</label>
+                    <label htmlFor="move-qty-input" className="label text-[#5F6368]">Quantity</label>
                     <input
                       type="number"
                       id="move-qty-input"
@@ -326,7 +326,7 @@ export default function WorkerInventoryPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="move-notes" className="label text-[#5E6C84]">Usage / Delivery Notes</label>
+                  <label htmlFor="move-notes" className="label text-[#5F6368]">Usage / Delivery Notes</label>
                   <textarea
                     id="move-notes"
                     value={notes}
@@ -348,7 +348,7 @@ export default function WorkerInventoryPage() {
             ) : (
               <form onSubmit={handleProposeItem} className="space-y-4">
                 <div className="space-y-1">
-                  <label htmlFor="prod-name-input" className="label text-[#5E6C84]">Product Name</label>
+                  <label htmlFor="prod-name-input" className="label text-[#5F6368]">Product Name</label>
                   <input
                     type="text"
                     id="prod-name-input"
@@ -362,7 +362,7 @@ export default function WorkerInventoryPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label htmlFor="category-select" className="label text-[#5E6C84]">Category Group</label>
+                    <label htmlFor="category-select" className="label text-[#5F6368]">Category Group</label>
                     <select
                       id="category-select"
                       value={prodCategory}
@@ -377,7 +377,7 @@ export default function WorkerInventoryPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label htmlFor="unit-select" className="label text-[#5E6C84]">Stock Unit</label>
+                    <label htmlFor="unit-select" className="label text-[#5F6368]">Stock Unit</label>
                     <select
                       id="unit-select"
                       value={prodUnit}
@@ -395,7 +395,7 @@ export default function WorkerInventoryPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="low-threshold-input" className="label text-[#5E6C84]">Low Stock Warning Threshold</label>
+                  <label htmlFor="low-threshold-input" className="label text-[#5F6368]">Low Stock Warning Threshold</label>
                   <input
                     type="number"
                     id="low-threshold-input"

@@ -372,7 +372,7 @@ export default function ManagerReportsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center text-sm text-[#6B7280]">
+      <div className="min-h-[50vh] flex items-center justify-center text-sm text-[#5F6368]">
         Loading report data...
       </div>
     );
@@ -415,11 +415,11 @@ export default function ManagerReportsPage() {
     <div className="space-y-6 pb-12">
       {/* Header */}
       <header>
-        <p className="label text-[#00869B] mb-1">Executive Ledger</p>
-        <h1 className="text-2xl font-bold text-[#0F1B2D]" style={{ fontFamily: "Georgia, serif" }}>
+        <p className="label text-[#1A56DB] mb-1">Executive Ledger</p>
+        <h1 className="text-2xl font-bold text-[#1A56DB]" >
           Reports Console
         </h1>
-        <p className="body-small text-[#6B7280] mt-1">
+        <p className="body-small text-[#5F6368] mt-1">
           Select a report type, preview the data, then download as PDF
         </p>
       </header>
@@ -436,14 +436,14 @@ export default function ManagerReportsPage() {
               onClick={() => setSelectedReport(opt.value)}
               className={`
                 system-card p-4 text-left transition-all duration-150 border-2 cursor-pointer
-                ${active ? "border-[#00869B] bg-[#EBF7F9]" : "border-[#E4E7EC] hover:border-[#C8CDD8]"}
+                ${active ? "border-[#1A56DB] bg-[#E8F0FE]" : "border-[#DADCE0] hover:border-[#C8CDD8]"}
               `}
             >
-              <Icon className={`h-5 w-5 mb-2 ${active ? "text-[#00869B]" : "text-[#9CA3AF]"}`} />
-              <p className={`text-[12px] font-bold uppercase tracking-wide ${active ? "text-[#00869B]" : "text-[#374151]"}`}>
+              <Icon className={`h-5 w-5 mb-2 ${active ? "text-[#1A56DB]" : "text-[#9AA0A6]"}`} />
+              <p className={`text-[12px] font-bold uppercase tracking-wide ${active ? "text-[#1A56DB]" : "text-[#5F6368]"}`}>
                 {opt.label}
               </p>
-              <p className="text-[11px] text-[#6B7280] mt-1 leading-snug">{opt.desc}</p>
+              <p className="text-[11px] text-[#5F6368] mt-1 leading-snug">{opt.desc}</p>
             </button>
           );
         })}
@@ -452,8 +452,8 @@ export default function ManagerReportsPage() {
       {/* Download bar */}
       <div className="system-card px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <p className="text-sm font-bold text-[#111827]">{currentOpt.label}</p>
-          <p className="text-xs text-[#6B7280]">{currentOpt.desc}</p>
+          <p className="text-sm font-bold text-[#202124]">{currentOpt.label}</p>
+          <p className="text-xs text-[#5F6368]">{currentOpt.desc}</p>
         </div>
         <div className="flex gap-3">
           <button type="button" onClick={() => window.print()} className="btn-secondary">
@@ -482,58 +482,58 @@ export default function ManagerReportsPage() {
             ].map((s) => (
               <div key={s.label} className="system-card p-5 text-center">
                 <p className="text-xs-label mb-1">{s.label}</p>
-                <p className="text-3xl font-bold text-[#0F1B2D]" style={{ fontFamily: "Georgia, serif" }}>{s.value}</p>
-                <p className="text-xs text-[#6B7280] mt-1">{s.unit}</p>
+                <p className="text-3xl font-bold text-[#1A56DB]" >{s.value}</p>
+                <p className="text-xs text-[#5F6368] mt-1">{s.unit}</p>
               </div>
             ))}
           </div>
           {/* Livestock by category */}
           <div className="system-card overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+            <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
               <h3 className="text-xs-label">Livestock by Category</h3>
             </div>
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   <th className="px-5 py-2.5 text-left text-xs-label">Category</th>
                   <th className="px-5 py-2.5 text-right text-xs-label">Head Count</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {Object.entries(lwCats).map(([cat, cnt]) => (
-                  <tr key={cat} className="hover:bg-[#F9FAFB]">
-                    <td className="px-5 py-3 font-semibold text-[#111827]">{cat}</td>
-                    <td className="px-5 py-3 text-right font-bold font-mono text-[#0F1B2D]">{cnt as number} Head</td>
+                  <tr key={cat} className="hover:bg-[#F8F9FA]">
+                    <td className="px-5 py-3 font-semibold text-[#202124]">{cat}</td>
+                    <td className="px-5 py-3 text-right font-bold font-mono text-[#1A56DB]">{cnt as number} Head</td>
                   </tr>
                 ))}
                 {Object.keys(lwCats).length === 0 && (
-                  <tr><td colSpan={2} className="px-5 py-6 text-center text-[#6B7280] text-xs">No livestock registered</td></tr>
+                  <tr><td colSpan={2} className="px-5 py-6 text-center text-[#5F6368] text-xs">No livestock registered</td></tr>
                 )}
               </tbody>
             </table>
           </div>
           {/* Inventory low stock */}
           <div className="system-card overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+            <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
               <h3 className="text-xs-label">Inventory Stock Levels</h3>
             </div>
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   {["Product", "Category", "Qty", "Alert Level", "Status"].map((h) => (
                     <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {inventory!.map((i) => {
                   const low = i.quantity <= i.lowStockThreshold;
                   return (
-                    <tr key={i._id} className="hover:bg-[#F9FAFB]">
-                      <td className="px-5 py-3 font-semibold text-[#111827]">{i.productName}</td>
-                      <td className="px-5 py-3 text-[#6B7280]">{i.category}</td>
-                      <td className="px-5 py-3 font-mono font-bold text-[#0F1B2D]">{i.quantity.toFixed(1)} {i.unit}</td>
-                      <td className="px-5 py-3 font-mono text-[#6B7280]">{i.lowStockThreshold.toFixed(1)} {i.unit}</td>
+                    <tr key={i._id} className="hover:bg-[#F8F9FA]">
+                      <td className="px-5 py-3 font-semibold text-[#202124]">{i.productName}</td>
+                      <td className="px-5 py-3 text-[#5F6368]">{i.category}</td>
+                      <td className="px-5 py-3 font-mono font-bold text-[#1A56DB]">{i.quantity.toFixed(1)} {i.unit}</td>
+                      <td className="px-5 py-3 font-mono text-[#5F6368]">{i.lowStockThreshold.toFixed(1)} {i.unit}</td>
                       <td className="px-5 py-3">
                         <span className={`status-badge ${low ? "status-low" : "status-ok"}`}>{low ? "LOW" : "OK"}</span>
                       </td>
@@ -541,7 +541,7 @@ export default function ManagerReportsPage() {
                   );
                 })}
                 {inventory!.length === 0 && (
-                  <tr><td colSpan={5} className="px-5 py-6 text-center text-[#6B7280] text-xs">No inventory items</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-6 text-center text-[#5F6368] text-xs">No inventory items</td></tr>
                 )}
               </tbody>
             </table>
@@ -560,40 +560,40 @@ export default function ManagerReportsPage() {
             ].map((s) => (
               <div key={s.label} className="system-card p-5 text-center">
                 <p className="text-xs-label mb-1">{s.label}</p>
-                <p className="text-2xl font-bold text-[#0F1B2D]" style={{ fontFamily: "Georgia, serif" }}>{s.value}</p>
+                <p className="text-2xl font-bold text-[#1A56DB]" >{s.value}</p>
               </div>
             ))}
           </div>
           <div className="system-card overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+            <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
               <h3 className="text-xs-label">All Movements — Date, Item, Person</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                  <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                     {["Date & Time", "Type", "Product", "Category", "Quantity", "Person", "Role", "Notes"].map((h) => (
                       <th key={h} className="px-4 py-2.5 text-left text-xs-label whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F3F4F6]">
+                <tbody className="divide-y divide-[#F1F3F4]">
                   {movements!.map((m) => (
-                    <tr key={m._id} className="hover:bg-[#F9FAFB]">
-                      <td className="px-4 py-3 font-mono text-xs text-[#6B7280] whitespace-nowrap">{formatDateTime(m.timestamp)}</td>
+                    <tr key={m._id} className="hover:bg-[#F8F9FA]">
+                      <td className="px-4 py-3 font-mono text-xs text-[#5F6368] whitespace-nowrap">{formatDateTime(m.timestamp)}</td>
                       <td className="px-4 py-3">
                         <span className={`status-badge ${m.type === "withdrawal" ? "status-out" : "status-ok"}`}>{m.type}</span>
                       </td>
-                      <td className="px-4 py-3 font-semibold text-[#111827]">{m.productName}</td>
-                      <td className="px-4 py-3 text-[#6B7280]">{m.category}</td>
-                      <td className="px-4 py-3 font-mono font-bold text-[#0F1B2D]">{m.quantity} {m.unit}</td>
-                      <td className="px-4 py-3 font-semibold text-[#374151]">{m.userName}</td>
-                      <td className="px-4 py-3 text-[#6B7280] capitalize">{m.userRole}</td>
-                      <td className="px-4 py-3 text-[#6B7280]">{m.notes || "—"}</td>
+                      <td className="px-4 py-3 font-semibold text-[#202124]">{m.productName}</td>
+                      <td className="px-4 py-3 text-[#5F6368]">{m.category}</td>
+                      <td className="px-4 py-3 font-mono font-bold text-[#1A56DB]">{m.quantity} {m.unit}</td>
+                      <td className="px-4 py-3 font-semibold text-[#5F6368]">{m.userName}</td>
+                      <td className="px-4 py-3 text-[#5F6368] capitalize">{m.userRole}</td>
+                      <td className="px-4 py-3 text-[#5F6368]">{m.notes || "—"}</td>
                     </tr>
                   ))}
                   {movements!.length === 0 && (
-                    <tr><td colSpan={8} className="px-5 py-8 text-center text-[#6B7280] text-xs">No movements recorded yet</td></tr>
+                    <tr><td colSpan={8} className="px-5 py-8 text-center text-[#5F6368] text-xs">No movements recorded yet</td></tr>
                   )}
                 </tbody>
               </table>
@@ -605,31 +605,31 @@ export default function ManagerReportsPage() {
       {/* Livestock */}
       {selectedReport === "livestock" && (
         <div className="system-card overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+          <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
             <h3 className="text-xs-label">Livestock Registry — {livestock!.length} total</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   {["Tag No.", "Name", "Category", "Breed", "Date of Birth", "Status"].map((h) => (
                     <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {livestock!.map((a) => (
-                  <tr key={a._id} className="hover:bg-[#F9FAFB]">
-                    <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{a.tagNumber}</td>
-                    <td className="px-5 py-3 font-semibold text-[#111827]">{a.name}</td>
-                    <td className="px-5 py-3 text-[#374151]">{a.category}</td>
-                    <td className="px-5 py-3 text-[#6B7280]">{a.breed}</td>
-                    <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{formatDate(a.dateOfBirth)}</td>
+                  <tr key={a._id} className="hover:bg-[#F8F9FA]">
+                    <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{a.tagNumber}</td>
+                    <td className="px-5 py-3 font-semibold text-[#202124]">{a.name}</td>
+                    <td className="px-5 py-3 text-[#5F6368]">{a.category}</td>
+                    <td className="px-5 py-3 text-[#5F6368]">{a.breed}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{formatDate(a.dateOfBirth)}</td>
                     <td className="px-5 py-3"><span className="status-badge status-ok capitalize">{a.status}</span></td>
                   </tr>
                 ))}
                 {livestock!.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#6B7280] text-xs">No livestock registered</td></tr>
+                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#5F6368] text-xs">No livestock registered</td></tr>
                 )}
               </tbody>
             </table>
@@ -640,31 +640,31 @@ export default function ManagerReportsPage() {
       {/* Crops */}
       {selectedReport === "crops" && (
         <div className="system-card overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+          <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
             <h3 className="text-xs-label">Crop Blocks — {cropBlocks!.length} blocks / {totalAcres} total acres</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   {["Block Name", "Category", "Crop", "Acres", "Status", "Planted Date"].map((h) => (
                     <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {cropBlocks!.map((b) => (
-                  <tr key={b._id} className="hover:bg-[#F9FAFB]">
-                    <td className="px-5 py-3 font-semibold text-[#111827]">{b.name}</td>
-                    <td className="px-5 py-3 text-[#374151]">{b.category}</td>
-                    <td className="px-5 py-3 font-mono text-xs uppercase text-[#00869B] font-bold">{b.crop}</td>
-                    <td className="px-5 py-3 font-mono font-bold text-[#0F1B2D]">{b.acres} ac</td>
+                  <tr key={b._id} className="hover:bg-[#F8F9FA]">
+                    <td className="px-5 py-3 font-semibold text-[#202124]">{b.name}</td>
+                    <td className="px-5 py-3 text-[#5F6368]">{b.category}</td>
+                    <td className="px-5 py-3 font-mono text-xs uppercase text-[#1A56DB] font-bold">{b.crop}</td>
+                    <td className="px-5 py-3 font-mono font-bold text-[#1A56DB]">{b.acres} ac</td>
                     <td className="px-5 py-3"><span className="status-badge status-ok capitalize">{b.status}</span></td>
-                    <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{b.plantedDate ? formatDate(b.plantedDate) : "—"}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{b.plantedDate ? formatDate(b.plantedDate) : "—"}</td>
                   </tr>
                 ))}
                 {cropBlocks!.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#6B7280] text-xs">No crop blocks registered</td></tr>
+                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#5F6368] text-xs">No crop blocks registered</td></tr>
                 )}
               </tbody>
             </table>
@@ -675,35 +675,35 @@ export default function ManagerReportsPage() {
       {/* Machinery */}
       {selectedReport === "machinery" && (
         <div className="system-card overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+          <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
             <h3 className="text-xs-label">Machinery Fleet — {machinery!.length} machines</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   {["Machine", "Type", "Plate No.", "Fuel", "Status", "Next Service"].map((h) => (
                     <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {machinery!.map((m) => (
-                  <tr key={m._id} className="hover:bg-[#F9FAFB]">
-                    <td className="px-5 py-3 font-semibold text-[#111827]">{m.name}</td>
-                    <td className="px-5 py-3 text-[#374151] capitalize">{m.type.replace("_", " ")}</td>
-                    <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{m.plateNumber || "—"}</td>
-                    <td className="px-5 py-3 capitalize text-[#374151]">{m.fuelType}</td>
+                  <tr key={m._id} className="hover:bg-[#F8F9FA]">
+                    <td className="px-5 py-3 font-semibold text-[#202124]">{m.name}</td>
+                    <td className="px-5 py-3 text-[#5F6368] capitalize">{m.type.replace("_", " ")}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{m.plateNumber || "—"}</td>
+                    <td className="px-5 py-3 capitalize text-[#5F6368]">{m.fuelType}</td>
                     <td className="px-5 py-3">
                       <span className={`status-badge ${m.status === "operational" ? "status-ok" : m.status === "maintenance" ? "status-low" : "status-out"}`}>
                         {m.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{formatDate(m.nextServiceDate)}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{formatDate(m.nextServiceDate)}</td>
                   </tr>
                 ))}
                 {machinery!.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#6B7280] text-xs">No machinery registered</td></tr>
+                  <tr><td colSpan={6} className="px-5 py-8 text-center text-[#5F6368] text-xs">No machinery registered</td></tr>
                 )}
               </tbody>
             </table>
@@ -718,7 +718,7 @@ export default function ManagerReportsPage() {
             {[
               { label: "Gross Revenue",  value: `KES ${totalIncome.toLocaleString()}`,       color: "text-[#15803d]" },
               { label: "Gross Expenses", value: `KES ${totalExpense.toLocaleString()}`,       color: "text-[#b91c1c]" },
-              { label: "Net Balance",    value: `KES ${(totalIncome-totalExpense).toLocaleString()}`, color: "text-[#0F1B2D]" },
+              { label: "Net Balance",    value: `KES ${(totalIncome-totalExpense).toLocaleString()}`, color: "text-[#1A56DB]" },
             ].map((s) => (
               <div key={s.label} className="system-card p-5 text-center">
                 <p className="text-xs-label mb-1">{s.label}</p>
@@ -727,33 +727,33 @@ export default function ManagerReportsPage() {
             ))}
           </div>
           <div className="system-card overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+            <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
               <h3 className="text-xs-label">Transaction Audit Log — {transactions!.length} records</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                  <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                     {["Date", "Type", "Category", "Description", "Reference", "Amount"].map((h) => (
                       <th key={h} className="px-5 py-2.5 text-left text-xs-label">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F3F4F6]">
+                <tbody className="divide-y divide-[#F1F3F4]">
                   {transactions!.map((t) => (
-                    <tr key={t._id} className="hover:bg-[#F9FAFB]">
-                      <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{formatDate(t.date)}</td>
+                    <tr key={t._id} className="hover:bg-[#F8F9FA]">
+                      <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{formatDate(t.date)}</td>
                       <td className="px-5 py-3">
                         <span className={`status-badge ${t.type === "income" ? "status-ok" : "status-out"}`}>{t.type}</span>
                       </td>
-                      <td className="px-5 py-3 text-[#374151] capitalize">{t.category.replace(/_/g, " ")}</td>
-                      <td className="px-5 py-3 text-[#111827]">{t.description}</td>
-                      <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">{t.reference || "—"}</td>
-                      <td className="px-5 py-3 font-mono font-bold text-right text-[#0F1B2D]">KES {t.amount.toLocaleString()}</td>
+                      <td className="px-5 py-3 text-[#5F6368] capitalize">{t.category.replace(/_/g, " ")}</td>
+                      <td className="px-5 py-3 text-[#202124]">{t.description}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-[#5F6368]">{t.reference || "—"}</td>
+                      <td className="px-5 py-3 font-mono font-bold text-right text-[#1A56DB]">KES {t.amount.toLocaleString()}</td>
                     </tr>
                   ))}
                   {transactions!.length === 0 && (
-                    <tr><td colSpan={6} className="px-5 py-8 text-center text-[#6B7280] text-xs">No transactions recorded</td></tr>
+                    <tr><td colSpan={6} className="px-5 py-8 text-center text-[#5F6368] text-xs">No transactions recorded</td></tr>
                   )}
                 </tbody>
               </table>

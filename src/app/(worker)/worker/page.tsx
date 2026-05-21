@@ -101,22 +101,22 @@ export default function WorkerDashboardPage() {
   return (
     <div className="max-w-[1024px] mx-auto p-4 md:p-6 space-y-6 pb-20">
       {/* Mobile Top Header Shell */}
-      <header className="flex justify-between items-center border-b border-[#DFE1E6] pb-4">
+      <header className="flex justify-between items-center border-b border-[#DADCE0] pb-4">
         <div>
           <span className="label block mb-1 text-teal">
             Worker Operations Portal
           </span>
-          <h1 className="text-2xl font-normal text-[#0F1B2D] tracking-tight">
+          <h1 className="text-2xl font-normal text-[#1A56DB] tracking-tight">
             Station Checklist
           </h1>
-          <p className="body-small text-[#5E6C84] font-semibold uppercase tracking-wider mt-0.5">
+          <p className="body-small text-[#5F6368] font-semibold uppercase tracking-wider mt-0.5">
             Crew: {user?.name || "Active Crew Member"}
           </p>
         </div>
         <button
           type="button"
           onClick={handleSignOut}
-          className="btn-secondary h-9 px-3 rounded-[6px] text-xs flex items-center gap-1.5 cursor-pointer border-[#DFE1E6]"
+          className="btn-secondary h-9 px-3 rounded-[6px] text-xs flex items-center gap-1.5 cursor-pointer border-[#DADCE0]"
         >
           <LogOut className="h-3.5 w-3.5" />
           <span>Sign Out</span>
@@ -125,44 +125,44 @@ export default function WorkerDashboardPage() {
 
       {/* Quick Action Logger Shortcuts (Mobile-optimized cards) */}
       <div className="space-y-3">
-        <span className="label text-[#5E6C84] block">
+        <span className="label text-[#5F6368] block">
           Station Logging Hub
         </span>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/worker/record/livestock" className="flex items-center justify-between p-4 bg-[#F4F5F7] border border-[#DFE1E6] hover:border-teal rounded-none transition-colors">
+          <Link href="/worker/record/livestock" className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] hover:border-teal rounded-none transition-colors">
             <div className="flex items-center gap-3">
               <div className="p-2 border border-teal/10 bg-teal/5">
                 <Layers className="h-5 w-5 text-teal" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-[#0F1B2D] block">Livestock Production</span>
-                <span className="body-small text-[#5E6C84]">Log daily yields & treatments</span>
+                <span className="text-xs font-bold text-[#1A56DB] block">Livestock Production</span>
+                <span className="body-small text-[#5F6368]">Log daily yields & treatments</span>
               </div>
             </div>
             <PlusCircle className="h-5 w-5 text-teal" />
           </Link>
 
-          <Link href="/worker/record/crops" className="flex items-center justify-between p-4 bg-[#F4F5F7] border border-[#DFE1E6] hover:border-teal rounded-none transition-colors">
+          <Link href="/worker/record/crops" className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] hover:border-teal rounded-none transition-colors">
             <div className="flex items-center gap-3">
               <div className="p-2 border border-teal/10 bg-teal/5">
                 <Map className="h-5 w-5 text-teal" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-[#0F1B2D] block">Crops & Harvesting</span>
-                <span className="body-small text-[#5E6C84]">Log seeding, spraying & yields</span>
+                <span className="text-xs font-bold text-[#1A56DB] block">Crops & Harvesting</span>
+                <span className="body-small text-[#5F6368]">Log seeding, spraying & yields</span>
               </div>
             </div>
             <PlusCircle className="h-5 w-5 text-teal" />
           </Link>
 
-          <Link href="/worker/record/inventory" className="flex items-center justify-between p-4 bg-[#F4F5F7] border border-[#DFE1E6] hover:border-teal rounded-none transition-colors">
+          <Link href="/worker/record/inventory" className="flex items-center justify-between p-4 bg-[#F8F9FA] border border-[#DADCE0] hover:border-teal rounded-none transition-colors">
             <div className="flex items-center gap-3">
               <div className="p-2 border border-teal/10 bg-teal/5">
                 <ClipboardList className="h-5 w-5 text-teal" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-[#0F1B2D] block">Store Inventory</span>
-                <span className="body-small text-[#5E6C84]">Log restocks & withdrawals</span>
+                <span className="text-xs font-bold text-[#1A56DB] block">Store Inventory</span>
+                <span className="body-small text-[#5F6368]">Log restocks & withdrawals</span>
               </div>
             </div>
             <PlusCircle className="h-5 w-5 text-teal" />
@@ -186,12 +186,12 @@ export default function WorkerDashboardPage() {
         {/* Active Tasks List */}
         <div className="lg:col-span-8 space-y-4">
           <div className="system-card p-6 space-y-6 rounded-none">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
               My Assigned Operations Checklist
             </h3>
 
             {myTasks.length === 0 ? (
-              <p className="body-small text-[#5E6C84] italic">
+              <p className="body-small text-[#5F6368] italic">
                 No duties currently assigned to your station.
               </p>
             ) : (
@@ -202,18 +202,18 @@ export default function WorkerDashboardPage() {
                     <div
                       key={task._id}
                       className={`p-4 border flex justify-between items-center rounded-none transition-all ${
-                        isDone ? "bg-[#F4F5F7]/60 border-[#DFE1E6] opacity-60" : "bg-white border-[#DFE1E6]"
+                        isDone ? "bg-[#F8F9FA]/60 border-[#DADCE0] opacity-60" : "bg-white border-[#DADCE0]"
                       }`}
                     >
                       <div className="space-y-1">
                         <span
                           className={`text-xs font-bold block ${
-                            isDone ? "line-through text-[#7A869A]" : "text-[#0F1B2D]"
+                            isDone ? "line-through text-[#7A869A]" : "text-[#1A56DB]"
                           }`}
                         >
                           {task.title}
                         </span>
-                        <p className="body-small text-[#5E6C84] font-medium">{task.description}</p>
+                        <p className="body-small text-[#5F6368] font-medium">{task.description}</p>
                         <span className="mono text-[9px] text-[#7A869A] uppercase tracking-wider block font-semibold">
                           DUE BY: {new Date(task.dueDate).toLocaleDateString("en-GB")}
                         </span>
@@ -222,7 +222,7 @@ export default function WorkerDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleResolve(task._id)}
-                          className="h-8 px-3 bg-[#0F1B2D] hover:bg-[#0F1B2D]/90 text-white text-[10px] font-bold uppercase tracking-wider rounded-[4px] transition-colors cursor-pointer"
+                          className="h-8 px-3 bg-[#1A56DB] hover:bg-[#1A56DB]/90 text-white text-[10px] font-bold uppercase tracking-wider rounded-[4px] transition-colors cursor-pointer"
                         >
                           Mark Done
                         </button>
@@ -238,13 +238,13 @@ export default function WorkerDashboardPage() {
         {/* Quick Incident Reporter */}
         <div className="lg:col-span-4 space-y-4">
           <div className="system-card p-6 space-y-6 rounded-none">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
               Report Field Incident
             </h3>
 
             <form onSubmit={handleReportIncident} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="inc-title-input" className="label text-[#5E6C84]">Incident Title / Issue</label>
+                <label htmlFor="inc-title-input" className="label text-[#5F6368]">Incident Title / Issue</label>
                 <input
                   type="text"
                   id="inc-title-input"
@@ -258,7 +258,7 @@ export default function WorkerDashboardPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="inc-dept-select" className="label text-[#5E6C84]">Department</label>
+                  <label htmlFor="inc-dept-select" className="label text-[#5F6368]">Department</label>
                   <select
                     id="inc-dept-select"
                     value={incDept}
@@ -274,7 +274,7 @@ export default function WorkerDashboardPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="inc-severity-select" className="label text-[#5E6C84]">Severity</label>
+                  <label htmlFor="inc-severity-select" className="label text-[#5F6368]">Severity</label>
                   <select
                     id="inc-severity-select"
                     value={incSeverity}
@@ -289,7 +289,7 @@ export default function WorkerDashboardPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="inc-desc-input" className="label text-[#5E6C84]">Describe the Issue</label>
+                <label htmlFor="inc-desc-input" className="label text-[#5F6368]">Describe the Issue</label>
                 <textarea
                   id="inc-desc-input"
                   rows={3}
@@ -315,19 +315,19 @@ export default function WorkerDashboardPage() {
 
       {/* Reported Incidents Log */}
       <div className="system-card p-6 space-y-4 rounded-none">
-        <h3 className="text-lg font-normal text-[#0F1B2D] border-b border-[#DFE1E6] pb-4">
+        <h3 className="text-lg font-normal text-[#1A56DB] border-b border-[#DADCE0] pb-4">
           My Reported Incidents Log
         </h3>
 
         {myReportedIncidents.length === 0 ? (
-          <p className="body-small text-[#5E6C84] italic">
+          <p className="body-small text-[#5F6368] italic">
             No incidents reported by your station.
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#DFE1E6] text-[10px] font-semibold text-[#5E6C84] uppercase tracking-wider">
+                <tr className="border-b border-[#DADCE0] text-[10px] font-semibold text-[#5F6368] uppercase tracking-wider">
                   <th className="pb-3">Date</th>
                   <th className="pb-3">Incident Title</th>
                   <th className="pb-3">Dept</th>
@@ -336,25 +336,25 @@ export default function WorkerDashboardPage() {
                   <th className="pb-3">Latest Resolution Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] text-[#0F1B2D] font-medium">
+              <tbody className="divide-y divide-[#DADCE0] text-[#1A56DB] font-medium">
                 {myReportedIncidents.map((inc) => {
                   const isResolved = inc.status === "resolved";
                   const isInvestigating = inc.status === "investigating";
                   const isCritical = inc.severity === "critical";
 
                   return (
-                    <tr key={inc._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
-                      <td className="py-3 font-mono text-[10px] text-[#5E6C84]">
+                    <tr key={inc._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
+                      <td className="py-3 font-mono text-[10px] text-[#5F6368]">
                         {new Date(inc.reportedAt).toLocaleDateString("en-GB")}
                       </td>
                       <td className="py-3 font-bold">{inc.title}</td>
-                      <td className="py-3 uppercase text-[9px] text-[#5E6C84]">{inc.department}</td>
+                      <td className="py-3 uppercase text-[9px] text-[#5F6368]">{inc.department}</td>
                       <td className="py-3">
                         <span
                           className={`status-badge text-[9px] uppercase ${
                             isCritical
                               ? "bg-alert/5 border-alert/20 text-alert"
-                              : "bg-[#C09E5A]/5 border-[#C09E5A]/20 text-[#C09E5A]"
+                              : "bg-[#5F6368]/5 border-[#5F6368]/20 text-[#5F6368]"
                           }`}
                         >
                           {inc.severity}
@@ -366,14 +366,14 @@ export default function WorkerDashboardPage() {
                             isResolved
                               ? "text-teal"
                               : isInvestigating
-                              ? "text-[#C09E5A]"
+                              ? "text-[#5F6368]"
                               : "text-alert"
                           }`}
                         >
                           {isResolved ? "RESOLVED" : isInvestigating ? "INVESTIGATING" : "PENDING"}
                         </span>
                       </td>
-                      <td className="py-3 text-[#5E6C84] italic max-w-[200px] truncate">
+                      <td className="py-3 text-[#5F6368] italic max-w-[200px] truncate">
                         {inc.notes || "Pending triage review"}
                       </td>
                     </tr>

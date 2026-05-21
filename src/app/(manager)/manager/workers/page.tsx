@@ -18,14 +18,14 @@ export default function ManagerWorkersPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
+      <header className="border-b border-[#DADCE0] pb-6">
         <span className="label block mb-2 text-teal">
           Staff Directory
         </span>
-        <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+        <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
           Workers Crew
         </h1>
-        <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+        <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
           Registry of farm operations staff, active roles & contacts
         </p>
       </header>
@@ -43,7 +43,7 @@ export default function ManagerWorkersPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+              <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                 <th className="py-4 px-6">Name</th>
                 <th className="py-4 px-6">Role</th>
                 <th className="py-4 px-6">Email Address</th>
@@ -51,21 +51,21 @@ export default function ManagerWorkersPage() {
                 <th className="py-4 px-6">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+            <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
               {users.map((staff: any) => (
-                <tr key={staff._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
+                <tr key={staff._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
                   <td className="py-4 px-6 font-bold">{staff.name ?? "Registry User"}</td>
                   <td className="py-4 px-6">
                     <span className={`status-badge text-[9px] border uppercase ${
                       staff.role === "manager"
-                        ? "text-[#C09E5A] border-[#C09E5A]/20 bg-[#C09E5A]/5"
+                        ? "text-[#5F6368] border-[#5F6368]/20 bg-[#5F6368]/5"
                         : "text-teal border-teal/20 bg-teal/5"
                     }`}>
                       {staff.role}
                     </span>
                   </td>
-                  <td className="py-4 px-6 text-[#5E6C84] font-mono">{staff.email}</td>
-                  <td className="py-4 px-6 text-[#5E6C84] font-mono">{staff.phone ?? "—"}</td>
+                  <td className="py-4 px-6 text-[#5F6368] font-mono">{staff.email}</td>
+                  <td className="py-4 px-6 text-[#5F6368] font-mono">{staff.phone ?? "—"}</td>
                   <td className="py-4 px-6">
                     <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5 font-bold">
                       ACTIVE

@@ -43,7 +43,7 @@ export default function MachineryPage() {
 
   if (machineryList === undefined) {
     return (
-      <div className="font-mono text-xs text-[#5E6C84] uppercase tracking-widest p-8">
+      <div className="font-mono text-xs text-[#5F6368] uppercase tracking-widest p-8">
         Loading machinery fleet...
       </div>
     );
@@ -126,16 +126,16 @@ export default function MachineryPage() {
   };
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
       {/* Page Header */}
-      <header className="border-b border-[#DFE1E6] pb-6">
-        <span className="text-[10px] font-black uppercase text-[#5E6C84] tracking-[0.2em] block mb-2">
+      <header className="border-b border-[#DADCE0] pb-6">
+        <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
           Operations &gt; Fleet Management
         </span>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#091E42]">
+        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
           Machinery Fleet
         </h1>
-        <p className="text-xs text-[#5E6C84] font-semibold mt-1 uppercase tracking-wider">
+        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
           Tractors, harvesters, milking pumps, and service registers
         </p>
       </header>
@@ -144,14 +144,14 @@ export default function MachineryPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Machinery List Container */}
         <div className="lg:col-span-2 card space-y-4">
-          <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-3">
+          <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
             Fleet Register
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider border-b border-[#DFE1E6]">
+                <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider border-b border-[#DADCE0]">
                   <th className="pb-2">Equipment</th>
                   <th className="pb-2">Type</th>
                   <th className="pb-2">Plate No</th>
@@ -161,7 +161,7 @@ export default function MachineryPage() {
                   <th className="pb-2 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] font-semibold text-[#091E42]">
+              <tbody className="divide-y divide-[#DADCE0] font-semibold text-[#202124]">
                 {machineryList.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="py-4 text-center text-muted italic">
@@ -172,23 +172,23 @@ export default function MachineryPage() {
                   machineryList.map((m) => (
                     <tr 
                       key={m._id} 
-                      className={`hover:bg-[#F4F5F7]/30 cursor-pointer ${selectedId === m._id ? "bg-primary-subtle/30" : ""}`}
+                      className={`hover:bg-[#F8F9FA]/30 cursor-pointer ${selectedId === m._id ? "bg-primary-subtle/30" : ""}`}
                       onClick={() => setSelectedId(m._id)}
                     >
-                      <td className="py-3 font-bold text-[#091E42]">{m.name}</td>
-                      <td className="py-3 capitalize text-[#5E6C84]">{m.type.replace("_", " ")}</td>
+                      <td className="py-3 font-bold text-[#202124]">{m.name}</td>
+                      <td className="py-3 capitalize text-[#5F6368]">{m.type.replace("_", " ")}</td>
                       <td className="py-3 font-mono text-primary">{m.plateNumber}</td>
-                      <td className="py-3 capitalize text-[#5E6C84]">{m.fuelType}</td>
+                      <td className="py-3 capitalize text-[#5F6368]">{m.fuelType}</td>
                       <td className="py-3">
                         <span className={`status-badge ${
                           m.status === "operational" ? "status-ok" :
                           m.status === "maintenance" ? "bg-[#FFF0B3] text-[#172B4D]" :
-                          "bg-[#FFEBE6] text-[#BF2600]"
+                          "bg-[#FFEBE6] text-[#D93025]"
                         }`}>
                           {m.status.toUpperCase()}
                         </span>
                       </td>
-                      <td className="py-3 font-mono text-[#5E6C84]">
+                      <td className="py-3 font-mono text-[#5F6368]">
                         {new Date(m.nextServiceDate).toLocaleDateString("en-GB")}
                       </td>
                       <td className="py-3 text-right">
@@ -213,18 +213,18 @@ export default function MachineryPage() {
 
         {/* Register Machinery Form */}
         <div className="card space-y-4">
-          <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-3">
+          <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
             Register Equipment
           </h3>
 
           {machineryError && (
-            <div className="border border-[#FFBDAD] text-[#BF2600] text-xs p-3 rounded-[4px]">
+            <div className="border border-[#FFBDAD] text-[#D93025] text-xs p-3 rounded-[4px]">
               [Error] {machineryError}
             </div>
           )}
 
           {machinerySuccess && (
-            <div className="border border-[#ABF5D1] text-[#006644] text-[10px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
+            <div className="border border-[#ABF5D1] text-[#1E8E3E] text-[10px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
               {machinerySuccess}
             </div>
           )}
@@ -340,11 +340,11 @@ export default function MachineryPage() {
 
       {/* Maintenance Logs Section for selected machinery */}
       {selectedId && selectedMachinery && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start pt-6 border-t border-[#DFE1E6]">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start pt-6 border-t border-[#DADCE0]">
           {/* Logs Table */}
           <div className="lg:col-span-2 card space-y-4">
-            <div className="flex justify-between items-center border-b border-[#DFE1E6] pb-3">
-              <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42]">
+            <div className="flex justify-between items-center border-b border-[#DADCE0] pb-3">
+              <h3 className="text-sm font-black uppercase tracking-wider text-[#202124]">
                 Service History: {selectedMachinery.name} ({selectedMachinery.plateNumber})
               </h3>
               <button 
@@ -359,7 +359,7 @@ export default function MachineryPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider border-b border-[#DFE1E6]">
+                  <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider border-b border-[#DADCE0]">
                     <th className="pb-2">Date</th>
                     <th className="pb-2">Type</th>
                     <th className="pb-2">Description</th>
@@ -367,7 +367,7 @@ export default function MachineryPage() {
                     <th className="pb-2 text-right">Cost (KES)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DFE1E6] font-semibold text-[#091E42]">
+                <tbody className="divide-y divide-[#DADCE0] font-semibold text-[#202124]">
                   {maintenanceLogs === undefined ? (
                     <tr>
                       <td colSpan={5} className="py-4 text-center text-muted italic">
@@ -382,24 +382,24 @@ export default function MachineryPage() {
                     </tr>
                   ) : (
                     maintenanceLogs.map((log) => (
-                      <tr key={log._id} className="hover:bg-[#F4F5F7]/30">
-                        <td className="py-3 font-mono text-[#5E6C84]">
+                      <tr key={log._id} className="hover:bg-[#F8F9FA]/30">
+                        <td className="py-3 font-mono text-[#5F6368]">
                           {new Date(log.date).toLocaleDateString("en-GB")}
                         </td>
                         <td className="py-3">
                           <span className={`badge ${
                             log.type === "routine" ? "border-primary text-primary" :
                             log.type === "repair" ? "border-[#FFF0B3] text-[#172B4D]" :
-                            "border-[#BF2600] text-[#BF2600]"
+                            "border-[#D93025] text-[#D93025]"
                           }`}>
                             {log.type.toUpperCase()}
                           </span>
                         </td>
-                        <td className="py-3 text-[#091E42]" title={log.notes}>
+                        <td className="py-3 text-[#202124]" title={log.notes}>
                           {log.description}
                         </td>
-                        <td className="py-3 text-[#5E6C84]">{log.performedBy}</td>
-                        <td className="py-3 text-right font-mono font-bold text-[#091E42]">
+                        <td className="py-3 text-[#5F6368]">{log.performedBy}</td>
+                        <td className="py-3 text-right font-mono font-bold text-[#202124]">
                           KES {log.cost.toLocaleString()}
                         </td>
                       </tr>
@@ -412,18 +412,18 @@ export default function MachineryPage() {
 
           {/* Log Maintenance Form */}
           <div className="card space-y-4">
-            <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-3">
+            <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
               Log Maintenance
             </h3>
 
             {maintenanceError && (
-              <div className="border border-[#FFBDAD] text-[#BF2600] text-xs p-3 rounded-[4px]">
+              <div className="border border-[#FFBDAD] text-[#D93025] text-xs p-3 rounded-[4px]">
                 [Error] {maintenanceError}
               </div>
             )}
 
             {maintenanceSuccess && (
-              <div className="border border-[#ABF5D1] text-[#006644] text-[10px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
+              <div className="border border-[#ABF5D1] text-[#1E8E3E] text-[10px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
                 {maintenanceSuccess}
               </div>
             )}

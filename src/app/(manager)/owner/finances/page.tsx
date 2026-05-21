@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import { getFarmClock } from "@/lib/farmClock";
 
 export default function OwnerFinancesPage() {
-  const simNow = 1779205903000;
+  const { now, yesterdayDateStr } = getFarmClock();
   const user = useQuery(api.users.viewer);
-  const cows = useQuery(api.cows.getHerdDashboard, { now: simNow, yesterdayDateStr: "2026-05-18" });
+  const cows = useQuery(api.cows.getHerdDashboard, { now, yesterdayDateStr });
   const contracts = useQuery(api.records.listContracts);
   const deliveries = useQuery(api.records.listAllDeliveries);
   const transactions = useQuery(api.records.listTransactions);
@@ -31,7 +32,7 @@ export default function OwnerFinancesPage() {
     user === undefined
   ) {
     return (
-      <div className="font-mono text-xs text-[#5E6C84] uppercase tracking-widest p-8">
+      <div className="font-mono text-xs text-[#5F6368] uppercase tracking-widest p-8">
         Loading financial registers...
       </div>
     );
@@ -119,16 +120,16 @@ export default function OwnerFinancesPage() {
   };
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
       {/* Page Title & Header */}
-      <header className="border-b border-[#DFE1E6] pb-6">
-        <span className="text-[10px] font-black uppercase text-[#5E6C84] tracking-[0.2em] block mb-2">
+      <header className="border-b border-[#DADCE0] pb-6">
+        <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
           Executive Ledger &gt; Finance
         </span>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#091E42]">
+        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
           Financial Registry & Ledger
         </h1>
-        <p className="text-xs text-[#5E6C84] font-semibold mt-1 uppercase tracking-wider">
+        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
           Cash flow statements, cereal contracts, and ledger auditing
         </p>
       </header>
@@ -136,37 +137,37 @@ export default function OwnerFinancesPage() {
       {/* Grid: Financial Summary Indicators */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card space-y-1">
-          <span className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block">
+          <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">
             Yesterday's Milk Revenue (Est.)
           </span>
           <div className="text-2xl font-black text-primary font-mono">
             KES {yesterdayRevenueEst.toLocaleString("en-KE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-[10px] text-[#5E6C84] font-semibold">
+          <p className="text-[10px] text-[#5F6368] font-semibold">
             Based on {yesterdayMilkYield.toFixed(1)}L produced @ KES 55.00/litre.
           </p>
         </div>
 
         <div className="card space-y-1">
-          <span className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block">
+          <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">
             Total Ledger Income
           </span>
-          <div className="text-2xl font-black text-[#006644] font-mono">
+          <div className="text-2xl font-black text-[#1E8E3E] font-mono">
             KES {totalIncome.toLocaleString("en-KE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-[10px] text-[#5E6C84] font-semibold">
+          <p className="text-[10px] text-[#5F6368] font-semibold">
             Audited cash inflows from sales.
           </p>
         </div>
 
         <div className="card space-y-1">
-          <span className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block">
+          <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block">
             Net Ledger Cash Flow
           </span>
-          <div className={`text-2xl font-black font-mono ${netCashFlow >= 0 ? "text-[#006644]" : "text-[#BF2600]"}`}>
+          <div className={`text-2xl font-black font-mono ${netCashFlow >= 0 ? "text-[#1E8E3E]" : "text-[#D93025]"}`}>
             KES {netCashFlow.toLocaleString("en-KE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-[10px] text-[#5E6C84] font-semibold">
+          <p className="text-[10px] text-[#5F6368] font-semibold">
             Outflow: KES {totalExpenses.toLocaleString()}
           </p>
         </div>
@@ -176,14 +177,14 @@ export default function OwnerFinancesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Ledger List */}
         <div className="lg:col-span-2 card space-y-4">
-          <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-3">
+          <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
             General Transaction Ledger
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider border-b border-[#DFE1E6]">
+                <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider border-b border-[#DADCE0]">
                   <th className="pb-2">Date</th>
                   <th className="pb-2">Type</th>
                   <th className="pb-2">Category</th>
@@ -192,7 +193,7 @@ export default function OwnerFinancesPage() {
                   <th className="pb-2 text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] font-semibold text-[#091E42]">
+              <tbody className="divide-y divide-[#DADCE0] font-semibold text-[#202124]">
                 {transactions.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-4 text-center text-muted italic">
@@ -201,8 +202,8 @@ export default function OwnerFinancesPage() {
                   </tr>
                 ) : (
                   transactions.map((t) => (
-                    <tr key={t._id} className="hover:bg-[#F4F5F7]/30">
-                      <td className="py-3 font-mono text-[#5E6C84]">
+                    <tr key={t._id} className="hover:bg-[#F8F9FA]/30">
+                      <td className="py-3 font-mono text-[#5F6368]">
                         {new Date(t.date).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "short",
@@ -211,22 +212,22 @@ export default function OwnerFinancesPage() {
                       <td className="py-3">
                         <span
                           className={`badge ${
-                            t.type === "income" ? "border-[#006644] text-[#006644]" : "border-[#BF2600] text-[#BF2600]"
+                            t.type === "income" ? "border-[#1E8E3E] text-[#1E8E3E]" : "border-[#D93025] text-[#D93025]"
                           }`}
                         >
                           {t.type.toUpperCase()}
                         </span>
                       </td>
-                      <td className="py-3 capitalize text-[#5E6C84]">
+                      <td className="py-3 capitalize text-[#5F6368]">
                         {t.category.replace("_", " ")}
                       </td>
-                      <td className="py-3 text-[#091E42] max-w-[180px] truncate" title={t.description}>
+                      <td className="py-3 text-[#202124] max-w-[180px] truncate" title={t.description}>
                         {t.description}
                       </td>
-                      <td className="py-3 font-mono text-[#5E6C84]">{t.reference || "—"}</td>
+                      <td className="py-3 font-mono text-[#5F6368]">{t.reference || "—"}</td>
                       <td
                         className={`py-3 text-right font-mono font-bold ${
-                          t.type === "income" ? "text-[#006644]" : "text-[#091E42]"
+                          t.type === "income" ? "text-[#1E8E3E]" : "text-[#202124]"
                         }`}
                       >
                         {t.type === "expense" ? "-" : ""}KES {t.amount.toLocaleString()}
@@ -241,18 +242,18 @@ export default function OwnerFinancesPage() {
 
         {/* Form to Log Transaction */}
         <div className="card space-y-4">
-          <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-3">
+          <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
             Log Cash Transaction
           </h3>
 
           {formError && (
-            <div className="border border-[#FFBDAD] text-[#BF2600] text-xs p-3 rounded-[4px]">
+            <div className="border border-[#FFBDAD] text-[#D93025] text-xs p-3 rounded-[4px]">
               [Error] {formError}
             </div>
           )}
 
           {formSuccess && (
-            <div className="border border-[#ABF5D1] text-[#006644] text-[10px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
+            <div className="border border-[#ABF5D1] text-[#1E8E3E] text-[10px] uppercase tracking-wider font-semibold p-3 rounded-[4px]">
               {formSuccess}
             </div>
           )}
@@ -269,7 +270,7 @@ export default function OwnerFinancesPage() {
                   }}
                   className={`btn text-xs font-bold py-2 ${
                     type === "income"
-                      ? "btn-primary bg-[#006644] hover:bg-[#005135]"
+                      ? "btn-primary bg-[#1E8E3E] hover:bg-[#005135]"
                       : "btn-secondary"
                   }`}
                 >
@@ -283,7 +284,7 @@ export default function OwnerFinancesPage() {
                   }}
                   className={`btn text-xs font-bold py-2 ${
                     type === "expense"
-                      ? "btn-primary bg-[#BF2600] hover:bg-[#A32000]"
+                      ? "btn-primary bg-[#D93025] hover:bg-[#A32000]"
                       : "btn-secondary"
                   }`}
                 >
@@ -379,15 +380,15 @@ export default function OwnerFinancesPage() {
       </div>
 
       {/* Section 2: Cereal sales contracts table */}
-      <section className="bg-white border border-[#DFE1E6] p-6 rounded-[24px] space-y-4">
-        <h3 className="text-sm font-black uppercase tracking-wider text-[#091E42] border-b border-[#DFE1E6] pb-3">
+      <section className="bg-white border border-[#DADCE0] p-6 rounded-[24px] space-y-4">
+        <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-3">
           Cereal Sales Contracts
         </h3>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider border-b border-[#DFE1E6]">
+              <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider border-b border-[#DADCE0]">
                 <th className="pb-2">Contract No.</th>
                 <th className="pb-2">Buyer</th>
                 <th className="pb-2">Crop</th>
@@ -399,9 +400,9 @@ export default function OwnerFinancesPage() {
                 <th className="pb-2 text-right">Revenue Collected</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#DFE1E6] font-semibold text-[#091E42]">
+            <tbody className="divide-y divide-[#DADCE0] font-semibold text-[#202124]">
               {contractRows.map((row) => (
-                <tr key={row.id} className="hover:bg-[#F4F5F7]/30">
+                <tr key={row.id} className="hover:bg-[#F8F9FA]/30">
                   <td className="py-3.5 font-mono text-primary">{row.number}</td>
                   <td className="py-3.5">{row.buyer}</td>
                   <td className="py-3.5 uppercase text-[10px]">{row.crop}</td>
@@ -411,14 +412,14 @@ export default function OwnerFinancesPage() {
                   <td className="py-3.5">
                     <span className={`status-badge ${
                       row.status === "active" ? "status-ok" :
-                      row.status === "fulfilled" ? "bg-[#E3FCEF] text-[#006644]" :
-                      "bg-[#FFEBE6] text-[#BF2600]"
+                      row.status === "fulfilled" ? "bg-[#E3FCEF] text-[#1E8E3E]" :
+                      "bg-[#FFEBE6] text-[#D93025]"
                     }`}>
                       {row.status}
                     </span>
                   </td>
                   <td className="py-3.5 text-right font-mono">{row.bagsDelivered.toLocaleString()} Bags</td>
-                  <td className="py-3.5 text-right font-mono text-[#006644]">
+                  <td className="py-3.5 text-right font-mono text-[#1E8E3E]">
                     KES {row.revenueCollected.toLocaleString()}
                   </td>
                 </tr>
@@ -427,12 +428,12 @@ export default function OwnerFinancesPage() {
           </table>
         </div>
 
-        <div className="pt-4 border-t border-[#DFE1E6] flex flex-col sm:flex-row justify-between text-xs font-bold text-[#5E6C84] gap-2">
+        <div className="pt-4 border-t border-[#DADCE0] flex flex-col sm:flex-row justify-between text-xs font-bold text-[#5F6368] gap-2">
           <span>
-            Total contract book value: <span className="text-[#091E42] font-mono">KES {totalBookValue.toLocaleString()}</span>
+            Total contract book value: <span className="text-[#202124] font-mono">KES {totalBookValue.toLocaleString()}</span>
           </span>
           <span>
-            Revenue collected to date: <span className="text-[#006644] font-mono">KES {totalRevenueCollected.toLocaleString()}</span>
+            Revenue collected to date: <span className="text-[#1E8E3E] font-mono">KES {totalRevenueCollected.toLocaleString()}</span>
           </span>
         </div>
       </section>

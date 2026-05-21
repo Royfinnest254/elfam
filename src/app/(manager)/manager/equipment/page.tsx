@@ -54,7 +54,7 @@ export default function ManagerEquipmentPage() {
 
   if (machinery === undefined || maintenanceLogs === undefined) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center text-[#6B7280] text-sm">
+      <div className="min-h-[50vh] flex items-center justify-center text-[#5F6368] text-sm">
         Loading machinery fleet...
       </div>
     );
@@ -121,11 +121,11 @@ export default function ManagerEquipmentPage() {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <p className="label text-[#00869B] mb-1">Fleet Management</p>
-          <h1 className="text-2xl font-bold text-[#0F1B2D]" style={{ fontFamily: "Georgia, serif" }}>
+          <p className="label text-[#1A56DB] mb-1">Fleet Management</p>
+          <h1 className="text-2xl font-bold text-[#1A56DB]" >
             Equipment &amp; Machinery
           </h1>
-          <p className="body-small text-[#6B7280] mt-1">
+          <p className="body-small text-[#5F6368] mt-1">
             Register machines, track status and log maintenance records
           </p>
         </div>
@@ -163,37 +163,37 @@ export default function ManagerEquipmentPage() {
 
       {/* Fleet Table */}
       <div className="system-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+        <div className="px-6 py-4 border-b border-[#DADCE0] bg-[#F8F9FA]">
           <h3 className="text-xs-label">Fleet Registry — {machinery.length} machine{machinery.length !== 1 ? "s" : ""}</h3>
         </div>
         {machinery.length === 0 ? (
           <div className="px-6 py-16 text-center">
             <Tractor className="h-10 w-10 text-[#D1D5DB] mx-auto mb-3" />
-            <p className="text-sm text-[#6B7280]">No machines registered. Click <strong>Register Machine</strong> to add one.</p>
+            <p className="text-sm text-[#5F6368]">No machines registered. Click <strong>Register Machine</strong> to add one.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   {["Machine Name", "Type", "Plate No.", "Fuel", "Status", "Next Service"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{h}</th>
+                    <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5F6368]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {machinery.map((m) => (
-                  <tr key={m._id} className="hover:bg-[#F9FAFB] transition-colors">
-                    <td className="px-5 py-3.5 font-bold text-sm text-[#111827]">{m.name}</td>
-                    <td className="px-5 py-3.5 text-sm text-[#374151] capitalize">{m.type.replace("_", " ")}</td>
-                    <td className="px-5 py-3.5 text-sm font-mono text-[#374151]">{m.plateNumber || "—"}</td>
-                    <td className="px-5 py-3.5 text-sm text-[#374151] capitalize">{m.fuelType}</td>
+                  <tr key={m._id} className="hover:bg-[#F8F9FA] transition-colors">
+                    <td className="px-5 py-3.5 font-bold text-sm text-[#202124]">{m.name}</td>
+                    <td className="px-5 py-3.5 text-sm text-[#5F6368] capitalize">{m.type.replace("_", " ")}</td>
+                    <td className="px-5 py-3.5 text-sm font-mono text-[#5F6368]">{m.plateNumber || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-[#5F6368] capitalize">{m.fuelType}</td>
                     <td className="px-5 py-3.5">
                       <span className={`status-badge ${STATUS_STYLE[m.status as MachineryStatus]}`}>
                         {m.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-[#374151]">
+                    <td className="px-5 py-3.5 text-sm text-[#5F6368]">
                       {new Date(m.nextServiceDate).toLocaleDateString("en-GB")}
                     </td>
                   </tr>
@@ -206,38 +206,38 @@ export default function ManagerEquipmentPage() {
 
       {/* Maintenance Logs */}
       <div className="system-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#E4E7EC] bg-[#F9FAFB]">
+        <div className="px-6 py-4 border-b border-[#DADCE0] bg-[#F8F9FA]">
           <h3 className="text-xs-label">Maintenance Log — {maintenanceLogs.length} record{maintenanceLogs.length !== 1 ? "s" : ""}</h3>
         </div>
         {maintenanceLogs.length === 0 ? (
-          <div className="px-6 py-10 text-center text-sm text-[#6B7280]">No maintenance records yet.</div>
+          <div className="px-6 py-10 text-center text-sm text-[#5F6368]">No maintenance records yet.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F9FAFB] border-b border-[#E4E7EC]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0]">
                   {["Date", "Machine", "Type", "Description", "Cost (KES)", "Performed By"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{h}</th>
+                    <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5F6368]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F3F4F6]">
+              <tbody className="divide-y divide-[#F1F3F4]">
                 {maintenanceLogs.map((log) => {
                   const machine = machinery.find((m) => m._id === log.machineryId);
                   return (
-                    <tr key={log._id} className="hover:bg-[#F9FAFB] transition-colors">
-                      <td className="px-5 py-3.5 text-sm font-mono text-[#6B7280]">
+                    <tr key={log._id} className="hover:bg-[#F8F9FA] transition-colors">
+                      <td className="px-5 py-3.5 text-sm font-mono text-[#5F6368]">
                         {new Date(log.date).toLocaleDateString("en-GB")}
                       </td>
-                      <td className="px-5 py-3.5 text-sm font-bold text-[#111827]">{machine?.name ?? "Unknown"}</td>
+                      <td className="px-5 py-3.5 text-sm font-bold text-[#202124]">{machine?.name ?? "Unknown"}</td>
                       <td className="px-5 py-3.5">
                         <span className="status-badge status-ok capitalize">{log.type}</span>
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-[#374151]">{log.description}</td>
-                      <td className="px-5 py-3.5 text-sm font-mono font-bold text-[#111827]">
+                      <td className="px-5 py-3.5 text-sm text-[#5F6368]">{log.description}</td>
+                      <td className="px-5 py-3.5 text-sm font-mono font-bold text-[#202124]">
                         {log.cost > 0 ? `KES ${log.cost.toLocaleString()}` : "—"}
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-[#374151]">{log.performedBy || "—"}</td>
+                      <td className="px-5 py-3.5 text-sm text-[#5F6368]">{log.performedBy || "—"}</td>
                     </tr>
                   );
                 })}
@@ -250,10 +250,10 @@ export default function ManagerEquipmentPage() {
       {/* Register Machine Modal */}
       {regOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#E4E7EC] w-full max-w-lg shadow-xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E4E7EC]">
-              <h2 className="text-base font-bold text-[#111827]" style={{ fontFamily: "Georgia, serif" }}>Register Machine</h2>
-              <button type="button" onClick={() => setRegOpen(false)} className="text-[#6B7280] hover:text-[#111827] p-1 rounded">
+          <div className="bg-white rounded-xl border border-[#DADCE0] w-full max-w-lg shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#DADCE0]">
+              <h2 className="text-base font-bold text-[#202124]" >Register Machine</h2>
+              <button type="button" onClick={() => setRegOpen(false)} className="text-[#5F6368] hover:text-[#202124] p-1 rounded">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -296,7 +296,7 @@ export default function ManagerEquipmentPage() {
                 <label className="label">Notes</label>
                 <input type="text" className="input-field" value={regNotes} onChange={(e) => setRegNotes(e.target.value)} placeholder="Optional notes" />
               </div>
-              <div className="flex justify-end gap-3 pt-2 border-t border-[#E4E7EC]">
+              <div className="flex justify-end gap-3 pt-2 border-t border-[#DADCE0]">
                 <button type="button" onClick={() => setRegOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={regSubmitting} className="btn-primary">
                   {regSubmitting ? "Registering..." : "Register Machine"}
@@ -310,10 +310,10 @@ export default function ManagerEquipmentPage() {
       {/* Log Maintenance Modal */}
       {maintOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#E4E7EC] w-full max-w-lg shadow-xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E4E7EC]">
-              <h2 className="text-base font-bold text-[#111827]" style={{ fontFamily: "Georgia, serif" }}>Log Maintenance</h2>
-              <button type="button" onClick={() => setMaintOpen(false)} className="text-[#6B7280] hover:text-[#111827] p-1 rounded">
+          <div className="bg-white rounded-xl border border-[#DADCE0] w-full max-w-lg shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#DADCE0]">
+              <h2 className="text-base font-bold text-[#202124]" >Log Maintenance</h2>
+              <button type="button" onClick={() => setMaintOpen(false)} className="text-[#5F6368] hover:text-[#202124] p-1 rounded">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -349,7 +349,7 @@ export default function ManagerEquipmentPage() {
                 <label className="label">Notes</label>
                 <input type="text" className="input-field" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes" />
               </div>
-              <div className="flex justify-end gap-3 pt-2 border-t border-[#E4E7EC]">
+              <div className="flex justify-end gap-3 pt-2 border-t border-[#DADCE0]">
                 <button type="button" onClick={() => setMaintOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={maintSubmitting} className="btn-primary">
                   {maintSubmitting ? "Logging..." : "Log Maintenance"}

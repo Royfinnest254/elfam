@@ -24,7 +24,7 @@ export default function ManagerRequestsPage() {
 
   if (requests === undefined) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center text-[#6B7280] text-sm">
+      <div className="min-h-[50vh] flex items-center justify-center text-[#5F6368] text-sm">
         Loading requests ledger...
       </div>
     );
@@ -81,14 +81,14 @@ export default function ManagerRequestsPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
+      <header className="border-b border-[#DADCE0] pb-6">
         <span className="label block mb-2 text-teal">
           Administrative Validation
         </span>
-        <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+        <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
           Resource & Maintenance Requests
         </h1>
-        <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+        <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
           Review, approve, and resolve staff resource requests or maintenance tickets
         </p>
       </header>
@@ -107,27 +107,27 @@ export default function ManagerRequestsPage() {
 
       {/* Pending Reviews Panel */}
       <div className="system-card p-6 space-y-6">
-        <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+        <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
           Pending Validation Queue ({pendingRequests.length})
         </h3>
         {pendingRequests.length === 0 ? (
-          <p className="body-small text-[#5E6C84] italic">No pending requests requiring validation.</p>
+          <p className="body-small text-[#5F6368] italic">No pending requests requiring validation.</p>
         ) : (
           <div className="space-y-4">
             {pendingRequests.map((req) => (
-              <div key={req._id} className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-[#F4F5F7] border border-[#DFE1E6] rounded-none gap-4">
+              <div key={req._id} className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-[#F8F9FA] border border-[#DADCE0] rounded-none gap-4">
                 <div className="space-y-1.5 max-w-3xl">
                   <div className="flex items-center gap-2">
                     <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5 uppercase font-bold">
                       {req.category}
                     </span>
-                    <span className="mono text-[9px] text-[#5E6C84]">
+                    <span className="mono text-[9px] text-[#5F6368]">
                       Submitted: {new Date(req.requestedAt).toLocaleString("en-GB")}
                     </span>
                   </div>
-                  <h4 className="text-sm font-bold text-[#0F1B2D]">{req.title}</h4>
-                  <p className="body-small text-[#5E6C84] font-medium leading-relaxed">{req.details}</p>
-                  <span className="text-[10px] font-bold text-[#0F1B2D] uppercase block">
+                  <h4 className="text-sm font-bold text-[#1A56DB]">{req.title}</h4>
+                  <p className="body-small text-[#5F6368] font-medium leading-relaxed">{req.details}</p>
+                  <span className="text-[10px] font-bold text-[#1A56DB] uppercase block">
                     Requested By: {req.requestedByName}
                   </span>
                 </div>
@@ -151,7 +151,7 @@ export default function ManagerRequestsPage() {
                   <button
                     type="button"
                     onClick={() => handleDeleteRequest(req._id)}
-                    className="p-2 border border-[#DFE1E6] hover:border-alert text-[#5E6C84] hover:text-alert rounded-[6px] transition-colors bg-white"
+                    className="p-2 border border-[#DADCE0] hover:border-alert text-[#5F6368] hover:text-alert rounded-[6px] transition-colors bg-white"
                     title="Delete Request Record"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -165,16 +165,16 @@ export default function ManagerRequestsPage() {
 
       {/* Resolved History Panel */}
       <div className="system-card p-6 space-y-6">
-        <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+        <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
           Request Validation Archive
         </h3>
         {resolvedRequests.length === 0 ? (
-          <p className="body-small text-[#5E6C84] italic">No completed requests in logs.</p>
+          <p className="body-small text-[#5F6368] italic">No completed requests in logs.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                   <th className="py-3 px-4">Date</th>
                   <th className="py-3 px-4">Requester</th>
                   <th className="py-3 px-4">Title / Purpose</th>
@@ -184,10 +184,10 @@ export default function ManagerRequestsPage() {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+              <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                 {resolvedRequests.map((req) => (
-                  <tr key={req._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono text-[#5E6C84]">
+                  <tr key={req._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
+                    <td className="py-3.5 px-4 font-mono text-[#5F6368]">
                       {new Date(req.requestedAt).toLocaleDateString("en-GB")}
                     </td>
                     <td className="py-3.5 px-4 font-bold">{req.requestedByName}</td>
@@ -206,7 +206,7 @@ export default function ManagerRequestsPage() {
                         {req.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-normal text-[#5E6C84] italic max-w-[240px] truncate" title={req.notes}>
+                    <td className="py-3.5 px-4 font-normal text-[#5F6368] italic max-w-[240px] truncate" title={req.notes}>
                       {req.notes || "—"}
                     </td>
                     <td className="py-3.5 px-4 text-right">
@@ -228,16 +228,16 @@ export default function ManagerRequestsPage() {
 
       {/* Action Notes Modal */}
       {actionModalOpen && (
-        <div className="fixed inset-0 bg-[#091E42]/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0F1B2D] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
-            <div className="flex justify-between items-start border-b border-[#DFE1E6] pb-3">
-              <h2 className="text-xl font-normal text-[#0F1B2D] capitalize">
+        <div className="fixed inset-0 bg-[#202124]/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#1A56DB] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
+            <div className="flex justify-between items-start border-b border-[#DADCE0] pb-3">
+              <h2 className="text-xl font-normal text-[#1A56DB] capitalize">
                 {actionType} Request Record
               </h2>
               <button
                 type="button"
                 onClick={() => setActionModalOpen(false)}
-                className="text-[#5E6C84] hover:text-[#0F1B2D] text-lg font-bold"
+                className="text-[#5F6368] hover:text-[#1A56DB] text-lg font-bold"
               >
                 &times;
               </button>
@@ -245,7 +245,7 @@ export default function ManagerRequestsPage() {
 
             <form onSubmit={handleProcessAction} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="action-notes" className="label text-[#5E6C84]">Validation Comments / Notes</label>
+                <label htmlFor="action-notes" className="label text-[#5F6368]">Validation Comments / Notes</label>
                 <textarea
                   id="action-notes"
                   className="input-field min-h-[100px] py-2"
@@ -255,7 +255,7 @@ export default function ManagerRequestsPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DFE1E6]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#DADCE0]">
                 <button
                   type="button"
                   onClick={() => setActionModalOpen(false)}

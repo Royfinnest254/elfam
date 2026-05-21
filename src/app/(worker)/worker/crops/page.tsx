@@ -79,15 +79,15 @@ export default function WorkerCropsPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <header className="border-b border-[#DADCE0] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <span className="label block mb-2 text-teal">
             Crops & Fields Register
           </span>
-          <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+          <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
             Crops & Crop Blocks
           </h1>
-          <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+          <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
             Acreage mapping, block status & crop activity histories
           </p>
         </div>
@@ -118,19 +118,19 @@ export default function WorkerCropsPage() {
       {/* Acreage Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="system-card p-6 text-center space-y-1">
-          <span className="label text-[#5E6C84] block">Total Managed Acreage</span>
-          <span className="text-2xl font-normal text-[#0F1B2D] block mono">{totalAcres} Acres</span>
+          <span className="label text-[#5F6368] block">Total Managed Acreage</span>
+          <span className="text-2xl font-normal text-[#1A56DB] block mono">{totalAcres} Acres</span>
         </div>
         <div className="system-card p-6 text-center space-y-1">
-          <span className="label text-[#5E6C84] block">Cereals Block</span>
+          <span className="label text-[#5F6368] block">Cereals Block</span>
           <span className="text-2xl font-normal text-teal block mono">{cerealAcres} Acres</span>
         </div>
         <div className="system-card p-6 text-center space-y-1">
-          <span className="label text-[#5E6C84] block">Horticulture Block</span>
+          <span className="label text-[#5F6368] block">Horticulture Block</span>
           <span className="text-2xl font-normal text-teal block mono">{hortAcres} Acres</span>
         </div>
         <div className="system-card p-6 text-center space-y-1">
-          <span className="label text-[#5E6C84] block">Forage Meadow</span>
+          <span className="label text-[#5F6368] block">Forage Meadow</span>
           <span className="text-2xl font-normal text-teal block mono">{forageAcres} Acres</span>
         </div>
       </div>
@@ -147,13 +147,13 @@ export default function WorkerCropsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-6">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
               Active Crop Blocks
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                  <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                     <th className="py-3 px-4">Block Name</th>
                     <th className="py-3 px-4">Category</th>
                     <th className="py-3 px-4">Crop Type</th>
@@ -162,16 +162,16 @@ export default function WorkerCropsPage() {
                     <th className="py-3 px-4">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+                <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                   {cropBlocks.map((block) => (
-                    <tr key={block._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
+                    <tr key={block._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
                       <td className="py-3.5 px-4 font-bold">{block.name}</td>
                       <td className="py-3.5 px-4">
                         <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5">
                           {block.category}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 uppercase text-[#5E6C84]">{block.crop}</td>
+                      <td className="py-3.5 px-4 uppercase text-[#5F6368]">{block.crop}</td>
                       <td className="py-3.5 px-4 text-right mono">{block.acres} ac</td>
                       <td className="py-3.5 px-4 mono">
                         {block.plantedDate ? new Date(block.plantedDate).toLocaleDateString() : "Fallow"}
@@ -180,7 +180,7 @@ export default function WorkerCropsPage() {
                         <span className={`status-badge text-[9px] border ${
                           block.status === "growing" || block.status === "planted"
                             ? "text-teal border-teal/20 bg-teal/5"
-                            : "text-[#5E6C84] border-[#DFE1E6] bg-white"
+                            : "text-[#5F6368] border-[#DADCE0] bg-white"
                         }`}>
                           {block.status.toUpperCase()}
                         </span>
@@ -196,39 +196,39 @@ export default function WorkerCropsPage() {
         {/* Right: Crop Activities Audit Logs */}
         <div className="lg:col-span-4 space-y-6">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
               Field Operations Log
             </h3>
             {cropActivities.length === 0 ? (
-              <p className="body-small text-[#5E6C84] italic">No field activities recorded.</p>
+              <p className="body-small text-[#5F6368] italic">No field activities recorded.</p>
             ) : (
               <div className="space-y-4 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar">
                 {cropActivities.map((act) => {
                   const block = cropBlocks.find(b => b._id === act.cropBlockId);
                   return (
-                    <div key={act._id} className="p-3 bg-[#F4F5F7] border border-[#DFE1E6] rounded-none space-y-1.5">
+                    <div key={act._id} className="p-3 bg-[#F8F9FA] border border-[#DADCE0] rounded-none space-y-1.5">
                       <div className="flex justify-between items-start">
                         <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5">
                           {act.type}
                         </span>
-                        <span className="mono text-[9px] text-[#5E6C84]">
+                        <span className="mono text-[9px] text-[#5F6368]">
                           {new Date(act.activityDate).toLocaleDateString()}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-[#0F1B2D] block">
+                      <span className="text-xs font-bold text-[#1A56DB] block">
                         Block: {block?.name || "Unknown Block"}
                       </span>
                       {act.productApplied && (
-                        <p className="body-small text-[#5E6C84]">
+                        <p className="body-small text-[#5F6368]">
                           Product: <strong>{act.productApplied}</strong> ({act.rate || "N/A"})
                         </p>
                       )}
                       {act.quantityHarvested !== undefined && (
-                        <p className="body-small text-[#5E6C84]">
+                        <p className="body-small text-[#5F6368]">
                           Harvest Yield: <strong>{act.quantityHarvested} tonnes</strong>
                         </p>
                       )}
-                      <p className="body-small text-[#5E6C84] italic font-normal">
+                      <p className="body-small text-[#5F6368] italic font-normal">
                         "{act.notes}"
                       </p>
                     </div>
@@ -242,14 +242,14 @@ export default function WorkerCropsPage() {
 
       {/* Registration Modal (Flat visual design) */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-[#091E42]/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0F1B2D] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
-            <div className="flex justify-between items-start border-b border-[#DFE1E6] pb-3">
-              <h2 className="text-xl font-normal text-[#0F1B2D]">Register new crop block</h2>
+        <div className="fixed inset-0 bg-[#202124]/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#1A56DB] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
+            <div className="flex justify-between items-start border-b border-[#DADCE0] pb-3">
+              <h2 className="text-xl font-normal text-[#1A56DB]">Register new crop block</h2>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="text-[#5E6C84] hover:text-[#0F1B2D] text-lg font-bold"
+                className="text-[#5F6368] hover:text-[#1A56DB] text-lg font-bold"
               >
                 &times;
               </button>
@@ -257,7 +257,7 @@ export default function WorkerCropsPage() {
 
             <form onSubmit={handleRegisterBlock} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="block-name" className="label text-[#5E6C84]">Block Name</label>
+                <label htmlFor="block-name" className="label text-[#5F6368]">Block Name</label>
                 <input
                   type="text"
                   id="block-name"
@@ -271,7 +271,7 @@ export default function WorkerCropsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="block-cat" className="label text-[#5E6C84]">Category Group</label>
+                  <label htmlFor="block-cat" className="label text-[#5F6368]">Category Group</label>
                   <select
                     id="block-cat"
                     value={category}
@@ -286,7 +286,7 @@ export default function WorkerCropsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="block-crop" className="label text-[#5E6C84]">Crop Type</label>
+                  <label htmlFor="block-crop" className="label text-[#5F6368]">Crop Type</label>
                   <select
                     id="block-crop"
                     value={crop}
@@ -310,7 +310,7 @@ export default function WorkerCropsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="block-acres" className="label text-[#5E6C84]">Acreage (Acres)</label>
+                  <label htmlFor="block-acres" className="label text-[#5F6368]">Acreage (Acres)</label>
                   <input
                     type="number"
                     id="block-acres"
@@ -324,7 +324,7 @@ export default function WorkerCropsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="block-status" className="label text-[#5E6C84]">Status</label>
+                  <label htmlFor="block-status" className="label text-[#5F6368]">Status</label>
                   <select
                     id="block-status"
                     value={status}
@@ -340,7 +340,7 @@ export default function WorkerCropsPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="block-notes" className="label text-[#5E6C84]">Soil / Field Notes</label>
+                <label htmlFor="block-notes" className="label text-[#5F6368]">Soil / Field Notes</label>
                 <textarea
                   id="block-notes"
                   value={notes}
@@ -350,7 +350,7 @@ export default function WorkerCropsPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DFE1E6]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#DADCE0]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

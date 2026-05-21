@@ -28,8 +28,8 @@ export default function WorkerLayout({
 
   if (user === undefined) {
     return (
-      <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center font-sans text-muted">
-        <span className="text-xs text-[#5E6C84] uppercase font-black tracking-widest font-sans">
+      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center font-sans text-muted">
+        <span className="text-xs text-[#5F6368] uppercase font-black tracking-widest font-sans">
           Loading operational console...
         </span>
       </div>
@@ -43,7 +43,7 @@ export default function WorkerLayout({
   return (
     <div
       className="flex flex-col md:flex-row md:h-screen md:w-screen md:overflow-hidden"
-      style={{ backgroundColor: "#F0F2F5" }}
+      style={{ backgroundColor: "#F8F9FA" }}
     >
       {/* Sidebar */}
       <Sidebar />

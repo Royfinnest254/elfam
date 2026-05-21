@@ -108,15 +108,15 @@ export default function ManagerLivestockPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <header className="border-b border-[#DADCE0] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <span className="label block mb-2 text-teal">
             Livestock List
           </span>
-          <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+          <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
             Livestock Registry
           </h1>
-          <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+          <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
             Category-level oversight & administrative registry
           </p>
         </div>
@@ -146,9 +146,9 @@ export default function ManagerLivestockPage() {
 
       {/* Filter Tabs Toolbar */}
       <div className="system-card p-6 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center gap-6 border-b border-[#DFE1E6] pb-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-6 border-b border-[#DADCE0] pb-4">
           <div className="space-y-1.5">
-            <span className="label text-[#5E6C84] block">Category Filter</span>
+            <span className="label text-[#5F6368] block">Category Filter</span>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <button
@@ -157,8 +157,8 @@ export default function ManagerLivestockPage() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-3 py-1.5 text-xs font-medium border rounded-[6px] transition-colors cursor-pointer ${
                     selectedCategory === cat
-                      ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-                      : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+                      ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+                      : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
                   }`}
                 >
                   {cat}
@@ -168,7 +168,7 @@ export default function ManagerLivestockPage() {
           </div>
 
           <div className="space-y-1.5">
-            <span className="label text-[#5E6C84] block">Status Filter</span>
+            <span className="label text-[#5F6368] block">Status Filter</span>
             <div className="flex flex-wrap gap-2">
               {statuses.map((st) => (
                 <button
@@ -177,8 +177,8 @@ export default function ManagerLivestockPage() {
                   onClick={() => setSelectedStatus(st)}
                   className={`px-3 py-1.5 text-xs font-medium border rounded-[6px] transition-colors cursor-pointer ${
                     selectedStatus === st
-                      ? "bg-[#00869B] border-[#00869B] text-white"
-                      : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+                      ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+                      : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
                   }`}
                 >
                   {st.toUpperCase()}
@@ -202,7 +202,7 @@ export default function ManagerLivestockPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+              <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                 <th className="py-4 px-6">Tag Number</th>
                 <th className="py-4 px-6">Category</th>
                 <th className="py-4 px-6">Name</th>
@@ -213,10 +213,10 @@ export default function ManagerLivestockPage() {
                 <th className="py-4 px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+            <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
               {filteredLivestock.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-[#5E6C84] italic">
+                  <td colSpan={8} className="py-8 text-center text-[#5F6368] italic">
                     No animals match the selected filters.
                   </td>
                 </tr>
@@ -224,8 +224,8 @@ export default function ManagerLivestockPage() {
                 filteredLivestock.map((item) => {
                   const ageInYears = ((Date.now() - item.dateOfBirth) / (365 * 24 * 60 * 60 * 1000)).toFixed(1);
                   return (
-                    <tr key={item._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold tracking-tight text-[#0F1B2D]">
+                    <tr key={item._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
+                      <td className="py-4 px-6 font-mono font-bold tracking-tight text-[#1A56DB]">
                         {item.tagNumber}
                       </td>
                       <td className="py-4 px-6">
@@ -242,12 +242,12 @@ export default function ManagerLivestockPage() {
                             ? "text-teal border-teal/20 bg-teal/5"
                             : item.status === "treatment"
                             ? "text-alert border-alert/20 bg-alert/5"
-                            : "text-[#5E6C84] border-[#DFE1E6] bg-white"
+                            : "text-[#5F6368] border-[#DADCE0] bg-white"
                         }`}>
                           {item.status}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-[#5E6C84] font-normal italic truncate max-w-[200px]">
+                      <td className="py-4 px-6 text-[#5F6368] font-normal italic truncate max-w-[200px]">
                         {item.notes}
                       </td>
                       <td className="py-4 px-6 text-right">
@@ -270,14 +270,14 @@ export default function ManagerLivestockPage() {
 
       {/* Registration Modal (Flat visual design) */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-[#091E42]/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0F1B2D] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
-            <div className="flex justify-between items-start border-b border-[#DFE1E6] pb-3">
-              <h2 className="text-xl font-normal text-[#0F1B2D]">Register new animal</h2>
+        <div className="fixed inset-0 bg-[#202124]/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#1A56DB] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
+            <div className="flex justify-between items-start border-b border-[#DADCE0] pb-3">
+              <h2 className="text-xl font-normal text-[#1A56DB]">Register new animal</h2>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="text-[#5E6C84] hover:text-[#0F1B2D] text-lg font-bold"
+                className="text-[#5F6368] hover:text-[#1A56DB] text-lg font-bold"
               >
                 &times;
               </button>
@@ -286,7 +286,7 @@ export default function ManagerLivestockPage() {
             <form onSubmit={handleRegisterLivestock} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="tag-number" className="label text-[#5E6C84]">Visual Tag Number</label>
+                  <label htmlFor="tag-number" className="label text-[#5F6368]">Visual Tag Number</label>
                   <input
                     type="text"
                     id="tag-number"
@@ -299,7 +299,7 @@ export default function ManagerLivestockPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="livestock-cat" className="label text-[#5E6C84]">Category Group</label>
+                  <label htmlFor="livestock-cat" className="label text-[#5F6368]">Category Group</label>
                   <select
                     id="livestock-cat"
                     value={category}
@@ -323,7 +323,7 @@ export default function ManagerLivestockPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="animal-name" className="label text-[#5E6C84]">Record Name / Identifier</label>
+                  <label htmlFor="animal-name" className="label text-[#5F6368]">Record Name / Identifier</label>
                   <input
                     type="text"
                     id="animal-name"
@@ -335,7 +335,7 @@ export default function ManagerLivestockPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="animal-breed" className="label text-[#5E6C84]">Breed / Details</label>
+                  <label htmlFor="animal-breed" className="label text-[#5F6368]">Breed / Details</label>
                   <input
                     type="text"
                     id="animal-breed"
@@ -350,7 +350,7 @@ export default function ManagerLivestockPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="animal-dob" className="label text-[#5E6C84]">Date of Birth</label>
+                  <label htmlFor="animal-dob" className="label text-[#5F6368]">Date of Birth</label>
                   <input
                     type="date"
                     id="animal-dob"
@@ -362,7 +362,7 @@ export default function ManagerLivestockPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="animal-status" className="label text-[#5E6C84]">Status</label>
+                  <label htmlFor="animal-status" className="label text-[#5F6368]">Status</label>
                   <select
                     id="animal-status"
                     value={status}
@@ -377,7 +377,7 @@ export default function ManagerLivestockPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="animal-notes" className="label text-[#5E6C84]">Administrative Notes</label>
+                <label htmlFor="animal-notes" className="label text-[#5F6368]">Administrative Notes</label>
                 <textarea
                   id="animal-notes"
                   value={notes}
@@ -387,7 +387,7 @@ export default function ManagerLivestockPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DFE1E6]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#DADCE0]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

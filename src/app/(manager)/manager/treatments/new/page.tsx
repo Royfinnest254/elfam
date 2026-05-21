@@ -62,38 +62,38 @@ export default function LogNewTreatmentPage() {
   };
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
-        <Link href="/manager/treatments" className="text-[10px] font-black text-primary hover:text-[#091E42] uppercase tracking-wider flex items-center gap-1.5 mb-4">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
+      <header className="border-b border-[#DADCE0] pb-6">
+        <Link href="/manager/treatments" className="text-[10px] font-black text-primary hover:text-[#202124] uppercase tracking-wider flex items-center gap-1.5 mb-4">
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Treatments</span>
         </Link>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#091E42]">
+        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
           Log Veterinary Medical Event
         </h1>
       </header>
 
-      <div className="max-w-xl system-card p-8 bg-white border border-[#DFE1E6] space-y-6">
+      <div className="max-w-xl system-card p-8 bg-white border border-[#DADCE0] space-y-6">
         {success && (
-          <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#006644] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
+          <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
             <Check className="h-4 w-4 shrink-0" />
             <span>Veterinary log written. Returning to Treatments list...</span>
           </div>
         )}
 
         {error && (
-          <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#BF2600] text-xs font-semibold p-4 rounded-xl">
+          <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4 rounded-xl">
             [Error] {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Select Sick Cow (Tag)</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Select Sick Cow (Tag)</label>
             <select
               value={cowId}
               onChange={(e) => setCowId(e.target.value)}
-              className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-3 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors cursor-pointer"
+              className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-3 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors cursor-pointer"
             >
               <option value="">-- Choose Cow --</option>
               {activeCows.map((c: any) => (
@@ -105,56 +105,56 @@ export default function LogNewTreatmentPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Medical Issue / Condition</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Medical Issue / Condition</label>
             <input
               type="text"
               placeholder="e.g. Mastitis, Milk Fever, Foot Rot"
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
-              className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+              className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Drug / Medicine</label>
+              <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Drug / Medicine</label>
               <input
                 type="text"
                 placeholder="e.g. Penicillin, Alamycin"
                 value={drug}
                 onChange={(e) => setDrug(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Dosage administered</label>
+              <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Dosage administered</label>
               <input
                 type="text"
                 placeholder="e.g. 20ml IM, 15ml SC"
                 value={dosage}
                 onChange={(e) => setDosage(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Milk Withholding (Days)</label>
+              <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Milk Withholding (Days)</label>
               <input
                 type="number"
                 placeholder="e.g. 4"
                 value={withholdingDays}
                 onChange={(e) => setWithholdingDays(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Administered By (Staff)</label>
+              <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Administered By (Staff)</label>
               <select
                 value={administeredBy}
                 onChange={(e) => setAdministeredBy(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-3 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors cursor-pointer"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-3 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors cursor-pointer"
               >
                 <option value="">-- Select --</option>
                 {staffMembers.map((s: any) => (
@@ -165,13 +165,13 @@ export default function LogNewTreatmentPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-[#5E6C84] ml-1 block">Operational Notes</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Operational Notes</label>
             <textarea
               rows={3}
               placeholder="Provide context or symptoms..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-[#F4F5F7] border border-[#DFE1E6] p-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+              className="w-full bg-[#F8F9FA] border border-[#DADCE0] p-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
             />
           </div>
 

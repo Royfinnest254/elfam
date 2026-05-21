@@ -103,56 +103,56 @@ export default function ManagerInventoryFlowPage() {
 
   if (feeds === undefined || vets === undefined || movements === undefined) {
     return (
-      <div className="font-mono text-xs text-[#5E6C84] uppercase tracking-widest p-8">
+      <div className="font-mono text-xs text-[#5F6368] uppercase tracking-widest p-8">
         Loading storage ledger...
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6 flex justify-between items-end">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
+      <header className="border-b border-[#DADCE0] pb-6 flex justify-between items-end">
         <div>
           <Link
             href="/manager/inventory"
-            className="text-[10px] font-black uppercase text-[#5E6C84] hover:text-primary tracking-[0.2em] flex items-center gap-1.5 mb-2"
+            className="text-[10px] font-black uppercase text-[#5F6368] hover:text-primary tracking-[0.2em] flex items-center gap-1.5 mb-2"
           >
             <ArrowLeft className="h-3 w-3" />
             <span>Storage Register</span>
           </Link>
-          <h1 className="font-sans text-2xl font-bold uppercase text-[#091E42]">
+          <h1 className="font-sans text-2xl font-bold uppercase text-[#202124]">
             Inventory Stock Movements
           </h1>
-          <p className="text-xs text-[#5E6C84] font-semibold mt-1 uppercase tracking-wider">
+          <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
             Audit trail and logging forms for crop inputs, feed silage, and medications
           </p>
         </div>
       </header>
 
       {success && (
-        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#006644] text-xs font-semibold p-4 rounded-none flex items-center gap-2">
+        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-none flex items-center gap-2">
           <Check className="h-4 w-4" />
           <span>Movement logged successfully. Inventory levels updated.</span>
         </div>
       )}
 
       {error && (
-        <div className="bg-[#FFEBE6] border border-[#FFD2C7] text-[#BF2600] text-xs font-semibold p-4 rounded-none">
+        <div className="bg-[#FFEBE6] border border-[#FFD2C7] text-[#D93025] text-xs font-semibold p-4 rounded-none">
           {error}
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Form component */}
-        <div className="lg:col-span-4 border border-[#DFE1E6] bg-white p-6 space-y-6">
-          <h3 className="text-base font-bold uppercase tracking-tight text-[#091E42] border-b border-[#DFE1E6] pb-4 flex items-center gap-2">
-            <ClipboardList className="h-4 w-4 text-[#5E6C84]" />
+        <div className="lg:col-span-4 border border-[#DADCE0] bg-white p-6 space-y-6">
+          <h3 className="text-base font-bold uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4 flex items-center gap-2">
+            <ClipboardList className="h-4 w-4 text-[#5F6368]" />
             <span>Log Stock Adjustment</span>
           </h3>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+              <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                 Department / Category
               </label>
               <select
@@ -162,7 +162,7 @@ export default function ManagerInventoryFlowPage() {
                   setSelectedItemId("");
                   setProductName("");
                 }}
-                className="w-full h-11 border border-[#DFE1E6] bg-white px-3 text-xs font-bold text-[#091E42] focus:outline-none focus:border-primary"
+                className="w-full h-11 border border-[#DADCE0] bg-white px-3 text-xs font-bold text-[#202124] focus:outline-none focus:border-primary"
               >
                 <option value="feed">Feed & Silage</option>
                 <option value="vet">Veterinary Drugs</option>
@@ -174,14 +174,14 @@ export default function ManagerInventoryFlowPage() {
             {/* Dynamic Product selection */}
             {itemType === "feed" && (
               <div>
-                <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                   Select Feed Product
                 </label>
                 <select
                   value={selectedItemId}
                   onChange={(e) => setSelectedItemId(e.target.value)}
                   required
-                  className="w-full h-11 border border-[#DFE1E6] bg-white px-3 text-xs font-bold text-[#091E42] focus:outline-none focus:border-primary"
+                  className="w-full h-11 border border-[#DADCE0] bg-white px-3 text-xs font-bold text-[#202124] focus:outline-none focus:border-primary"
                 >
                   <option value="">-- Choose Feed --</option>
                   {feeds.map((f: any) => (
@@ -195,14 +195,14 @@ export default function ManagerInventoryFlowPage() {
 
             {itemType === "vet" && (
               <div>
-                <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                   Select Medicine Product
                 </label>
                 <select
                   value={selectedItemId}
                   onChange={(e) => setSelectedItemId(e.target.value)}
                   required
-                  className="w-full h-11 border border-[#DFE1E6] bg-white px-3 text-xs font-bold text-[#091E42] focus:outline-none focus:border-primary"
+                  className="w-full h-11 border border-[#DADCE0] bg-white px-3 text-xs font-bold text-[#202124] focus:outline-none focus:border-primary"
                 >
                   <option value="">-- Choose Drug --</option>
                   {vets.map((v: any) => (
@@ -216,7 +216,7 @@ export default function ManagerInventoryFlowPage() {
 
             {(itemType === "machinery" || itemType === "general") && (
               <div>
-                <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                   Item / Part Name
                 </label>
                 <input
@@ -225,20 +225,20 @@ export default function ManagerInventoryFlowPage() {
                   placeholder="e.g. Massey Ferguson oil filter"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
-                  className="w-full h-11 border border-[#DFE1E6] bg-white px-3 text-xs font-bold text-[#091E42] focus:outline-none focus:border-primary"
+                  className="w-full h-11 border border-[#DADCE0] bg-white px-3 text-xs font-bold text-[#202124] focus:outline-none focus:border-primary"
                 />
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                   Action
                 </label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value as any)}
-                  className="w-full h-11 border border-[#DFE1E6] bg-white px-3 text-xs font-bold text-[#091E42] focus:outline-none focus:border-primary"
+                  className="w-full h-11 border border-[#DADCE0] bg-white px-3 text-xs font-bold text-[#202124] focus:outline-none focus:border-primary"
                 >
                   <option value="restock">Restock (+)</option>
                   <option value="withdrawal">Withdraw (-)</option>
@@ -246,7 +246,7 @@ export default function ManagerInventoryFlowPage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                   Quantity ({resolvedUnit})
                 </label>
                 <input
@@ -256,13 +256,13 @@ export default function ManagerInventoryFlowPage() {
                   placeholder="0.00"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full h-11 border border-[#DFE1E6] bg-white px-3 text-xs font-bold text-[#091E42] focus:outline-none focus:border-primary"
+                  className="w-full h-11 border border-[#DADCE0] bg-white px-3 text-xs font-bold text-[#202124] focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-[10px] font-black text-[#5E6C84] uppercase tracking-wider block mb-1">
+              <label className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
                 Transaction Notes
               </label>
               <textarea
@@ -271,14 +271,14 @@ export default function ManagerInventoryFlowPage() {
                 placeholder="Specify supplier, user purpose or dosage allocations..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full border border-[#DFE1E6] bg-white p-3 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary resize-none"
+                className="w-full border border-[#DADCE0] bg-white p-3 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 text-[10px] font-bold uppercase tracking-wider bg-primary hover:bg-primary-dark disabled:bg-[#DFE1E6] text-white flex items-center justify-center cursor-pointer transition-colors"
+              className="w-full h-11 text-[10px] font-bold uppercase tracking-wider bg-primary hover:bg-primary-dark disabled:bg-[#DADCE0] text-white flex items-center justify-center cursor-pointer transition-colors"
             >
               {loading ? "Logging..." : "Commit Transaction"}
             </button>
@@ -286,34 +286,34 @@ export default function ManagerInventoryFlowPage() {
         </div>
 
         {/* Ledger Table */}
-        <div className="lg:col-span-8 border border-[#DFE1E6] bg-white p-6 space-y-4">
-          <h3 className="text-base font-bold uppercase tracking-tight text-[#091E42] border-b border-[#DFE1E6] pb-4">
+        <div className="lg:col-span-8 border border-[#DADCE0] bg-white p-6 space-y-4">
+          <h3 className="text-base font-bold uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">
             Movement Log Ledger
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="border-b border-[#DFE1E6]">
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider">
+                <tr className="border-b border-[#DADCE0]">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider">
                     Timestamp
                   </th>
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider">
                     Item
                   </th>
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider">
                     Dept
                   </th>
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider text-right">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider text-right">
                     Quantity
                   </th>
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider">
                     Logged By
                   </th>
-                  <th className="pb-3 text-[10px] font-black text-[#5E6C84] uppercase tracking-wider">
+                  <th className="pb-3 text-[10px] font-black text-[#5F6368] uppercase tracking-wider">
                     Notes
                   </th>
                 </tr>
@@ -321,7 +321,7 @@ export default function ManagerInventoryFlowPage() {
               <tbody>
                 {movements.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-6 text-center text-xs italic text-[#5E6C84]">
+                    <td colSpan={7} className="py-6 text-center text-xs italic text-[#5F6368]">
                       No movement transactions logged.
                     </td>
                   </tr>
@@ -329,8 +329,8 @@ export default function ManagerInventoryFlowPage() {
                   movements.map((move: any) => {
                     const isRestock = move.type === "restock";
                     return (
-                      <tr key={move._id} className="border-b border-[#DFE1E6] hover:bg-[#F4F5F7] text-xs font-semibold">
-                        <td className="py-3 font-mono text-[11px] text-[#5E6C84]">
+                      <tr key={move._id} className="border-b border-[#DADCE0] hover:bg-[#F8F9FA] text-xs font-semibold">
+                        <td className="py-3 font-mono text-[11px] text-[#5F6368]">
                           {new Date(move.timestamp).toLocaleString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
@@ -338,12 +338,12 @@ export default function ManagerInventoryFlowPage() {
                             minute: "2-digit",
                           })}
                         </td>
-                        <td className="py-3 text-[#091E42]">{move.productName}</td>
+                        <td className="py-3 text-[#202124]">{move.productName}</td>
                         <td className="py-3 uppercase text-[10px] text-[#7A869A]">{move.itemType}</td>
                         <td className="py-3">
                           <span
                             className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider ${
-                              isRestock ? "text-[#0A7C52]" : "text-[#BF2600]"
+                              isRestock ? "text-[#0A7C52]" : "text-[#D93025]"
                             }`}
                           >
                             {isRestock ? (
@@ -354,11 +354,11 @@ export default function ManagerInventoryFlowPage() {
                             {move.type}
                           </span>
                         </td>
-                        <td className="py-3 font-mono font-bold text-right text-[#091E42]">
+                        <td className="py-3 font-mono font-bold text-right text-[#202124]">
                           {isRestock ? "+" : "-"}
                           {move.quantity} {move.unit}
                         </td>
-                        <td className="py-3 text-[#5E6C84]">{move.userName}</td>
+                        <td className="py-3 text-[#5F6368]">{move.userName}</td>
                         <td className="py-3 text-[#7A869A] max-w-[180px] truncate" title={move.notes}>
                           {move.notes}
                         </td>

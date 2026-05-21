@@ -69,13 +69,13 @@ export default function ManagerMilkingPage() {
   };
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
+      <header className="border-b border-[#DADCE0] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <span className="text-[10px] font-black uppercase text-[#5E6C84] tracking-[0.2em] block mb-2">
+          <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
             Dairy Operations
           </span>
-          <h1 className="font-sans text-2xl font-black uppercase text-[#091E42]">
+          <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
             Milking Session Yields
           </h1>
         </div>
@@ -88,28 +88,28 @@ export default function ManagerMilkingPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Entry Form */}
         <div className="lg:col-span-6 system-card p-6 space-y-6">
-          <h3 className="text-base font-black uppercase tracking-tight text-[#091E42] border-b border-[#DFE1E6] pb-4">Session Log Form</h3>
+          <h3 className="text-base font-black uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">Session Log Form</h3>
 
           {success && (
-            <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#006644] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
-              <Check className="h-4 w-4 text-[#006644]" />
+            <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
+              <Check className="h-4 w-4 text-[#1E8E3E]" />
               <span>Yield entry successfully logged into the database.</span>
             </div>
           )}
 
           {error && (
-            <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#BF2600] text-xs font-semibold p-4 rounded-xl">
+            <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4 rounded-xl">
               [Error] {error}
             </div>
           )}
 
           <form onSubmit={handleLog} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Select Cow</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Cow</label>
               <select
                 value={cowId}
                 onChange={(e) => setCowId(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
                 <option value="">-- Choose Cow tag --</option>
                 {activeCows.map((c: any) => (
@@ -122,45 +122,45 @@ export default function ManagerMilkingPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Session</label>
+                <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Session</label>
                 <select
                   value={session}
                   onChange={(e) => setSession(e.target.value as any)}
-                  className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                  className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
                 >
                   <option value="AM">AM Session</option>
                   <option value="PM">PM Session</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Date</label>
+                <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Date</label>
                 <input
                   type="date"
                   value={dateStr}
                   onChange={(e) => setDateStr(e.target.value)}
-                  className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                  className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Yield (Litres)</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Yield (Litres)</label>
               <input
                 type="number"
                 step="0.1"
                 placeholder="e.g. 14.5"
                 value={litres}
                 onChange={(e) => setLitres(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Recorded By (Staff)</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Recorded By (Staff)</label>
               <select
                 value={loggedBy}
                 onChange={(e) => setLoggedBy(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
                 <option value="">-- Select Team Member --</option>
                 {workers.map((w: any) => (
@@ -181,18 +181,18 @@ export default function ManagerMilkingPage() {
 
         {/* Informational Guidance Panel */}
         <div className="lg:col-span-6 system-card p-6 space-y-6">
-          <h3 className="text-base font-black uppercase tracking-tight text-[#091E42] border-b border-[#DFE1E6] pb-4">Operational Safeguards</h3>
-          <div className="space-y-4 text-xs font-semibold text-[#5E6C84] leading-relaxed">
+          <h3 className="text-base font-black uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">Operational Safeguards</h3>
+          <div className="space-y-4 text-xs font-semibold text-[#5F6368] leading-relaxed">
             <p>
-              <strong className="text-[#091E42]">Withholding Safeguard:</strong> Cows currently flagged under medical treatment will automatically have their yield records marked as <strong className="text-[#BF2600] uppercase">Locked</strong>.
+              <strong className="text-[#202124]">Withholding Safeguard:</strong> Cows currently flagged under medical treatment will automatically have their yield records marked as <strong className="text-[#D93025] uppercase">Locked</strong>.
             </p>
             <p>
               These lockouts protect the bulk storage tank. Contaminated yield cannot be combined with clean dispatches.
             </p>
-            <div className="border border-[#DFE1E6] p-5 bg-[#F4F5F7] rounded-[18px] space-y-2 text-xs font-semibold text-[#5E6C84]">
-              <span className="text-[10px] font-black text-[#091E42] block uppercase tracking-wider">Verification Thresholds</span>
-              <p>Daily AM Yield Average target: <span className="text-[#091E42] font-bold">12.0 L</span></p>
-              <p>Daily PM Yield Average target: <span className="text-[#091E42] font-bold">10.0 L</span></p>
+            <div className="border border-[#DADCE0] p-5 bg-[#F8F9FA] rounded-[18px] space-y-2 text-xs font-semibold text-[#5F6368]">
+              <span className="text-[10px] font-black text-[#202124] block uppercase tracking-wider">Verification Thresholds</span>
+              <p>Daily AM Yield Average target: <span className="text-[#202124] font-bold">12.0 L</span></p>
+              <p>Daily PM Yield Average target: <span className="text-[#202124] font-bold">10.0 L</span></p>
             </div>
           </div>
         </div>

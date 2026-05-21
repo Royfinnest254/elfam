@@ -60,30 +60,30 @@ export default function ManagerTasksPage() {
   };
 
   if (tasks === undefined || users === undefined) {
-    return <div className="text-xs text-[#5E6C84] uppercase font-semibold p-8 font-sans">Loading tasks ledger...</div>;
+    return <div className="text-xs text-[#5F6368] uppercase font-semibold p-8 font-sans">Loading tasks ledger...</div>;
   }
 
   return (
-    <div className="space-y-8 pb-12 text-[#091E42]">
-      <header className="border-b border-[#DFE1E6] pb-6">
+    <div className="space-y-8 pb-12 text-[#202124]">
+      <header className="border-b border-[#DADCE0] pb-6">
         <span className="label block mb-2 text-teal">
           Work Operations
         </span>
-        <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+        <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
           Tasks & Workers Checklist
         </h1>
-        <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">Assign crop/dairy duties and track staff resolutions</p>
+        <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">Assign crop/dairy duties and track staff resolutions</p>
       </header>
 
       {success && (
-        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#006644] text-xs font-semibold p-4 rounded-[4px] flex items-center gap-2">
-          <Check className="h-4 w-4 text-[#006644]" />
+        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-[4px] flex items-center gap-2">
+          <Check className="h-4 w-4 text-[#1E8E3E]" />
           <span>Task successfully dispatched to team member.</span>
         </div>
       )}
 
       {error && (
-        <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#BF2600] text-xs font-semibold p-4 rounded-[4px]">
+        <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4 rounded-[4px]">
           [Error] {error}
         </div>
       )}
@@ -91,10 +91,10 @@ export default function ManagerTasksPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Active Tasks List */}
         <div className="lg:col-span-7 system-card p-6 space-y-6 rounded-none">
-          <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">Active Tasks Register</h3>
+          <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">Active Tasks Register</h3>
 
           {tasks.length === 0 ? (
-            <p className="body-small text-[#5E6C84] italic">No tasks currently registered.</p>
+            <p className="body-small text-[#5F6368] italic">No tasks currently registered.</p>
           ) : (
             <div className="space-y-3">
               {tasks.map((task: any) => {
@@ -103,13 +103,13 @@ export default function ManagerTasksPage() {
                 
                 return (
                   <div key={task._id} className={`p-4 border rounded-none flex justify-between items-start ${
-                    isDone ? "bg-[#F4F5F7] border-[#DFE1E6] opacity-60" : "bg-white border-[#DFE1E6]"
+                    isDone ? "bg-[#F8F9FA] border-[#DADCE0] opacity-60" : "bg-white border-[#DADCE0]"
                   }`}>
                     <div className="space-y-1">
-                      <span className={`text-xs font-bold block ${isDone ? "line-through text-[#7A869A]" : "text-[#091E42]"}`}>
+                      <span className={`text-xs font-bold block ${isDone ? "line-through text-[#7A869A]" : "text-[#202124]"}`}>
                         {task.title}
                       </span>
-                      <p className="body-small text-[#5E6C84] font-medium">{task.description}</p>
+                      <p className="body-small text-[#5F6368] font-medium">{task.description}</p>
                       <div className="flex gap-4 font-mono text-[9px] text-[#7A869A] pt-1 font-semibold">
                         <span>ASSIGNEE: {assignee?.name ?? "Staff"}</span>
                         <span>DUE: {new Date(task.dueDate).toLocaleDateString("en-GB")}</span>
@@ -120,7 +120,7 @@ export default function ManagerTasksPage() {
                       <button
                         type="button"
                         onClick={() => handleResolveTask(task._id)}
-                        className="h-8 px-3 rounded-[6px] bg-white border border-[#DFE1E6] text-xs font-semibold text-[#091E42] hover:bg-[#F4F5F7] hover:border-[#B3BAC5] transition-colors cursor-pointer"
+                        className="h-8 px-3 rounded-[6px] bg-white border border-[#DADCE0] text-xs font-semibold text-[#202124] hover:bg-[#F8F9FA] hover:border-[#B3BAC5] transition-colors cursor-pointer"
                       >
                         Resolve
                       </button>
@@ -134,10 +134,10 @@ export default function ManagerTasksPage() {
 
         {/* Create Task Form */}
         <div className="lg:col-span-5 system-card p-6 space-y-6 rounded-none">
-          <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">Dispatch New Task</h3>
+          <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">Dispatch New Task</h3>
           <form onSubmit={handleCreateTask} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="task-title" className="label text-[#5E6C84] block mb-1">Task Title</label>
+              <label htmlFor="task-title" className="label text-[#5F6368] block mb-1">Task Title</label>
               <input
                 type="text"
                 id="task-title"
@@ -150,7 +150,7 @@ export default function ManagerTasksPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="task-desc" className="label text-[#5E6C84] block mb-1">Description</label>
+              <label htmlFor="task-desc" className="label text-[#5F6368] block mb-1">Description</label>
               <textarea
                 id="task-desc"
                 rows={3}
@@ -163,7 +163,7 @@ export default function ManagerTasksPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="task-assign" className="label text-[#5E6C84] block mb-1">Assign to staff</label>
+              <label htmlFor="task-assign" className="label text-[#5F6368] block mb-1">Assign to staff</label>
               <select
                 id="task-assign"
                 value={assignedTo}
@@ -179,7 +179,7 @@ export default function ManagerTasksPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="task-duedate" className="label text-[#5E6C84] block mb-1">Due Date</label>
+              <label htmlFor="task-duedate" className="label text-[#5F6368] block mb-1">Due Date</label>
               <input
                 type="date"
                 id="task-duedate"

@@ -570,6 +570,7 @@ export const addTransaction = mutation({
 export const clearDatabase = mutation({
   args: {},
   handler: async (ctx) => {
+    await enforceRole(ctx, ["manager"]);
     const tables = [
       "cows",
       "milkingSessions",

@@ -152,15 +152,15 @@ export default function ManagerInventoryPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <header className="border-b border-[#DADCE0] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <span className="label block mb-2 text-teal">
             Store & Stock Control
           </span>
-          <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+          <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
             Store Inventory
           </h1>
-          <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+          <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
             Manage stock warning thresholds and approve proposed worker inventory item additions
           </p>
         </div>
@@ -194,14 +194,14 @@ export default function ManagerInventoryPage() {
         {/* Left: Current Active Stock Levels */}
         <div className="lg:col-span-8 space-y-6">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
               Active Store Stock
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                  <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                     <th className="py-3 px-4">Product Name</th>
                     <th className="py-3 px-4">Category</th>
                     <th className="py-3 px-4 text-right">Quantity</th>
@@ -211,10 +211,10 @@ export default function ManagerInventoryPage() {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+                <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                   {activeInventory.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-[#5E6C84] italic">
+                      <td colSpan={7} className="py-8 text-center text-[#5F6368] italic">
                         No active inventory items found. Add items to get started.
                       </td>
                     </tr>
@@ -222,7 +222,7 @@ export default function ManagerInventoryPage() {
                     activeInventory.map((item) => {
                       const isLow = item.quantity <= item.lowStockThreshold;
                       return (
-                        <tr key={item._id} className={`hover:bg-[#F4F5F7]/40 transition-colors ${isLow ? "bg-[#FF5630]/5" : ""}`}>
+                        <tr key={item._id} className={`hover:bg-[#F8F9FA]/40 transition-colors ${isLow ? "bg-[#D93025]/5" : ""}`}>
                           <td className="py-3.5 px-4 font-bold">{item.productName}</td>
                           <td className="py-3.5 px-4">
                             <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5">
@@ -238,7 +238,7 @@ export default function ManagerInventoryPage() {
                                 type="number"
                                 value={editingValue}
                                 onChange={(e) => setEditingValue(e.target.value)}
-                                className="w-20 px-2 py-1 text-right text-xs border border-[#DFE1E6] rounded-[4px]"
+                                className="w-20 px-2 py-1 text-right text-xs border border-[#DADCE0] rounded-[4px]"
                                 placeholder={item.lowStockThreshold.toString()}
                               />
                             ) : (
@@ -263,7 +263,7 @@ export default function ManagerInventoryPage() {
                                   type="button"
                                   onClick={() => handleSaveThreshold(item._id)}
                                   disabled={actionLoading}
-                                  className="px-2 py-1 text-[11px] font-medium bg-[#0F1B2D] text-white rounded-[4px] cursor-pointer"
+                                  className="px-2 py-1 text-[11px] font-medium bg-[#1A56DB] text-white rounded-[4px] cursor-pointer"
                                 >
                                   Save
                                 </button>
@@ -273,7 +273,7 @@ export default function ManagerInventoryPage() {
                                     setEditingId(null);
                                     setEditingValue("");
                                   }}
-                                  className="px-2 py-1 text-[11px] font-medium border border-[#DFE1E6] rounded-[4px] cursor-pointer"
+                                  className="px-2 py-1 text-[11px] font-medium border border-[#DADCE0] rounded-[4px] cursor-pointer"
                                 >
                                   Cancel
                                 </button>
@@ -285,7 +285,7 @@ export default function ManagerInventoryPage() {
                                   setEditingId(item._id);
                                   setEditingValue(item.lowStockThreshold.toString());
                                 }}
-                                className="px-2 py-1 hover:bg-[#F4F5F7] text-[#00869B] border border-[#00869B]/20 inline-flex items-center gap-1 cursor-pointer rounded-[4px] text-[11px] font-medium"
+                                className="px-2 py-1 hover:bg-[#F8F9FA] text-[#1A56DB] border border-[#1A56DB]/20 inline-flex items-center gap-1 cursor-pointer rounded-[4px] text-[11px] font-medium"
                               >
                                 <Sliders className="h-3 w-3" />
                                 <span>Adjust Alert</span>
@@ -314,25 +314,25 @@ export default function ManagerInventoryPage() {
         {/* Right: Pending Approvals Queue */}
         <div className="lg:col-span-4 space-y-6">
           <div className="system-card p-6 space-y-6">
-            <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight">
+            <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight">
               Approval Queue
             </h3>
-            <p className="body-small text-[#5E6C84]">
+            <p className="body-small text-[#5F6368]">
               Workers register new inventory categories or products here. Review details before approving them to enter general ledger active tracking.
             </p>
 
             {pendingInventory.length === 0 ? (
-              <p className="body-small text-[#5E6C84] italic">No pending items in queue.</p>
+              <p className="body-small text-[#5F6368] italic">No pending items in queue.</p>
             ) : (
               <div className="space-y-4">
                 {pendingInventory.map((item) => (
-                  <div key={item._id} className="p-4 bg-[#F4F5F7] border border-[#DFE1E6] rounded-none space-y-3">
+                  <div key={item._id} className="p-4 bg-[#F8F9FA] border border-[#DADCE0] rounded-none space-y-3">
                     <div>
                       <span className="status-badge text-[9px] text-teal border-teal/20 bg-teal/5 block mb-1">
                         {item.category}
                       </span>
-                      <h4 className="text-xs font-bold text-[#0F1B2D]">{item.productName}</h4>
-                      <p className="body-small text-[#5E6C84] mt-1 font-medium">
+                      <h4 className="text-xs font-bold text-[#1A56DB]">{item.productName}</h4>
+                      <p className="body-small text-[#5F6368] mt-1 font-medium">
                         Unit: {item.unit} &middot; Default Alert: {item.lowStockThreshold}
                       </p>
                     </div>
@@ -351,7 +351,7 @@ export default function ManagerInventoryPage() {
                         type="button"
                         onClick={() => handleReject(item._id)}
                         disabled={actionLoading}
-                        className="flex-1 flex items-center justify-center gap-1 btn-secondary h-8 px-2 border-[#DFE1E6] text-alert hover:bg-alert/5"
+                        className="flex-1 flex items-center justify-center gap-1 btn-secondary h-8 px-2 border-[#DADCE0] text-alert hover:bg-alert/5"
                       >
                         <X className="h-3 w-3" />
                         <span>Reject</span>
@@ -367,14 +367,14 @@ export default function ManagerInventoryPage() {
 
       {/* Registration Modal (Flat visual design) */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-[#091E42]/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0F1B2D] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
-            <div className="flex justify-between items-start border-b border-[#DFE1E6] pb-3">
-              <h2 className="text-xl font-normal text-[#0F1B2D]">Register new stock item</h2>
+        <div className="fixed inset-0 bg-[#202124]/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#1A56DB] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
+            <div className="flex justify-between items-start border-b border-[#DADCE0] pb-3">
+              <h2 className="text-xl font-normal text-[#1A56DB]">Register new stock item</h2>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="text-[#5E6C84] hover:text-[#0F1B2D] text-lg font-bold"
+                className="text-[#5F6368] hover:text-[#1A56DB] text-lg font-bold"
               >
                 &times;
               </button>
@@ -382,7 +382,7 @@ export default function ManagerInventoryPage() {
 
             <form onSubmit={handleRegisterStockItem} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="product-name" className="label text-[#5E6C84]">Product Name</label>
+                <label htmlFor="product-name" className="label text-[#5F6368]">Product Name</label>
                 <input
                   type="text"
                   id="product-name"
@@ -396,7 +396,7 @@ export default function ManagerInventoryPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="item-cat" className="label text-[#5E6C84]">Category Group</label>
+                  <label htmlFor="item-cat" className="label text-[#5F6368]">Category Group</label>
                   <select
                     id="item-cat"
                     value={category}
@@ -411,7 +411,7 @@ export default function ManagerInventoryPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="item-unit" className="label text-[#5E6C84]">Measurement Unit</label>
+                  <label htmlFor="item-unit" className="label text-[#5F6368]">Measurement Unit</label>
                   <select
                     id="item-unit"
                     value={unit}
@@ -429,7 +429,7 @@ export default function ManagerInventoryPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="initial-qty" className="label text-[#5E6C84]">Initial Stock Qty</label>
+                  <label htmlFor="initial-qty" className="label text-[#5F6368]">Initial Stock Qty</label>
                   <input
                     type="number"
                     id="initial-qty"
@@ -443,7 +443,7 @@ export default function ManagerInventoryPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="stock-threshold" className="label text-[#5E6C84]">Low Stock Alert Threshold</label>
+                  <label htmlFor="stock-threshold" className="label text-[#5F6368]">Low Stock Alert Threshold</label>
                   <input
                     type="number"
                     id="stock-threshold"
@@ -457,7 +457,7 @@ export default function ManagerInventoryPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DFE1E6]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#DADCE0]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

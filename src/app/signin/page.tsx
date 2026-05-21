@@ -26,19 +26,6 @@ export default function SignInPage() {
       router.push("/");
     } catch (err: any) {
       console.error(err);
-      const errMsg = err.message || "";
-      if (flow === "signIn" && errMsg.includes("InvalidAccountId")) {
-        // Seeded account credentials don't exist yet; attempt auto-signup link
-        try {
-          await signIn("password", { email, password, flow: "signUp" });
-          router.push("/");
-          return;
-        } catch (signUpErr: any) {
-          console.error(signUpErr);
-          setError("Those credentials didn't match. Try again.");
-          return;
-        }
-      }
       setError("Those credentials didn't match. Try again.");
     } finally {
       setLoading(false);
@@ -47,7 +34,7 @@ export default function SignInPage() {
 
 
   return (
-    <div className="min-h-screen w-screen bg-[#F4F5F7] flex flex-col md:flex-row font-sans text-[#091E42] selection:bg-primary-subtle overflow-hidden">
+    <div className="min-h-screen w-screen bg-[#F8F9FA] flex flex-col md:flex-row font-sans text-[#202124] selection:bg-primary-subtle overflow-hidden">
       {/* Left side: primary background, wordmark centered */}
       <div className="hidden md:flex md:w-1/2 bg-primary items-center justify-center p-12">
         <div className="text-center space-y-4">
@@ -68,7 +55,7 @@ export default function SignInPage() {
           </h2>
 
           {error && (
-            <div className="text-[#FF5630] body-small font-medium" id="signin-error">
+            <div className="text-[#D93025] body-small font-medium" id="signin-error">
               {error}
             </div>
           )}
@@ -112,7 +99,7 @@ export default function SignInPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 label text-muted hover:text-[#091E42] px-2 py-1 cursor-pointer bg-transparent border-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 label text-muted hover:text-[#202124] px-2 py-1 cursor-pointer bg-transparent border-none"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>

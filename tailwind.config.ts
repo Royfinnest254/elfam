@@ -9,46 +9,48 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#091E42",
-        paper: "#FFFFFF",
-        "paper-2": "#F4F5F7",
-        rule: "#DFE1E6",
-        navy: "#0F1B2D",
-        teal: "#00869B",
-        gold: "#C09E5A",
-        alert: "#FF5630",
-        muted: "#5E6C84",
-        background: "#F4F5F7",
-        surface: "#FFFFFF",
+        // ── Google-style palette ────────────────────
+        ink:        "#202124",         // near-black primary text
+        paper:      "#FFFFFF",
+        "paper-2":  "#F8F9FA",         // app canvas
+        rule:       "#DADCE0",         // Google divider
+        navy:       "#1A56DB",         // deep blue primary
+        teal:       "#1A56DB",         // aliased → same blue
+        gold:       "#5F6368",         // neutralised
+        alert:      "#D93025",         // Google red
+        muted:      "#5F6368",         // Google secondary text grey
+        background: "#F8F9FA",
+        surface:    "#FFFFFF",
         primary: {
-          DEFAULT: "#0F1B2D",
-          dark: "#0A1220",
-          light: "#00869B",
-          subtle: "#E6F3F5",
+          DEFAULT: "#1A56DB",
+          dark:    "#103FA8",
+          light:   "#E8F0FE",
+          subtle:  "#E8F0FE",
         },
         accent: {
-          DEFAULT: "#091E42",
+          DEFAULT: "#1A56DB",
         },
-        success: "#36B37E",
-        warning: "#FFAB00",
-        danger: "#FF5630",
+        // ── Status ──────────────────────────────────
+        success: "#1E8E3E",
+        warning: "#E37400",
+        danger:  "#D93025",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "monospace"],
+        // Roboto loaded via next/font/google into --font-sans
+        display: ["var(--font-sans)", "Roboto", "system-ui", "sans-serif"],
+        sans:    ["var(--font-sans)", "Roboto", "system-ui", "sans-serif"],
+        mono:    ["var(--font-mono)", "Roboto Mono", "monospace"],
       },
       fontSize: {
-        display: ["32px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "900" }],
-        h1: ["24px", { lineHeight: "1.2", letterSpacing: "-0.015em", fontWeight: "900" }],
-        h2: ["18px", { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "800" }],
-        body: ["14px", { lineHeight: "1.5" }],
-        small: ["12px", { lineHeight: "1.4" }],
-        mono: ["12px", { lineHeight: "1.3" }],
+        display: ["30px", { lineHeight: "1.15", letterSpacing: "0", fontWeight: "500" }],
+        h1:      ["22px", { lineHeight: "1.3",  letterSpacing: "0", fontWeight: "500" }],
+        h2:      ["18px", { lineHeight: "1.35", letterSpacing: "0", fontWeight: "500" }],
+        body:    ["14px", { lineHeight: "1.5" }],
+        small:   ["12px", { lineHeight: "1.4" }],
+        mono:    ["12px", { lineHeight: "1.3" }],
       },
     },
   },
   plugins: [],
 };
 export default config;
-

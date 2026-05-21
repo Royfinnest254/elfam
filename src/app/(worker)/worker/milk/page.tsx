@@ -64,42 +64,42 @@ export default function WorkerMilkEntryPage() {
   };
 
   if (cows === undefined || user === undefined) {
-    return <div className="text-xs text-[#5E6C84] uppercase font-black tracking-widest p-8 font-sans">Loading data registry...</div>;
+    return <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">Loading data registry...</div>;
   }
 
   return (
-    <div className="space-y-8 font-sans text-[#091E42] pb-12">
-      <header className="border-b border-[#DFE1E6] pb-6">
-        <span className="text-[10px] font-black uppercase text-[#5E6C84] tracking-[0.2em] block mb-2">
+    <div className="space-y-8 font-sans text-[#202124] pb-12">
+      <header className="border-b border-[#DADCE0] pb-6">
+        <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
           Daily Log Portal
         </span>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#091E42]">
+        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
           Enter Daily Milk
         </h1>
-        <p className="text-xs text-[#5E6C84] font-semibold mt-1 uppercase tracking-wider">Mobile session entries for AM and PM yields</p>
+        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">Mobile session entries for AM and PM yields</p>
       </header>
 
       <div className="max-w-xl system-card p-6 space-y-6">
         {success && (
-          <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#006644] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
-            <Check className="h-4 w-4 text-[#006644]" />
+          <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] text-xs font-semibold p-4 rounded-xl flex items-center gap-2">
+            <Check className="h-4 w-4 text-[#1E8E3E]" />
             <span>Yield saved successfully.</span>
           </div>
         )}
 
         {error && (
-          <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#BF2600] text-xs font-semibold p-4 rounded-xl">
+          <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] text-xs font-semibold p-4 rounded-xl">
             [Error] {error}
           </div>
         )}
 
         <form onSubmit={handleLog} className="space-y-4">
           <div>
-            <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Select Cow</label>
+            <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Cow</label>
             <select
               value={cowId}
               onChange={(e) => setCowId(e.target.value)}
-              className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+              className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
             >
               <option value="">-- Choose Cow Tag --</option>
               {activeCows.map((c: any) => (
@@ -112,25 +112,25 @@ export default function WorkerMilkEntryPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Session</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Session</label>
               <select
                 value={session}
                 onChange={(e) => setSession(e.target.value as any)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
                 <option value="AM">AM (Morning)</option>
                 <option value="PM">PM (Evening)</option>
               </select>
             </div>
             <div>
-              <label className="block text-[10px] font-black text-[#5E6C84] mb-1.5 uppercase tracking-wider">Yield Litres</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Yield Litres</label>
               <input
                 type="number"
                 step="0.1"
                 placeholder="e.g. 12.4"
                 value={litres}
                 onChange={(e) => setLitres(e.target.value)}
-                className="w-full h-11 bg-[#F4F5F7] border border-[#DFE1E6] px-4 text-xs font-semibold text-[#091E42] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
+                className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               />
             </div>
           </div>

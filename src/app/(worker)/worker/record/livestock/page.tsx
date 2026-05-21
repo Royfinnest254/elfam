@@ -170,10 +170,10 @@ export default function WorkerRecordLivestockPage() {
   };
 
   return (
-    <div className="max-w-[640px] mx-auto p-4 space-y-6 pb-20 text-[#0F1B2D]">
+    <div className="max-w-[640px] mx-auto p-4 space-y-6 pb-20 text-[#1A56DB]">
       {/* Header */}
-      <header className="flex items-center gap-4 border-b border-[#DFE1E6] pb-4">
-        <Link href="/worker" className="p-2 hover:bg-[#F4F5F7] rounded-[6px] transition-colors border border-[#DFE1E6]">
+      <header className="flex items-center gap-4 border-b border-[#DADCE0] pb-4">
+        <Link href="/worker" className="p-2 hover:bg-[#F8F9FA] rounded-[6px] transition-colors border border-[#DADCE0]">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
@@ -199,8 +199,8 @@ export default function WorkerRecordLivestockPage() {
             }}
             className={`py-2 text-xs font-semibold border rounded-[6px] transition-colors cursor-pointer ${
               activeTab === tab
-                ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-                : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+                ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+                : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -225,7 +225,7 @@ export default function WorkerRecordLivestockPage() {
         {activeTab === "production" && (
           <form onSubmit={handleLogProduction} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="animal-select-prod" className="label text-[#5E6C84]">Select Animal / Group</label>
+              <label htmlFor="animal-select-prod" className="label text-[#5F6368]">Select Animal / Group</label>
               <select
                 id="animal-select-prod"
                 value={selectedAnimalId}
@@ -244,7 +244,7 @@ export default function WorkerRecordLivestockPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="prod-type-select" className="label text-[#5E6C84]">Yield Type</label>
+                <label htmlFor="prod-type-select" className="label text-[#5F6368]">Yield Type</label>
                 <select
                   id="prod-type-select"
                   value={prodType}
@@ -260,7 +260,7 @@ export default function WorkerRecordLivestockPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="prod-qty-input" className="label text-[#5E6C84]">Quantity</label>
+                <label htmlFor="prod-qty-input" className="label text-[#5F6368]">Quantity</label>
                 <input
                   type="number"
                   id="prod-qty-input"
@@ -275,7 +275,7 @@ export default function WorkerRecordLivestockPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="prod-notes-input" className="label text-[#5E6C84]">Operational Notes</label>
+              <label htmlFor="prod-notes-input" className="label text-[#5F6368]">Operational Notes</label>
               <textarea
                 id="prod-notes-input"
                 value={notes}
@@ -298,7 +298,7 @@ export default function WorkerRecordLivestockPage() {
         {activeTab === "health" && (
           <form onSubmit={handleLogHealth} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="animal-select-health" className="label text-[#5E6C84]">Select Affected Animal</label>
+              <label htmlFor="animal-select-health" className="label text-[#5F6368]">Select Affected Animal</label>
               <select
                 id="animal-select-health"
                 value={selectedAnimalId}
@@ -316,7 +316,7 @@ export default function WorkerRecordLivestockPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="condition-input" className="label text-[#5E6C84]">Condition / Symptoms</label>
+              <label htmlFor="condition-input" className="label text-[#5F6368]">Condition / Symptoms</label>
               <input
                 type="text"
                 id="condition-input"
@@ -330,7 +330,7 @@ export default function WorkerRecordLivestockPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="treatment-input" className="label text-[#5E6C84]">Drug / Treatment</label>
+                <label htmlFor="treatment-input" className="label text-[#5F6368]">Drug / Treatment</label>
                 <input
                   type="text"
                   id="treatment-input"
@@ -343,7 +343,7 @@ export default function WorkerRecordLivestockPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="dosage-input" className="label text-[#5E6C84]">Dosage administered</label>
+                <label htmlFor="dosage-input" className="label text-[#5F6368]">Dosage administered</label>
                 <input
                   type="text"
                   id="dosage-input"
@@ -357,7 +357,7 @@ export default function WorkerRecordLivestockPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="wh-days-input" className="label text-[#5E6C84]">Withholding Period (Days)</label>
+              <label htmlFor="wh-days-input" className="label text-[#5F6368]">Withholding Period (Days)</label>
               <input
                 type="number"
                 id="wh-days-input"
@@ -367,13 +367,13 @@ export default function WorkerRecordLivestockPage() {
                 placeholder="e.g. 3"
                 required
               />
-              <span className="mono text-[9px] text-[#FF5630] font-bold uppercase tracking-wider block mt-1">
+              <span className="mono text-[9px] text-[#D93025] font-bold uppercase tracking-wider block mt-1">
                 Yield quarantine will be enforced automatically.
               </span>
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="health-notes-input" className="label text-[#5E6C84]">Notes</label>
+              <label htmlFor="health-notes-input" className="label text-[#5F6368]">Notes</label>
               <textarea
                 id="health-notes-input"
                 value={notes}
@@ -396,7 +396,7 @@ export default function WorkerRecordLivestockPage() {
         {activeTab === "breeding" && (
           <form onSubmit={handleLogBreeding} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="animal-select-breed" className="label text-[#5E6C84]">Select Female Animal</label>
+              <label htmlFor="animal-select-breed" className="label text-[#5F6368]">Select Female Animal</label>
               <select
                 id="animal-select-breed"
                 value={selectedAnimalId}
@@ -415,7 +415,7 @@ export default function WorkerRecordLivestockPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="breed-type-select" className="label text-[#5E6C84]">Breeding Action</label>
+                <label htmlFor="breed-type-select" className="label text-[#5F6368]">Breeding Action</label>
                 <select
                   id="breed-type-select"
                   value={breedType}
@@ -430,7 +430,7 @@ export default function WorkerRecordLivestockPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="breed-status-select" className="label text-[#5E6C84]">Resulting Status</label>
+                <label htmlFor="breed-status-select" className="label text-[#5F6368]">Resulting Status</label>
                 <select
                   id="breed-status-select"
                   value={breedStatus}
@@ -447,7 +447,7 @@ export default function WorkerRecordLivestockPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="details-input" className="label text-[#5E6C84]">Breeding Details / Parameters</label>
+              <label htmlFor="details-input" className="label text-[#5F6368]">Breeding Details / Parameters</label>
               <input
                 type="text"
                 id="details-input"
@@ -460,7 +460,7 @@ export default function WorkerRecordLivestockPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="breed-notes-input" className="label text-[#5E6C84]">Notes</label>
+              <label htmlFor="breed-notes-input" className="label text-[#5F6368]">Notes</label>
               <textarea
                 id="breed-notes-input"
                 value={notes}

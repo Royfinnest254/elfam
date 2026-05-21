@@ -24,7 +24,7 @@ export default function WorkerLayout({
 
   if (user === undefined) {
     return (
-      <div className="text-xs text-[#5E6C84] uppercase font-black tracking-widest p-8 font-sans">
+      <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">
         Loading mobile tasks interface...
       </div>
     );

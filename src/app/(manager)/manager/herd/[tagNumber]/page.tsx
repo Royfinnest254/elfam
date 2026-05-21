@@ -59,7 +59,7 @@ export default function CowProfilePage() {
           <span className={`text-small font-mono font-bold uppercase px-3 py-1 border ${
             cow.status === "milking" ? "bg-success/10 text-success border-success/20" :
             cow.status === "treatment" ? "bg-alert/10 text-alert border-alert/20" :
-            "bg-[#F4F5F7] text-[#5E6C84] border-[#DFE1E6]"
+            "bg-[#F8F9FA] text-[#5F6368] border-[#DADCE0]"
           }`}>
             {cow.status}
           </span>

@@ -37,7 +37,7 @@ export default function WorkerEquipmentPage() {
 
   if (machinery === undefined || maintenanceLogs === undefined) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center text-[#6B7280] text-sm">
+      <div className="min-h-[50vh] flex items-center justify-center text-[#5F6368] text-sm">
         Loading machinery fleet...
       </div>
     );
@@ -74,15 +74,15 @@ export default function WorkerEquipmentPage() {
   return (
     <div className="space-y-8 pb-12">
       {/* Header */}
-      <header className="border-b border-[#DFE1E6] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <header className="border-b border-[#DADCE0] pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <span className="label block mb-2 text-teal">
             Fleet Operations
           </span>
-          <h1 className="text-3xl font-normal text-[#0F1B2D] tracking-tight">
+          <h1 className="text-3xl font-normal text-[#1A56DB] tracking-tight">
             Equipment &amp; Machinery
           </h1>
-          <p className="body-small text-[#5E6C84] mt-1 uppercase tracking-wider font-semibold">
+          <p className="body-small text-[#5F6368] mt-1 uppercase tracking-wider font-semibold">
             Track active machinery fleet status and log servicing details
           </p>
         </div>
@@ -110,19 +110,19 @@ export default function WorkerEquipmentPage() {
 
       {/* Fleet Table */}
       <div className="system-card p-6 space-y-4">
-        <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+        <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
           Fleet Registry — {machinery.length} Active Machines
         </h3>
         {machinery.length === 0 ? (
           <div className="py-16 text-center">
             <Tractor className="h-10 w-10 text-[#D1D5DB] mx-auto mb-3" />
-            <p className="text-sm text-[#6B7280]">No machines registered in database.</p>
+            <p className="text-sm text-[#5F6368]">No machines registered in database.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                   <th className="py-3 px-4">Machine Name</th>
                   <th className="py-3 px-4">Type</th>
                   <th className="py-3 px-4">Plate No.</th>
@@ -131,12 +131,12 @@ export default function WorkerEquipmentPage() {
                   <th className="py-3 px-4">Next Service</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+              <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                 {machinery.map((m) => (
-                  <tr key={m._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
+                  <tr key={m._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
                     <td className="py-3.5 px-4 font-bold">{m.name}</td>
                     <td className="py-3.5 px-4 capitalize">{m.type.replace("_", " ")}</td>
-                    <td className="py-3.5 px-4 font-mono text-[#5E6C84]">{m.plateNumber || "—"}</td>
+                    <td className="py-3.5 px-4 font-mono text-[#5F6368]">{m.plateNumber || "—"}</td>
                     <td className="py-3.5 px-4 capitalize">{m.fuelType}</td>
                     <td className="py-3.5 px-4">
                       <span className={`status-badge text-[9px] border uppercase ${
@@ -144,12 +144,12 @@ export default function WorkerEquipmentPage() {
                           ? "text-teal border-teal/20 bg-teal/5"
                           : m.status === "maintenance"
                           ? "text-alert border-alert/20 bg-alert/5"
-                          : "text-[#5E6C84] border-[#DFE1E6] bg-white"
+                          : "text-[#5F6368] border-[#DADCE0] bg-white"
                       }`}>
                         {m.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 mono text-[#5E6C84]">
+                    <td className="py-3.5 px-4 mono text-[#5F6368]">
                       {new Date(m.nextServiceDate).toLocaleDateString("en-GB")}
                     </td>
                   </tr>
@@ -162,16 +162,16 @@ export default function WorkerEquipmentPage() {
 
       {/* Maintenance Logs */}
       <div className="system-card p-6 space-y-4">
-        <h3 className="text-lg font-normal text-[#0F1B2D] tracking-tight border-b border-[#DFE1E6] pb-4">
+        <h3 className="text-lg font-normal text-[#1A56DB] tracking-tight border-b border-[#DADCE0] pb-4">
           Maintenance Log — {maintenanceLogs.length} Records
         </h3>
         {maintenanceLogs.length === 0 ? (
-          <div className="py-10 text-center text-sm text-[#5E6C84]">No maintenance logs recorded.</div>
+          <div className="py-10 text-center text-sm text-[#5F6368]">No maintenance logs recorded.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6] text-[10px] font-semibold uppercase tracking-wider text-[#5E6C84]">
+                <tr className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[10px] font-semibold uppercase tracking-wider text-[#5F6368]">
                   <th className="py-3 px-4">Date</th>
                   <th className="py-3 px-4">Machine</th>
                   <th className="py-3 px-4">Type</th>
@@ -180,12 +180,12 @@ export default function WorkerEquipmentPage() {
                   <th className="py-3 px-4">Performed By</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE1E6] text-xs font-medium text-[#0F1B2D]">
+              <tbody className="divide-y divide-[#DADCE0] text-xs font-medium text-[#1A56DB]">
                 {maintenanceLogs.map((log) => {
                   const machine = machinery.find((m) => m._id === log.machineryId);
                   return (
-                    <tr key={log._id} className="hover:bg-[#F4F5F7]/40 transition-colors">
-                      <td className="py-3.5 px-4 font-mono text-[#5E6C84]">
+                    <tr key={log._id} className="hover:bg-[#F8F9FA]/40 transition-colors">
+                      <td className="py-3.5 px-4 font-mono text-[#5F6368]">
                         {new Date(log.date).toLocaleDateString("en-GB")}
                       </td>
                       <td className="py-3.5 px-4 font-bold">{machine?.name ?? "Unknown"}</td>
@@ -194,11 +194,11 @@ export default function WorkerEquipmentPage() {
                           {log.type}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-normal text-[#5E6C84]">{log.description}</td>
+                      <td className="py-3.5 px-4 font-normal text-[#5F6368]">{log.description}</td>
                       <td className="py-3.5 px-4 text-right font-mono font-bold">
                         {log.cost > 0 ? `KES ${log.cost.toLocaleString()}` : "—"}
                       </td>
-                      <td className="py-3.5 px-4 font-normal text-[#5E6C84]">{log.performedBy || "—"}</td>
+                      <td className="py-3.5 px-4 font-normal text-[#5F6368]">{log.performedBy || "—"}</td>
                     </tr>
                   );
                 })}
@@ -210,14 +210,14 @@ export default function WorkerEquipmentPage() {
 
       {/* Log Maintenance Modal */}
       {maintOpen && (
-        <div className="fixed inset-0 bg-[#091E42]/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0F1B2D] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
-            <div className="flex justify-between items-start border-b border-[#DFE1E6] pb-3">
-              <h2 className="text-xl font-normal text-[#0F1B2D]">Log Equipment Maintenance</h2>
+        <div className="fixed inset-0 bg-[#202124]/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#1A56DB] w-full max-w-lg p-6 space-y-6 rounded-[6px]">
+            <div className="flex justify-between items-start border-b border-[#DADCE0] pb-3">
+              <h2 className="text-xl font-normal text-[#1A56DB]">Log Equipment Maintenance</h2>
               <button
                 type="button"
                 onClick={() => setMaintOpen(false)}
-                className="text-[#5E6C84] hover:text-[#0F1B2D] text-lg font-bold"
+                className="text-[#5F6368] hover:text-[#1A56DB] text-lg font-bold"
               >
                 &times;
               </button>
@@ -225,7 +225,7 @@ export default function WorkerEquipmentPage() {
 
             <form onSubmit={handleLogMaintenance} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="machine-select" className="label text-[#5E6C84]">Select Machine / Tool *</label>
+                <label htmlFor="machine-select" className="label text-[#5F6368]">Select Machine / Tool *</label>
                 <select
                   id="machine-select"
                   className="input-field bg-white"
@@ -242,7 +242,7 @@ export default function WorkerEquipmentPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label htmlFor="service-type" className="label text-[#5E6C84]">Maintenance Type *</label>
+                  <label htmlFor="service-type" className="label text-[#5F6368]">Maintenance Type *</label>
                   <select
                     id="service-type"
                     className="input-field bg-white"
@@ -253,7 +253,7 @@ export default function WorkerEquipmentPage() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="service-cost" className="label text-[#5E6C84]">Service Cost (KES)</label>
+                  <label htmlFor="service-cost" className="label text-[#5F6368]">Service Cost (KES)</label>
                   <input
                     type="number"
                     id="service-cost"
@@ -266,7 +266,7 @@ export default function WorkerEquipmentPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="service-perf" className="label text-[#5E6C84]">Service Provider / Staff Name</label>
+                <label htmlFor="service-perf" className="label text-[#5F6368]">Service Provider / Staff Name</label>
                 <input
                   type="text"
                   id="service-perf"
@@ -278,7 +278,7 @@ export default function WorkerEquipmentPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="service-desc" className="label text-[#5E6C84]">Service Description *</label>
+                <label htmlFor="service-desc" className="label text-[#5F6368]">Service Description *</label>
                 <input
                   type="text"
                   id="service-desc"
@@ -291,7 +291,7 @@ export default function WorkerEquipmentPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="service-notes" className="label text-[#5E6C84]">Technical Notes</label>
+                <label htmlFor="service-notes" className="label text-[#5F6368]">Technical Notes</label>
                 <textarea
                   id="service-notes"
                   className="input-field min-h-[80px] py-2"
@@ -301,7 +301,7 @@ export default function WorkerEquipmentPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#DFE1E6]">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#DADCE0]">
                 <button type="button" onClick={() => setMaintOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={maintSubmitting} className="btn-primary">
                   {maintSubmitting ? "Logging..." : "Log Maintenance"}

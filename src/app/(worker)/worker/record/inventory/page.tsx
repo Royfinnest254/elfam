@@ -124,10 +124,10 @@ export default function WorkerRecordInventoryPage() {
   };
 
   return (
-    <div className="max-w-[640px] mx-auto p-4 space-y-6 pb-20 text-[#0F1B2D]">
+    <div className="max-w-[640px] mx-auto p-4 space-y-6 pb-20 text-[#1A56DB]">
       {/* Header */}
-      <header className="flex items-center gap-4 border-b border-[#DFE1E6] pb-4">
-        <Link href="/worker" className="p-2 hover:bg-[#F4F5F7] rounded-[6px] transition-colors border border-[#DFE1E6]">
+      <header className="flex items-center gap-4 border-b border-[#DADCE0] pb-4">
+        <Link href="/worker" className="p-2 hover:bg-[#F8F9FA] rounded-[6px] transition-colors border border-[#DADCE0]">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
@@ -151,8 +151,8 @@ export default function WorkerRecordInventoryPage() {
           }}
           className={`py-2 text-xs font-semibold border rounded-[6px] transition-colors cursor-pointer ${
             activeTab === "movement"
-              ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-              : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+              ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+              : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
           }`}
         >
           Stock Movement
@@ -166,8 +166,8 @@ export default function WorkerRecordInventoryPage() {
           }}
           className={`py-2 text-xs font-semibold border rounded-[6px] transition-colors cursor-pointer ${
             activeTab === "propose"
-              ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-              : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+              ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+              : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
           }`}
         >
           Propose New Item
@@ -191,7 +191,7 @@ export default function WorkerRecordInventoryPage() {
         {activeTab === "movement" ? (
           <form onSubmit={handleLogMovement} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="inventory-item-select" className="label text-[#5E6C84]">Select Store Product</label>
+              <label htmlFor="inventory-item-select" className="label text-[#5F6368]">Select Store Product</label>
               <select
                 id="inventory-item-select"
                 value={selectedInventoryId}
@@ -210,7 +210,7 @@ export default function WorkerRecordInventoryPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="move-type-select" className="label text-[#5E6C84]">Action Type</label>
+                <label htmlFor="move-type-select" className="label text-[#5F6368]">Action Type</label>
                 <select
                   id="move-type-select"
                   value={movementType}
@@ -224,7 +224,7 @@ export default function WorkerRecordInventoryPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="move-qty-input" className="label text-[#5E6C84]">Quantity</label>
+                <label htmlFor="move-qty-input" className="label text-[#5F6368]">Quantity</label>
                 <input
                   type="number"
                   id="move-qty-input"
@@ -239,7 +239,7 @@ export default function WorkerRecordInventoryPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="move-notes" className="label text-[#5E6C84]">Usage / Delivery Notes</label>
+              <label htmlFor="move-notes" className="label text-[#5F6368]">Usage / Delivery Notes</label>
               <textarea
                 id="move-notes"
                 value={notes}
@@ -261,7 +261,7 @@ export default function WorkerRecordInventoryPage() {
         ) : (
           <form onSubmit={handleProposeItem} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="prod-name-input" className="label text-[#5E6C84]">Product Name</label>
+              <label htmlFor="prod-name-input" className="label text-[#5F6368]">Product Name</label>
               <input
                 type="text"
                 id="prod-name-input"
@@ -275,7 +275,7 @@ export default function WorkerRecordInventoryPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="category-select" className="label text-[#5E6C84]">Category Group</label>
+                <label htmlFor="category-select" className="label text-[#5F6368]">Category Group</label>
                 <select
                   id="category-select"
                   value={prodCategory}
@@ -290,7 +290,7 @@ export default function WorkerRecordInventoryPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="unit-select" className="label text-[#5E6C84]">Stock Unit</label>
+                <label htmlFor="unit-select" className="label text-[#5F6368]">Stock Unit</label>
                 <select
                   id="unit-select"
                   value={prodUnit}
@@ -308,7 +308,7 @@ export default function WorkerRecordInventoryPage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="low-threshold-input" className="label text-[#5E6C84]">Low Stock Warning Threshold</label>
+              <label htmlFor="low-threshold-input" className="label text-[#5F6368]">Low Stock Warning Threshold</label>
               <input
                 type="number"
                 id="low-threshold-input"

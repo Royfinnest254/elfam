@@ -76,10 +76,10 @@ export default function WorkerRecordCropsPage() {
   };
 
   return (
-    <div className="max-w-[640px] mx-auto p-4 space-y-6 pb-20 text-[#0F1B2D]">
+    <div className="max-w-[640px] mx-auto p-4 space-y-6 pb-20 text-[#1A56DB]">
       {/* Header */}
-      <header className="flex items-center gap-4 border-b border-[#DFE1E6] pb-4">
-        <Link href="/worker" className="p-2 hover:bg-[#F4F5F7] rounded-[6px] transition-colors border border-[#DFE1E6]">
+      <header className="flex items-center gap-4 border-b border-[#DADCE0] pb-4">
+        <Link href="/worker" className="p-2 hover:bg-[#F8F9FA] rounded-[6px] transition-colors border border-[#DADCE0]">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
@@ -105,8 +105,8 @@ export default function WorkerRecordCropsPage() {
             }}
             className={`py-2 text-xs font-semibold border rounded-[6px] transition-colors cursor-pointer ${
               activityType === type
-                ? "bg-[#0F1B2D] border-[#0F1B2D] text-white"
-                : "bg-white border-[#DFE1E6] text-[#0F1B2D] hover:bg-[#F4F5F7]"
+                ? "bg-[#1A56DB] border-[#1A56DB] text-white"
+                : "bg-white border-[#DADCE0] text-[#1A56DB] hover:bg-[#F8F9FA]"
             }`}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -130,7 +130,7 @@ export default function WorkerRecordCropsPage() {
       <div className="system-card p-6 rounded-none">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label htmlFor="block-select" className="label text-[#5E6C84]">Select Crop Block / Field</label>
+            <label htmlFor="block-select" className="label text-[#5F6368]">Select Crop Block / Field</label>
             <select
               id="block-select"
               value={selectedBlockId}
@@ -150,7 +150,7 @@ export default function WorkerRecordCropsPage() {
           {activityType === "application" && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="prod-applied-input" className="label text-[#5E6C84]">Chemical / Inputs Applied</label>
+                <label htmlFor="prod-applied-input" className="label text-[#5F6368]">Chemical / Inputs Applied</label>
                 <input
                   type="text"
                   id="prod-applied-input"
@@ -163,7 +163,7 @@ export default function WorkerRecordCropsPage() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="rate-input" className="label text-[#5E6C84]">Application Rate</label>
+                <label htmlFor="rate-input" className="label text-[#5F6368]">Application Rate</label>
                 <input
                   type="text"
                   id="rate-input"
@@ -179,7 +179,7 @@ export default function WorkerRecordCropsPage() {
 
           {activityType === "harvesting" && (
             <div className="space-y-1">
-              <label htmlFor="qty-harvested-input" className="label text-[#5E6C84]">Quantity Harvested (Tonnes)</label>
+              <label htmlFor="qty-harvested-input" className="label text-[#5F6368]">Quantity Harvested (Tonnes)</label>
               <input
                 type="number"
                 id="qty-harvested-input"
@@ -194,7 +194,7 @@ export default function WorkerRecordCropsPage() {
           )}
 
           <div className="space-y-1">
-            <label htmlFor="activity-notes" className="label text-[#5E6C84]">Activity Notes / Details</label>
+            <label htmlFor="activity-notes" className="label text-[#5F6368]">Activity Notes / Details</label>
             <textarea
               id="activity-notes"
               value={notes}
