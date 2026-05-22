@@ -8,24 +8,24 @@ import { getFarmClock } from "@/lib/farmClock";
 
 export default function ManagerWithholdingPage() {
   const { now } = getFarmClock();
-  const activeWithholdings = useQuery(api.cows.getActiveWithholdings, { now });
-  const healCowMutation = useMutation(api.records.healCow);
+  const activeWithholdings = useQuery(api.livestock.getActiveWithholdings, { now });
+  const healLivestockMutation = useMutation(api.records.healLivestock);
 
-  const [healingCowId, setHealingCowId] = useState<string | null>(null);
+  const [healingLivestockId, setHealingLivestockId] = useState<string | null>(null);
   const [healNotes, setHealNotes] = useState("");
   const [healing, setHealing] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const handleHeal = async (e: React.FormEvent, cowId: string, tagNumber: string) => {
+  const handleHeal = async (e: React.FormEvent, livestockId: string, tagNumber: string) => {
     e.preventDefault();
     setHealing(true);
     try {
-      await healCowMutation({
-        cowId: cowId as any,
-        notes: healNotes.trim() || "Cow cleared by supervisor. Withholding override — milking resumed.",
+      await healLivestockMutation({
+        livestockId: livestockId as any,
+        notes: healNotes.trim() || "Animal cleared by supervisor. Withholding override — milking resumed.",
       });
       setSuccessMsg(`VERIFIED: ${tagNumber} cleared for milking.`);
-      setHealingCowId(null);
+      setHealingLivestockId(null);
       setHealNotes("");
       setTimeout(() => setSuccessMsg(null), 4000);
     } catch (err: any) {
@@ -49,7 +49,7 @@ export default function ManagerWithholdingPage() {
           Milk Safety Warnings List
         </h1>
         <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
-          Cows with active drug withdrawals. Milk must NOT enter the main bulk tank.
+          Animals under active drug withdrawal safety lockouts. Milk must NOT enter the main bulk tank.
         </p>
       </header>
 
@@ -66,7 +66,7 @@ export default function ManagerWithholdingPage() {
           <div className="space-y-1">
             <h4 className="text-[10px] font-black uppercase text-[#1E8E3E] tracking-wider">All milk clean</h4>
             <p className="text-xs font-semibold text-[#1E8E3E] opacity-80">
-              Zero cows currently flagged under active medical withholding lockdowns.
+              Zero animals currently flagged under active medical withholding lockdowns.
             </p>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function ManagerWithholdingPage() {
             <div className="space-y-1">
               <h4 className="text-[10px] font-black uppercase text-[#D93025] tracking-wider">Lockout Safeguard Active</h4>
               <p className="text-xs font-semibold text-[#D93025] opacity-80">
-                {activeWithholdings.length} cows are currently under medication withdrawal periods. Check and lock their daily yield buckets during PM and AM milking sessions.
+                {activeWithholdings.length} animals/groups are currently under medication withdrawal periods. Check and lock their daily yield buckets during PM and AM milking sessions.
               </p>
             </div>
           </div>
@@ -87,8 +87,9 @@ export default function ManagerWithholdingPage() {
               <table className="w-full text-left text-xs divide-y divide-[#DADCE0]">
                 <thead>
                   <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider bg-[#F8F9FA]">
-                    <th className="p-4">Cow Tag</th>
-                    <th className="p-4">Cow Name</th>
+                    <th className="p-4">Animal Tag / Group</th>
+                    <th className="p-4">Name / ID</th>
+                    <th className="p-4">Species / Type</th>
                     <th className="p-4">Condition Treated</th>
                     <th className="p-4">Medicine Used</th>
                     <th className="p-4">Safety Date (End)</th>
@@ -97,15 +98,24 @@ export default function ManagerWithholdingPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#DADCE0] font-medium text-[#202124]">
-                  {activeWithholdings.map(({ cow, treatment }: { cow: any; treatment: any }) => {
+                  {activeWithholdings.map((item: any) => {
+                    const treatment = item.treatment;
+                    const isGroup = item.type === "group";
+                    const target = isGroup ? item.group : item.livestock;
+                    if (!target) return null;
+
+                    const tagNumber = isGroup ? "GROUP" : target.tagNumber;
+                    const name = target.name;
+                    const typeLabel = isGroup ? "Group" : target.species;
                     const timeLeftMs = treatment.withholdingUntil - now;
                     const daysRemaining = Math.ceil(timeLeftMs / (1000 * 60 * 60 * 24));
 
                     return (
-                      <React.Fragment key={cow._id}>
+                      <React.Fragment key={treatment._id}>
                         <tr className="hover:bg-[#F8F9FA]/50 transition-colors">
-                          <td className="p-4 font-mono font-bold text-primary">{cow.tagNumber}</td>
-                          <td className="p-4 font-bold">{cow.name}</td>
+                          <td className="p-4 font-mono font-bold text-primary">{tagNumber}</td>
+                          <td className="p-4 font-bold">{name}</td>
+                          <td className="p-4 text-[10px] uppercase font-semibold text-[#5F6368]">{typeLabel}</td>
                           <td className="p-4">{treatment.condition}</td>
                           <td className="p-4 font-bold">{treatment.drugAdministered}</td>
                           <td className="p-4 font-mono text-[#D93025] font-bold">
@@ -117,24 +127,28 @@ export default function ManagerWithholdingPage() {
                             </span>
                           </td>
                           <td className="p-4">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setHealingCowId(healingCowId === cow._id ? null : cow._id);
-                                setHealNotes("");
-                              }}
-                              className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#ABF5D1] bg-[#E3FCEF] hover:bg-[#C6F6D5] text-[#1E8E3E] flex items-center gap-1 transition-colors cursor-pointer"
-                            >
-                              <ShieldCheck className="h-3 w-3" />
-                              Heal
-                            </button>
+                            {!isGroup ? (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setHealingLivestockId(healingLivestockId === target._id ? null : target._id);
+                                  setHealNotes("");
+                                }}
+                                className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#ABF5D1] bg-[#E3FCEF] hover:bg-[#C6F6D5] text-[#1E8E3E] flex items-center gap-1 transition-colors cursor-pointer"
+                              >
+                                <ShieldCheck className="h-3 w-3" />
+                                Heal
+                              </button>
+                            ) : (
+                              <span className="text-[10px] text-[#5F6368] italic font-semibold">Automatic Lock</span>
+                            )}
                           </td>
                         </tr>
-                        {healingCowId === cow._id && (
+                        {!isGroup && healingLivestockId === target._id && (
                           <tr>
-                            <td colSpan={7} className="p-0">
+                            <td colSpan={8} className="p-0">
                               <form
-                                onSubmit={(e) => handleHeal(e, cow._id, cow.tagNumber)}
+                                onSubmit={(e) => handleHeal(e, target._id, target.tagNumber)}
                                 className="bg-[#E3FCEF]/40 border-t border-[#ABF5D1] p-4 flex flex-wrap items-end gap-3"
                               >
                                 <div className="flex-1 min-w-[240px]">
@@ -159,7 +173,7 @@ export default function ManagerWithholdingPage() {
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => setHealingCowId(null)}
+                                  onClick={() => setHealingLivestockId(null)}
                                   className="h-9 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#DADCE0] bg-white hover:bg-[#F8F9FA] text-[#5F6368] transition-colors cursor-pointer"
                                 >
                                   Cancel

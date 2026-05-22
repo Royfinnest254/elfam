@@ -9,7 +9,6 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as cows from "../cows.js";
 import type * as http from "../http.js";
 import type * as livestock from "../livestock.js";
 import type * as records from "../records.js";
@@ -24,7 +23,6 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  cows: typeof cows;
   http: typeof http;
   livestock: typeof livestock;
   records: typeof records;

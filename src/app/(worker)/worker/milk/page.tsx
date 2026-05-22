@@ -97,12 +97,12 @@ function WithholdingBanner({ message }: { message: string }) {
 /* ── Main Page ──────────────────────────────────────────────────────────── */
 export default function WorkerMilkEntryPage() {
   const user = useQuery(api.users.viewer);
-  const cows = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const now = Date.now();
-  const activeWithholdings = useQuery(api.cows.getActiveWithholdings, { now });
+  const activeWithholdings = useQuery(api.livestock.getActiveWithholdings, { now });
   const logMilkingMutation = useMutation(api.records.logMilkingSession);
 
-  const [cowId, setCowId] = useState("");
+  const [livestockId, setLivestockId] = useState("");
   const [session, setSession] = useState<"AM" | "PM">("AM");
   const [litres, setLitres] = useState("");
   const [tagSearch, setTagSearch] = useState("");
@@ -113,54 +113,56 @@ export default function WorkerMilkEntryPage() {
   const [withholdingAlert, setWithholdingAlert] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const activeCows = useMemo(
-    () => cows?.filter((c: any) => c.status === "milking" || c.status === "treatment") ?? [],
-    [cows]
+  const activeLivestock = useMemo(
+    () => livestock?.filter((c: any) => c.status === "milking" || c.status === "treatment") ?? [],
+    [livestock]
   );
 
-  // Build withholding map keyed by cowId
+  // Build withholding map keyed by livestockId
   const withholdingMap = useMemo(() => {
     const map = new Map<string, any>();
     activeWithholdings?.forEach((w: any) => {
-      map.set(w.cow._id, w);
+      if (w.type === "individual" && w.livestock) {
+        map.set(w.livestock._id, w);
+      }
     });
     return map;
   }, [activeWithholdings]);
 
-  // Filtered cows for tag search
-  const filteredCows = useMemo(() => {
-    if (!tagSearch.trim()) return activeCows;
+  // Filtered animals for tag search
+  const filteredLivestock = useMemo(() => {
+    if (!tagSearch.trim()) return activeLivestock;
     const q = tagSearch.toUpperCase();
-    return activeCows.filter(
+    return activeLivestock.filter(
       (c: any) =>
         c.tagNumber.toUpperCase().includes(q) ||
         c.name.toUpperCase().includes(q)
     );
-  }, [activeCows, tagSearch]);
+  }, [activeLivestock, tagSearch]);
 
-  const selectedCow = useMemo(
-    () => cows?.find((c: any) => c._id === cowId) ?? null,
-    [cows, cowId]
+  const selectedLivestock = useMemo(
+    () => livestock?.find((c: any) => c._id === livestockId) ?? null,
+    [livestock, livestockId]
   );
 
-  // Check if selected cow is under withholding
-  const selectedWithholding = cowId ? withholdingMap.get(cowId) : null;
+  // Check if selected animal is under withholding
+  const selectedWithholding = livestockId ? withholdingMap.get(livestockId) : null;
 
-  const handleSelectCow = (id: string) => {
-    setCowId(id);
+  const handleSelectLivestock = (id: string) => {
+    setLivestockId(id);
     setWithholdingAlert(null);
     setError(null);
     setSuccess(false);
     setLitres("");
-    // Check withholding immediately on cow selection
+    // Check withholding immediately on selection
     const wh = withholdingMap.get(id);
     if (wh) {
-      const cow = cows?.find((c: any) => c._id === id);
+      const animal = livestock?.find((c: any) => c._id === id);
       const d = new Date(wh.treatment.withholdingUntil);
       const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       const dateStr = `${d.getDate()} ${months[d.getMonth()]}`;
       setWithholdingAlert(
-        `${cow?.tagNumber ?? "EL-?"} ${cow?.name ?? ""} — milk withheld until ${dateStr}. Do not add to bulk tank.`
+        `${animal?.tagNumber ?? "EL-?"} ${animal?.name ?? ""} — milk withheld until ${dateStr}. Do not add to bulk tank.`
       );
     }
   };
@@ -170,8 +172,8 @@ export default function WorkerMilkEntryPage() {
     setError(null);
     setSuccess(false);
 
-    if (!cowId || !litres || !user || user === null) {
-      setError("Please select a cow and enter the yield amount.");
+    if (!livestockId || !litres || !user || user === null) {
+      setError("Please select an animal and enter the yield amount.");
       return;
     }
 
@@ -181,14 +183,14 @@ export default function WorkerMilkEntryPage() {
       return;
     }
 
-    const cow = cows?.find((c: any) => c._id === cowId);
-    if (!cow) return;
+    const animal = livestock?.find((c: any) => c._id === livestockId);
+    if (!animal) return;
 
     setSubmitting(true);
     try {
-      const flagged = cow.status === "treatment";
+      const flagged = animal.status === "treatment";
       const result = await logMilkingMutation({
-        cowId: cowId as any,
+        livestockId: livestockId as any,
         session,
         date: new Date().toISOString().split("T")[0],
         litres: litresNum,
@@ -202,12 +204,12 @@ export default function WorkerMilkEntryPage() {
       } else {
         setSuccess(true);
         setSuccessMsg(
-          `VERIFIED: ${cow.tagNumber} (${cow.name}) — ${session} yield of ${litresNum}L committed to bulk tank ledger.`
+          `VERIFIED: ${animal.tagNumber} (${animal.name}) — ${session} yield of ${litresNum}L committed to bulk tank ledger.`
         );
-        setTimeout(() => setSuccess(false), 4000);
+        setTimeout(() => setSuccessMsg(""), 4000);
       }
       setLitres("");
-      setCowId("");
+      setLivestockId("");
       setTagSearch("");
       setWithholdingAlert(null);
     } catch (e: any) {
@@ -217,7 +219,7 @@ export default function WorkerMilkEntryPage() {
     }
   };
 
-  if (cows === undefined || user === undefined || user === null || activeWithholdings === undefined) {
+  if (livestock === undefined || user === undefined || user === null || activeWithholdings === undefined) {
     return (
       <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">
         Loading data registry...
@@ -240,10 +242,10 @@ export default function WorkerMilkEntryPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        {/* Left: Cow Selector */}
+        {/* Left: Animal Selector */}
         <div className="system-card p-5 space-y-4">
           <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#5F6368] border-b border-[#DADCE0] pb-3">
-            1 — Select Cow
+            1 — Select Animal
           </h2>
 
           {/* Tag Search */}
@@ -260,21 +262,21 @@ export default function WorkerMilkEntryPage() {
             />
           </div>
 
-          {/* Cow List */}
+          {/* Animal List */}
           <div className="max-h-64 overflow-y-auto border border-[#DADCE0] divide-y divide-[#DADCE0] custom-scrollbar">
-            {filteredCows.length === 0 ? (
+            {filteredLivestock.length === 0 ? (
               <p className="p-4 text-xs text-[#5F6368] italic">
-                No active cows match your search.
+                No active animals match your search.
               </p>
             ) : (
-              filteredCows.map((c: any) => {
+              filteredLivestock.map((c: any) => {
                 const isWithholding = withholdingMap.has(c._id);
-                const isSelected = cowId === c._id;
+                const isSelected = livestockId === c._id;
                 return (
                   <button
                     key={c._id}
                     type="button"
-                    onClick={() => handleSelectCow(c._id)}
+                    onClick={() => handleSelectLivestock(c._id)}
                     className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer
                       ${isSelected
                         ? "bg-[#E8F0FE] border-l-4 border-[#1A56DB]"
@@ -285,7 +287,7 @@ export default function WorkerMilkEntryPage() {
                   >
                     <div>
                       <span className="text-xs font-black text-[#202124] block">
-                        {c.tagNumber}
+                        {c.tagNumber} ({c.species})
                         {isWithholding && (
                           <span className="ml-2 text-[9px] font-black text-[#D93025] uppercase tracking-widest bg-[#FFEBE6] px-1.5 py-0.5 border border-[#FFBDAD]">
                             WITHHELD
@@ -341,13 +343,13 @@ export default function WorkerMilkEntryPage() {
 
           {/* Live Display */}
           <div className="bg-[#F8F9FA] border border-[#DADCE0] px-6 py-4 text-center">
-            {selectedCow ? (
+            {selectedLivestock ? (
               <p className="text-[10px] font-black uppercase tracking-widest text-[#5F6368] mb-1">
-                {selectedCow.tagNumber} · {selectedCow.name} · {session}
+                {selectedLivestock.tagNumber} · {selectedLivestock.name} · {session}
               </p>
             ) : (
               <p className="text-[10px] font-black uppercase tracking-widest text-[#DADCE0] mb-1">
-                Select a cow first
+                Select an animal first
               </p>
             )}
             <div className="font-mono text-5xl font-black text-[#202124] tracking-tight leading-none">
@@ -383,7 +385,7 @@ export default function WorkerMilkEntryPage() {
           <form onSubmit={handleLog}>
             <button
               type="submit"
-              disabled={submitting || !cowId || !litres}
+              disabled={submitting || !livestockId || !litres}
               className="w-full btn-primary h-14 text-[11px] rounded-none mt-2 uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {submitting

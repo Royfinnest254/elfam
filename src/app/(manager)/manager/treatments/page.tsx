@@ -9,11 +9,11 @@ import { getFarmClock } from "@/lib/farmClock";
 
 export default function ManagerTreatmentsPage() {
   const treatments = useQuery(api.records.listAllTreatments, {}); // empty args lists all
-  const cows = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const users = useQuery(api.users.list);
   const { now: simNow } = getFarmClock();
 
-  if (treatments === undefined || cows === undefined || users === undefined) {
+  if (treatments === undefined || livestock === undefined || users === undefined) {
     return <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">Loading medical logs...</div>;
   }
 
@@ -46,7 +46,7 @@ export default function ManagerTreatmentsPage() {
               <thead>
                 <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider bg-[#F8F9FA]">
                   <th className="p-4">Date</th>
-                  <th className="p-4">Cow Tag</th>
+                  <th className="p-4">Animal Tag</th>
                   <th className="p-4">Medical Issue</th>
                   <th className="p-4">Drug Used</th>
                   <th className="p-4">Dosage</th>
@@ -56,13 +56,13 @@ export default function ManagerTreatmentsPage() {
               </thead>
               <tbody className="divide-y divide-[#DADCE0] font-medium text-[#202124]">
                 {treatments.map((t: any) => {
-                  const cow = cows.find((c: any) => c._id === t.cowId);
+                  const animal = livestock.find((c: any) => c._id === (t.livestockId || t.cowId));
                   const isActive = t.withholdingUntil > simNow;
                   
                   return (
                     <tr key={t._id} className="hover:bg-[#F8F9FA]/50 transition-colors">
                       <td className="p-4 font-mono text-[#5F6368]">{new Date(t.date).toLocaleDateString("en-GB")}</td>
-                      <td className="p-4 font-bold font-mono text-primary">{cow?.tagNumber ?? "Unknown"}</td>
+                      <td className="p-4 font-bold font-mono text-primary">{animal ? `${animal.tagNumber} (${animal.name} - ${animal.species})` : "Unknown"}</td>
                       <td className="p-4 font-bold">{t.condition}</td>
                       <td className="p-4">{t.drugAdministered}</td>
                       <td className="p-4 font-mono">{t.dosage}</td>

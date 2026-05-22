@@ -9,12 +9,12 @@ import Link from "next/link";
 export default function ManagerIncidentsPage() {
   const user = useQuery(api.users.viewer);
   const incidents = useQuery(api.records.listIncidents);
-  const cows = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const users = useQuery(api.users.list);
   const addIncidentMutation = useMutation(api.records.addIncident);
   const updateIncidentStatusMutation = useMutation(api.records.updateIncidentStatus);
   const logTreatmentMutation = useMutation(api.records.logTreatment);
-  const healCowMutation = useMutation(api.records.healCow);
+  const healCowMutation = useMutation(api.records.healCow); // Backend uses this name or healLivestock; both work now
 
   // New incident form state
   const [title, setTitle] = useState("");
@@ -34,7 +34,7 @@ export default function ManagerIncidentsPage() {
 
   // Treatment inline form state
   const [treatingIncidentId, setTreatingIncidentId] = useState<string | null>(null);
-  const [treatCowId, setTreatCowId] = useState("");
+  const [treatLivestockId, setTreatLivestockId] = useState("");
   const [treatCondition, setTreatCondition] = useState("");
   const [treatDrug, setTreatDrug] = useState("");
   const [treatDosage, setTreatDosage] = useState("");
@@ -50,11 +50,11 @@ export default function ManagerIncidentsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const cowMap = useMemo(() => {
+  const livestockMap = useMemo(() => {
     const m = new Map<string, any>();
-    cows?.forEach((c: any) => m.set(c._id, c));
+    livestock?.forEach((l: any) => m.set(l._id, l));
     return m;
-  }, [cows]);
+  }, [livestock]);
 
   const staffMembers = useMemo(
     () => users?.filter((u: any) => u.role === "manager" || u.role === "worker") ?? [],
@@ -104,13 +104,13 @@ export default function ManagerIncidentsPage() {
   const handleLogTreatment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!treatingIncidentId) return;
-    if (!treatCowId || !treatCondition || !treatDrug || !treatDosage || !treatWhDays || !treatAdminBy) {
+    if (!treatLivestockId || !treatCondition || !treatDrug || !treatDosage || !treatWhDays || !treatAdminBy) {
       showMsg("Please fill all treatment fields.", true); return;
     }
     setLoading(true);
     try {
       await logTreatmentMutation({
-        cowId: treatCowId as any,
+        livestockId: treatLivestockId as any,
         incidentId: treatingIncidentId as any,
         date: Date.now(),
         condition: treatCondition.trim(),
@@ -120,34 +120,45 @@ export default function ManagerIncidentsPage() {
         administeredBy: treatAdminBy as any,
         notes: treatNotes.trim(),
       });
-      showMsg("VERIFIED: Treatment logged. Incident status updated to Investigating. Milk withholding enforced.");
+      showMsg("VERIFIED: Treatment logged. Incident status updated to Investigating. Withholding period enforced.");
       setTreatingIncidentId(null);
-      setTreatCowId(""); setTreatCondition(""); setTreatDrug("");
+      setTreatLivestockId(""); setTreatCondition(""); setTreatDrug("");
       setTreatDosage(""); setTreatWhDays(""); setTreatAdminBy(""); setTreatNotes("");
     } catch (err: any) {
       showMsg(`Treatment failed: ${err.message}`, true);
     } finally { setLoading(false); }
   };
 
-  const handleHealCow = async (e: React.FormEvent, inc: any) => {
+  const handleHealLivestock = async (e: React.FormEvent, inc: any) => {
     e.preventDefault();
     if (!user || user === null) { showMsg("Not authenticated.", true); return; }
-    if (!inc.cowId) { showMsg("No cow linked to this incident.", true); return; }
+    if (!inc.livestockId) { showMsg("No animal linked to this incident.", true); return; }
     setLoading(true);
     try {
       await healCowMutation({
-        cowId: inc.cowId as any,
+        livestockId: inc.livestockId as any,
         incidentId: inc._id as any,
-        notes: healNotes.trim() || "Cow verified healed by supervisor. Cleared for milking.",
+        notes: healNotes.trim() || "Animal verified healed by supervisor.",
       });
-      showMsg(`VERIFIED: Cow ${cowMap.get(inc.cowId)?.tagNumber ?? ""} cleared for milking. Incident resolved.`);
+      showMsg(`VERIFIED: Animal ${livestockMap.get(inc.livestockId)?.tagNumber ?? ""} marked healed. Incident resolved.`);
       setHealingIncidentId(null); setHealNotes("");
     } catch (err: any) {
       showMsg(`Heal failed: ${err.message}`, true);
     } finally { setLoading(false); }
   };
 
-  if (incidents === undefined || cows === undefined) {
+  const getSpeciesEmoji = (species?: string) => {
+    if (!species) return "🐾";
+    switch (species) {
+      case "cattle": return "🐄";
+      case "goat": return "🐐";
+      case "sheep": return "🐑";
+      case "pig": return "🐖";
+      default: return "🐾";
+    }
+  };
+
+  if (incidents === undefined || livestock === undefined) {
     return (
       <div className="font-mono text-xs text-[#5F6368] uppercase tracking-widest p-8">
         Loading incident register...
@@ -325,7 +336,7 @@ export default function ManagerIncidentsPage() {
                 const isMedium = inc.severity === "medium";
                 const isResolved = inc.status === "resolved";
                 const isInvestigating = inc.status === "investigating";
-                const linkedCow = inc.cowId ? cowMap.get(inc.cowId) : null;
+                const linkedLivestock = inc.livestockId ? livestockMap.get(inc.livestockId) : null;
 
                 return (
                   <div
@@ -356,9 +367,9 @@ export default function ManagerIncidentsPage() {
                           <span className="text-[10px] uppercase font-bold text-[#7A869A]">
                             {inc.department}
                           </span>
-                          {linkedCow && (
+                          {linkedLivestock && (
                             <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 border bg-[#F8F9FA] border-[#DADCE0] text-[#5F6368]">
-                              🐄 {linkedCow.tagNumber} — {linkedCow.name}
+                              {getSpeciesEmoji(linkedLivestock.species)} {linkedLivestock.tagNumber} — {linkedLivestock.name}
                             </span>
                           )}
                         </div>
@@ -407,7 +418,7 @@ export default function ManagerIncidentsPage() {
                       <div className="flex flex-wrap gap-2 pt-1">
                         {/* Standard triage update */}
                         <button
-                          type="button"
+                           type="button"
                           onClick={() => {
                             setUpdatingIncidentId(updatingIncidentId === inc._id ? null : inc._id);
                             setTreatingIncidentId(null);
@@ -421,15 +432,15 @@ export default function ManagerIncidentsPage() {
                           Triage Status
                         </button>
 
-                        {/* Log Treatment (only if dairy incident with linked cow) */}
-                        {inc.department === "dairy" && inc.cowId && !isInvestigating && (
+                        {/* Log Treatment (only if dairy incident with linked animal) */}
+                        {inc.department === "dairy" && inc.livestockId && !isInvestigating && (
                           <button
                             type="button"
                             onClick={() => {
                               setTreatingIncidentId(treatingIncidentId === inc._id ? null : inc._id);
                               setUpdatingIncidentId(null);
                               setHealingIncidentId(null);
-                              setTreatCowId(inc.cowId || "");
+                              setTreatLivestockId(inc.livestockId || "");
                             }}
                             className="h-8 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#DADCE0] bg-white hover:bg-[#FFEBE6] text-[#D93025] flex items-center gap-1.5 transition-colors cursor-pointer"
                           >
@@ -438,8 +449,8 @@ export default function ManagerIncidentsPage() {
                           </button>
                         )}
 
-                        {/* Heal Cow (only if investigating, dairy, cow linked) */}
-                        {isInvestigating && linkedCow && (
+                        {/* Heal Animal (only if investigating, dairy, animal linked) */}
+                        {isInvestigating && linkedLivestock && (
                           <button
                             type="button"
                             onClick={() => {
@@ -451,7 +462,7 @@ export default function ManagerIncidentsPage() {
                             className="h-8 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#ABF5D1] bg-[#E3FCEF] hover:bg-[#C6F6D5] text-[#1E8E3E] flex items-center gap-1.5 transition-colors cursor-pointer"
                           >
                             <ShieldCheck className="h-3.5 w-3.5" />
-                            Resolve — Heal Cow
+                            Resolve — Heal Animal
                           </button>
                         )}
                       </div>
@@ -509,9 +520,9 @@ export default function ManagerIncidentsPage() {
                           <Stethoscope className="h-3.5 w-3.5" />
                           Administer Veterinary Treatment
                         </h5>
-                        {linkedCow && (
+                        {linkedLivestock && (
                           <p className="text-[10px] font-bold text-[#202124]">
-                            Cow: {linkedCow.tagNumber} — {linkedCow.name} ({linkedCow.breed})
+                            Animal: {linkedLivestock.tagNumber} — {linkedLivestock.name} ({linkedLivestock.breed})
                           </p>
                         )}
                         <div className="grid grid-cols-2 gap-3">
@@ -575,14 +586,14 @@ export default function ManagerIncidentsPage() {
 
                     {/* Heal Form */}
                     {healingIncidentId === inc._id && (
-                      <form onSubmit={(e) => handleHealCow(e, inc)} className="bg-[#E3FCEF]/40 border border-[#ABF5D1] p-4 space-y-3">
+                      <form onSubmit={(e) => handleHealLivestock(e, inc)} className="bg-[#E3FCEF]/40 border border-[#ABF5D1] p-4 space-y-3">
                         <h5 className="text-[10px] font-black uppercase text-[#1E8E3E] tracking-wider flex items-center gap-1.5">
                           <ShieldCheck className="h-3.5 w-3.5" />
-                          Supervisor Heal — Clear for Milking
+                          Supervisor Heal — Clear animal for milking
                         </h5>
-                        {linkedCow && (
+                        {linkedLivestock && (
                           <p className="text-[10px] font-bold text-[#202124]">
-                            Cow: {linkedCow.tagNumber} — {linkedCow.name} · Current status: {linkedCow.status}
+                            Animal: {linkedLivestock.tagNumber} — {linkedLivestock.name} · Current status: {linkedLivestock.status}
                           </p>
                         )}
                         <div>

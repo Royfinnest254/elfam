@@ -10,7 +10,7 @@ import { getFarmClock } from "@/lib/farmClock";
 export default function SupervisorReportsPage() {
   const reportRef = useRef<HTMLDivElement>(null);
   const { now, yesterdayDateStr } = getFarmClock();
-  const cows = useQuery(api.cows.getHerdDashboard, { now, yesterdayDateStr });
+  const livestockDashboard = useQuery(api.livestock.getLivestockDashboard, { now, yesterdayDateStr });
   const fields = useQuery(api.records.listFields);
 
   // Parameter states
@@ -19,9 +19,11 @@ export default function SupervisorReportsPage() {
     new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })
   );
 
-  const totalYield = cows?.reduce((sum: number, c: any) => sum + (c.yesterdayYield ?? 0), 0) ?? 0;
-  const milkingCows = cows?.filter((c: any) => c.status === "milking") ?? [];
-  const averageYield = milkingCows.length > 0 ? totalYield / milkingCows.length : 0;
+  const totalYield = 
+    (livestockDashboard?.individual.reduce((sum: number, c: any) => sum + (c.yesterdayYield ?? 0), 0) ?? 0) +
+    (livestockDashboard?.groups.reduce((sum: number, g: any) => sum + (g.yesterdayYield ?? 0), 0) ?? 0);
+  const milkingAnimals = livestockDashboard?.individual.filter((c: any) => c.status === "milking") ?? [];
+  const averageYield = milkingAnimals.length > 0 ? totalYield / milkingAnimals.length : 0;
 
   const fieldRows = fields ?? [];
   const acresByCrop = fieldRows.reduce<Record<string, number>>((acc, f) => {
@@ -90,9 +92,9 @@ export default function SupervisorReportsPage() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(94, 108, 132);
-    doc.text(`Herd Size: ${cows?.length ?? 28} Animals`, 20, 93);
+    doc.text(`Livestock Population: ${livestockDashboard?.individual.length ?? 0} Animals`, 20, 93);
     doc.text(`Yesterday's Total Yield: ${totalYield.toFixed(1)} Litres`, 20, 99);
-    doc.text(`Average Yield per Milking Cow: ${averageYield.toFixed(1)} L/day`, 20, 105);
+    doc.text(`Average Yield per Milking Animal: ${averageYield.toFixed(1)} L/day`, 20, 105);
 
     if (reportType === "monthly") {
       doc.setFont("helvetica", "bold");
@@ -121,8 +123,8 @@ export default function SupervisorReportsPage() {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
       doc.setTextColor(94, 108, 132);
-      const treatmentCount = cows?.filter(c => c.isWithholding).length ?? 0;
-      doc.text(`Cows under active treatment: ${treatmentCount} cows`, 20, 126);
+      const treatmentCount = (livestockDashboard?.individual.filter(c => c.isWithholding).length ?? 0) + (livestockDashboard?.groups.filter(g => g.isWithholding).length ?? 0);
+      doc.text(`Animals/Groups under active treatment: ${treatmentCount}`, 20, 126);
       doc.text("Milk withholding rules status: VERIFIED & ENFORCED", 20, 132);
       doc.text("Daily testing for antibiotic residues: COMPLETED (No residues detected)", 20, 138);
     }
@@ -151,7 +153,7 @@ export default function SupervisorReportsPage() {
     doc.save(filename);
   };
 
-  if (cows === undefined || fields === undefined) {
+  if (livestockDashboard === undefined || fields === undefined) {
     return (
       <div className="font-mono text-xs text-[#5F6368] uppercase tracking-widest p-8">
         Loading report generator...
@@ -279,15 +281,15 @@ export default function SupervisorReportsPage() {
             <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-2">2. Dairy Performance Summary</h3>
             <div className="grid grid-cols-3 gap-4 border border-[#DADCE0] p-5 rounded-[18px] text-xs font-medium text-[#5F6368] bg-[#F8F9FA]">
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-[#5F6368] block uppercase tracking-wider">Herd Size</span>
-                <strong className="text-[#202124] text-sm font-bold">{cows?.length ?? 0} Animals</strong>
+                <span className="text-[10px] font-black text-[#5F6368] block uppercase tracking-wider">Livestock Population</span>
+                <strong className="text-[#202124] text-sm font-bold">{livestockDashboard?.individual.length ?? 0} Animals</strong>
               </div>
               <div className="space-y-1">
                 <span className="text-[10px] font-black text-[#5F6368] block uppercase tracking-wider">Yesterday's Total Yield</span>
                 <strong className="text-[#202124] text-sm font-bold">{totalYield.toFixed(1)} Litres</strong>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-[#5F6368] block uppercase tracking-wider">Avg Yield / Milking Cow</span>
+                <span className="text-[10px] font-black text-[#5F6368] block uppercase tracking-wider">Avg Yield / Milking Animal</span>
                 <strong className="text-primary text-sm font-bold">{averageYield.toFixed(1)} L/day</strong>
               </div>
             </div>
@@ -315,8 +317,8 @@ export default function SupervisorReportsPage() {
               <h3 className="text-sm font-black uppercase tracking-wider text-[#202124] border-b border-[#DADCE0] pb-2">3. Herd Health & Veterinary Safeguards</h3>
               <div className="border border-[#DADCE0] divide-y divide-[#DADCE0] rounded-[18px] overflow-hidden text-xs font-semibold text-[#5F6368] bg-[#F8F9FA]">
                 <div className="flex justify-between p-4">
-                  <span>Cows under active withholding quarantine</span>
-                  <strong className="text-[#D93025]">{cows?.filter(c => c.isWithholding).length ?? 0} Cows</strong>
+                  <span>Animals/Groups under active withholding quarantine</span>
+                  <strong className="text-[#D93025]">{(livestockDashboard?.individual.filter(c => c.isWithholding).length ?? 0) + (livestockDashboard?.groups.filter(g => g.isWithholding).length ?? 0)} Animals/Groups</strong>
                 </div>
                 <div className="flex justify-between p-4">
                   <span>Withholding enforcement status</span>

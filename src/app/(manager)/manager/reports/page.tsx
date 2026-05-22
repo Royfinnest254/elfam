@@ -17,9 +17,9 @@ declare module "jspdf" {
 type ReportType = "farm_summary" | "inventory_usage" | "financial" | "livestock" | "crops" | "machinery";
 
 const REPORT_OPTIONS: { value: ReportType; label: string; icon: React.ElementType; desc: string }[] = [
-  { value: "farm_summary",    label: "Farm Asset Summary",      icon: BarChart2,  desc: "Total counts of all herd cows, fields, inventory and equipment on the farm" },
+  { value: "farm_summary",    label: "Farm Asset Summary",      icon: BarChart2,  desc: "Total counts of all livestock, fields, inventory and equipment on the farm" },
   { value: "inventory_usage", label: "Inventory Usage Log",     icon: Package,    desc: "All withdrawals and restocks with date, item, quantity and person who acted" },
-  { value: "livestock",       label: "Herd Registry",           icon: Leaf,       desc: "Complete cow registry broken down by breed and status" },
+  { value: "livestock",       label: "Livestock Registry",      icon: Leaf,       desc: "Complete livestock registry broken down by breed and status" },
   { value: "crops",           label: "Field Crop Registry",     icon: Leaf,       desc: "All cereal crop fields with acreage, crop type, and crop status" },
   { value: "machinery",       label: "Machinery Fleet Report",  icon: Tractor,    desc: "All registered machines with type, status and next service date" },
   { value: "financial",       label: "Financial Ledger",        icon: FileText,   desc: "Income, expenses and net balance with full transaction audit log" },
@@ -107,7 +107,7 @@ function generateFarmSummaryPDF(data: any) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(15, 27, 45);
-  doc.text("1. Herd Summary (by Breed)", 14, y + 2);
+  doc.text("1. Livestock Summary (by Breed)", 14, y + 2);
   autoTable(doc, {
     startY: y + 6,
     head: [["Breed", "Total Head"]],
@@ -244,7 +244,7 @@ function generateInventoryUsagePDF(movements: any[]) {
 
 function generateLivestockPDF(livestock: any[]) {
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-  let y = addPdfHeader(doc, "Herd Registry Report", "Complete cow register by breed with status and tag identification");
+  let y = addPdfHeader(doc, "Livestock Registry Report", "Complete animal register by breed with status and tag identification");
 
   const categories = livestock.map((a) => a.breed).filter((val, idx, self) => self.indexOf(val) === idx);
   for (const cat of categories) {
@@ -267,7 +267,7 @@ function generateLivestockPDF(livestock: any[]) {
   }
 
   addPdfFooter(doc);
-  doc.save(`Elfam_Herd_Registry_${new Date().toISOString().split("T")[0]}.pdf`);
+  doc.save(`Elfam_Livestock_Registry_${new Date().toISOString().split("T")[0]}.pdf`);
 }
 
 function generateCropsPDF(cropBlocks: any[]) {
@@ -360,7 +360,7 @@ export default function ManagerReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportType>("farm_summary");
   const [generating, setGenerating] = useState(false);
 
-  const livestock = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const cropBlocks = useQuery(api.records.listFields, {});
   const feedInventory = useQuery(api.records.listFeedInventory, {});
   const vetInventory = useQuery(api.records.listVetInventory, {});
@@ -482,7 +482,7 @@ export default function ManagerReportsPage() {
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Total Cows (Herd)", value: livestock!.length, unit: "head" },
+              { label: "Total Livestock",   value: livestock!.length, unit: "head" },
               { label: "Crop Fields",      value: cropBlocks!.length, unit: `fields / ${totalAcres} acres` },
               { label: "Inventory Products", value: combinedInventory.length, unit: "items" },
               { label: "Machinery Fleet",  value: machinery!.length, unit: "machines" },
@@ -497,7 +497,7 @@ export default function ManagerReportsPage() {
           {/* Herd by breed */}
           <div className="system-card overflow-hidden">
             <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
-              <h3 className="text-xs-label">Herd by Breed</h3>
+              <h3 className="text-xs-label">Livestock by Breed</h3>
             </div>
             <table className="w-full text-sm border-collapse">
               <thead>
@@ -514,7 +514,7 @@ export default function ManagerReportsPage() {
                   </tr>
                 ))}
                 {Object.keys(lwCats).length === 0 && (
-                  <tr><td colSpan={2} className="px-5 py-6 text-center text-[#5F6368] text-xs">No cows registered</td></tr>
+                  <tr><td colSpan={2} className="px-5 py-6 text-center text-[#5F6368] text-xs">No livestock registered</td></tr>
                 )}
               </tbody>
             </table>
@@ -612,7 +612,7 @@ export default function ManagerReportsPage() {
       {selectedReport === "livestock" && (
         <div className="system-card overflow-hidden">
           <div className="px-5 py-3 border-b border-[#DADCE0] bg-[#F8F9FA]">
-            <h3 className="text-xs-label">Herd Registry — {livestock!.length} total cows</h3>
+            <h3 className="text-xs-label">Livestock Registry — {livestock!.length} total animals</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
@@ -634,7 +634,7 @@ export default function ManagerReportsPage() {
                   </tr>
                 ))}
                 {livestock!.length === 0 && (
-                  <tr><td colSpan={5} className="px-5 py-8 text-center text-[#5F6368] text-xs">No cows registered</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-8 text-center text-[#5F6368] text-xs">No livestock registered</td></tr>
                 )}
               </tbody>
             </table>

@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default function WorkerRecordLivestockPage() {
   const user = useQuery(api.users.viewer);
-  const livestock = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
 
   const logMilking = useMutation(api.records.logMilkingSession);
   const logHealth = useMutation(api.records.logTreatment);
@@ -39,6 +39,17 @@ export default function WorkerRecordLivestockPage() {
   const [breedType, setBreedType] = useState("insemination");
   const [breedStatus, setBreedStatus] = useState("pregnant");
   const [details, setDetails] = useState("");
+
+  const getSpeciesEmoji = (species?: string) => {
+    if (!species) return "🐾";
+    switch (species) {
+      case "cattle": return "🐄";
+      case "goat": return "🐐";
+      case "sheep": return "🐑";
+      case "pig": return "🐖";
+      default: return "🐾";
+    }
+  };
 
   if (livestock === undefined || user === undefined) {
     return (
@@ -96,7 +107,7 @@ export default function WorkerRecordLivestockPage() {
       const todayStr = new Date().toISOString().split("T")[0];
 
       const result = await logMilking({
-        cowId: selectedAnimalId as any,
+        livestockId: selectedAnimalId as any,
         session: currentSession,
         date: todayStr,
         litres: qty,
@@ -139,7 +150,7 @@ export default function WorkerRecordLivestockPage() {
     setSubmitting(true);
     try {
       await logHealth({
-        cowId: selectedAnimalId as any,
+        livestockId: selectedAnimalId as any,
         date: Date.now(),
         condition: condition.trim(),
         drugAdministered: treatment.trim(),
@@ -174,7 +185,7 @@ export default function WorkerRecordLivestockPage() {
     try {
       if (breedType === "insemination") {
         await logService({
-          cowId: selectedAnimalId as any,
+          livestockId: selectedAnimalId as any,
           date: Date.now(),
           type: "AI",
           bullOrSemenCode: details.trim() || "Unknown",
@@ -187,7 +198,7 @@ export default function WorkerRecordLivestockPage() {
         const expectedCalvingDate = resultVal === "pregnant" ? Date.now() + 280 * 24 * 60 * 60 * 1000 : null;
         
         await logPregnancy({
-          cowId: selectedAnimalId as any,
+          livestockId: selectedAnimalId as any,
           date: Date.now(),
           result: resultVal,
           expectedCalvingDate,
@@ -205,7 +216,7 @@ export default function WorkerRecordLivestockPage() {
         const complications = breedStatus === "failed" ? (details || "Parturition failed / complications") : "";
 
         await logCalving({
-          cowId: selectedAnimalId as any,
+          livestockId: selectedAnimalId as any,
           date: Date.now(),
           calfSex,
           calfTagNumber,
@@ -292,7 +303,7 @@ export default function WorkerRecordLivestockPage() {
                 <option value="">-- Choose Animal --</option>
                 {livestock.map((item) => (
                   <option key={item._id} value={item._id}>
-                    Tag {item.tagNumber} - {item.name} ({item.breed})
+                    {getSpeciesEmoji(item.species)} Tag {item.tagNumber} - {item.name} ({item.breed})
                   </option>
                 ))}
               </select>
@@ -365,7 +376,7 @@ export default function WorkerRecordLivestockPage() {
                 <option value="">-- Choose Animal --</option>
                 {livestock.map((item) => (
                   <option key={item._id} value={item._id}>
-                    Tag {item.tagNumber} - {item.name} ({item.breed})
+                    {getSpeciesEmoji(item.species)} Tag {item.tagNumber} - {item.name} ({item.breed})
                   </option>
                 ))}
               </select>
@@ -463,7 +474,7 @@ export default function WorkerRecordLivestockPage() {
                 <option value="">-- Choose Animal --</option>
                 {livestock.map((item) => (
                   <option key={item._id} value={item._id}>
-                    Tag {item.tagNumber} - {item.name} ({item.breed})
+                    {getSpeciesEmoji(item.species)} Tag {item.tagNumber} - {item.name} ({item.breed})
                   </option>
                 ))}
               </select>

@@ -6,26 +6,31 @@ import { api } from "../../../../../convex/_generated/api";
 import { Check } from "lucide-react";
 
 export default function ManagerBreedingPage() {
-  const cows = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const users = useQuery(api.users.list);
   const logServiceMutation = useMutation(api.records.logService);
   const logPregnancyMutation = useMutation(api.records.logPregnancyDiagnosis);
 
   // States
-  const [cowId, setCowId] = useState("");
+  const [livestockId, setLivestockId] = useState("");
   const [serviceType, setServiceType] = useState<"AI" | "natural">("AI");
   const [bullCode, setBullCode] = useState("");
   const [performedBy, setPerformedBy] = useState("");
   const [serviceNotes, setServiceNotes] = useState("");
 
-  const [pregCowId, setPregCowId] = useState("");
+  const [pregLivestockId, setPregLivestockId] = useState("");
   const [pregResult, setPregResult] = useState<"pregnant" | "open" | "uncertain">("pregnant");
   const [performedByPreg, setPerformedByPreg] = useState("");
 
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const activeCows = cows?.filter((c: any) => c.status !== "deceased" && c.status !== "sold") ?? [];
+  const eligibleAnimals = livestock?.filter((c: any) => 
+    c.status !== "deceased" && 
+    c.status !== "sold" && 
+    c.sex === "F" &&
+    ["cattle", "goat", "sheep", "pig"].includes(c.species)
+  ) ?? [];
   const staffMembers = users?.filter((u: any) => u.role === "manager" || u.role === "worker") ?? [];
 
   const handleLogService = async (e: React.FormEvent) => {
@@ -33,14 +38,14 @@ export default function ManagerBreedingPage() {
     setError(null);
     setSuccess(false);
 
-    if (!cowId || !bullCode || !performedBy) {
+    if (!livestockId || !bullCode || !performedBy) {
       setError("Please fill out all required service fields.");
       return;
     }
 
     try {
       await logServiceMutation({
-        cowId: cowId as any,
+        livestockId: livestockId as any,
         date: Date.now(),
         type: serviceType,
         bullOrSemenCode: bullCode,
@@ -49,7 +54,7 @@ export default function ManagerBreedingPage() {
       });
 
       setSuccess(true);
-      setCowId("");
+      setLivestockId("");
       setBullCode("");
       setServiceNotes("");
       setTimeout(() => setSuccess(false), 3000);
@@ -63,7 +68,7 @@ export default function ManagerBreedingPage() {
     setError(null);
     setSuccess(false);
 
-    if (!pregCowId || !performedByPreg) {
+    if (!pregLivestockId || !performedByPreg) {
       setError("Please fill out all required pregnancy verification fields.");
       return;
     }
@@ -71,7 +76,7 @@ export default function ManagerBreedingPage() {
     try {
       const expectedCalvingDate = pregResult === "pregnant" ? Date.now() + 280 * 24 * 60 * 60 * 1000 : null;
       await logPregnancyMutation({
-        cowId: pregCowId as any,
+        livestockId: pregLivestockId as any,
         date: Date.now(),
         result: pregResult,
         expectedCalvingDate,
@@ -79,7 +84,7 @@ export default function ManagerBreedingPage() {
       });
 
       setSuccess(true);
-      setPregCowId("");
+      setPregLivestockId("");
       setTimeout(() => setSuccess(false), 3000);
     } catch (e: any) {
       setError(e.message || "Failed to log pregnancy diagnosis.");
@@ -90,7 +95,7 @@ export default function ManagerBreedingPage() {
     <div className="space-y-8 font-sans text-[#202124] pb-12">
       <header className="border-b border-[#DADCE0] pb-6">
         <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
-          Dairy Operations
+          Operations
         </span>
         <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
           Breeding Board
@@ -117,15 +122,15 @@ export default function ManagerBreedingPage() {
           <h3 className="text-base font-black uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">Log Breeding Service</h3>
           <form onSubmit={handleLogService} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Cow</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Female Animal</label>
               <select
-                value={cowId}
-                onChange={(e) => setCowId(e.target.value)}
+                value={livestockId}
+                onChange={(e) => setLivestockId(e.target.value)}
                 className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
-                <option value="">-- Choose Cow --</option>
-                {activeCows.map((c: any) => (
-                  <option key={c._id} value={c._id}>{c.tagNumber} ({c.name})</option>
+                <option value="">-- Choose Animal --</option>
+                {eligibleAnimals.map((c: any) => (
+                  <option key={c._id} value={c._id}>{c.tagNumber} ({c.name} - {c.species})</option>
                 ))}
               </select>
             </div>
@@ -139,14 +144,14 @@ export default function ManagerBreedingPage() {
                   className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
                 >
                   <option value="AI">AI (Insemination)</option>
-                  <option value="natural">Natural Bull</option>
+                  <option value="natural">Natural Sire</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Bull / Semen Code</label>
+                <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Sire / Semen Code</label>
                 <input
                   type="text"
-                  placeholder="e.g. JE-980 or Bull Tag"
+                  placeholder="e.g. JE-980 or Sire Tag"
                   value={bullCode}
                   onChange={(e) => setBullCode(e.target.value)}
                   className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
@@ -155,13 +160,13 @@ export default function ManagerBreedingPage() {
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Inseminator (Staff)</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Inseminator / Performed By (Staff)</label>
               <select
                 value={performedBy}
                 onChange={(e) => setPerformedBy(e.target.value)}
                 className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
-                <option value="">-- Select Inseminator --</option>
+                <option value="">-- Select Staff --</option>
                 {staffMembers.map((s: any) => (
                   <option key={s._id} value={s._id}>{s.name}</option>
                 ))}
@@ -183,7 +188,7 @@ export default function ManagerBreedingPage() {
               type="submit"
               className="w-full btn-primary h-12 text-[11px] rounded-[18px] mt-4 uppercase tracking-wider"
             >
-              Log Insemination Service
+              Log Breeding Service
             </button>
           </form>
         </div>
@@ -193,15 +198,15 @@ export default function ManagerBreedingPage() {
           <h3 className="text-base font-black uppercase tracking-tight text-[#202124] border-b border-[#DADCE0] pb-4">Verify Pregnancy Status</h3>
           <form onSubmit={handleLogPregnancy} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Cow Checked</label>
+              <label className="block text-[10px] font-black text-[#5F6368] mb-1.5 uppercase tracking-wider">Select Animal Checked</label>
               <select
-                value={pregCowId}
-                onChange={(e) => setPregCowId(e.target.value)}
+                value={pregLivestockId}
+                onChange={(e) => setPregLivestockId(e.target.value)}
                 className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
               >
-                <option value="">-- Choose Cow --</option>
-                {activeCows.map((c: any) => (
-                  <option key={c._id} value={c._id}>{c.tagNumber} ({c.name})</option>
+                <option value="">-- Choose Animal --</option>
+                {eligibleAnimals.map((c: any) => (
+                  <option key={c._id} value={c._id}>{c.tagNumber} ({c.name} - {c.species})</option>
                 ))}
               </select>
             </div>
@@ -226,9 +231,9 @@ export default function ManagerBreedingPage() {
                   onChange={(e) => setPerformedByPreg(e.target.value)}
                   className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-4 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors"
                 >
-                  <option value="">-- Select --</option>
+                  <option value="">-- Select Staff --</option>
                   {staffMembers.map((s: any) => (
-                    <option key={s._id} value={s._id}>{s.name}</option>
+                     <option key={s._id} value={s._id}>{s.name}</option>
                   ))}
                 </select>
               </div>

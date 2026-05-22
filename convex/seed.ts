@@ -53,6 +53,7 @@ export default mutation({
       "livestock",
       "livestockGroups",
       "productionRecords",
+      "treatments",
       "breedingServices",
       "pregnancyChecks",
       "birthEvents",

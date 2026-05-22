@@ -8,7 +8,7 @@ import { getFarmClock } from "@/lib/farmClock";
 export default function SupervisorFinancesPage() {
   const { now, yesterdayDateStr } = getFarmClock();
   const user = useQuery(api.users.viewer);
-  const cows = useQuery(api.cows.getHerdDashboard, { now, yesterdayDateStr });
+  const livestockDashboard = useQuery(api.livestock.getLivestockDashboard, { now, yesterdayDateStr });
   const contracts = useQuery(api.records.listContracts);
   const deliveries = useQuery(api.records.listAllDeliveries);
   const transactions = useQuery(api.records.listTransactions);
@@ -26,7 +26,7 @@ export default function SupervisorFinancesPage() {
 
   if (
     contracts === undefined ||
-    cows === undefined ||
+    livestockDashboard === undefined ||
     deliveries === undefined ||
     transactions === undefined ||
     user === undefined
@@ -39,7 +39,9 @@ export default function SupervisorFinancesPage() {
   }
 
   // --- Calculations for Section 1: Daily Revenue Estimate ---
-  const yesterdayMilkYield = cows.reduce((sum, c) => sum + (c.yesterdayYield ?? 0), 0);
+  const yesterdayMilkYield = 
+    livestockDashboard.individual.reduce((sum: number, c: any) => sum + (c.yesterdayYield ?? 0), 0) +
+    livestockDashboard.groups.reduce((sum: number, g: any) => sum + (g.yesterdayYield ?? 0), 0);
   const milkRate = 55.0;
   const yesterdayRevenueEst = yesterdayMilkYield * milkRate;
 

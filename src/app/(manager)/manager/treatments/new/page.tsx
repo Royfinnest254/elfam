@@ -9,11 +9,11 @@ import { ArrowLeft, Check } from "lucide-react";
 
 export default function LogNewTreatmentPage() {
   const router = useRouter();
-  const cows = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const users = useQuery(api.users.list);
   const logTreatmentMutation = useMutation(api.records.logTreatment);
 
-  const [cowId, setCowId] = useState("");
+  const [livestockId, setLivestockId] = useState("");
   const [condition, setCondition] = useState("");
   const [drug, setDrug] = useState("");
   const [dosage, setDosage] = useState("");
@@ -25,7 +25,7 @@ export default function LogNewTreatmentPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const activeCows = cows?.filter((c: any) => c.status !== "deceased" && c.status !== "sold") ?? [];
+  const activeLivestock = livestock?.filter((c: any) => c.status !== "deceased" && c.status !== "sold") ?? [];
   const staffMembers = users?.filter((u: any) => u.role === "manager" || u.role === "worker") ?? [];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +33,7 @@ export default function LogNewTreatmentPage() {
     setError(null);
     setSuccess(false);
 
-    if (!cowId || !condition || !drug || !dosage || !withholdingDays || !administeredBy) {
+    if (!livestockId || !condition || !drug || !dosage || !withholdingDays || !administeredBy) {
       setError("Please fill out all required fields.");
       return;
     }
@@ -41,7 +41,7 @@ export default function LogNewTreatmentPage() {
     setLoading(true);
     try {
       await logTreatmentMutation({
-        cowId: cowId as any,
+        livestockId: livestockId as any,
         date: Date.now(),
         condition,
         drugAdministered: drug,
@@ -89,16 +89,16 @@ export default function LogNewTreatmentPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Select Sick Cow (Tag)</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] ml-1 block">Select Sick Animal (Tag)</label>
             <select
-              value={cowId}
-              onChange={(e) => setCowId(e.target.value)}
+              value={livestockId}
+              onChange={(e) => setLivestockId(e.target.value)}
               className="w-full h-11 bg-[#F8F9FA] border border-[#DADCE0] px-3 text-xs font-semibold text-[#202124] focus:outline-none focus:border-primary rounded-[14px] transition-colors cursor-pointer"
             >
-              <option value="">-- Choose Cow --</option>
-              {activeCows.map((c: any) => (
+              <option value="">-- Choose Animal --</option>
+              {activeLivestock.map((c: any) => (
                 <option key={c._id} value={c._id}>
-                  {c.tagNumber} ({c.name})
+                  {c.tagNumber} ({c.name} - {c.species})
                 </option>
               ))}
             </select>

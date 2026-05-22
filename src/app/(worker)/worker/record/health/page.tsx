@@ -7,10 +7,10 @@ import { Check, AlertCircle } from "lucide-react";
 
 export default function WorkerHealthObservationPage() {
   const user = useQuery(api.users.viewer);
-  const cows = useQuery(api.cows.list, {});
+  const livestock = useQuery(api.livestock.list, {});
   const addIncidentMutation = useMutation(api.records.addIncident);
 
-  const [cowId, setCowId] = useState("");
+  const [livestockId, setLivestockId] = useState("");
   const [tagSearch, setTagSearch] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,22 +20,33 @@ export default function WorkerHealthObservationPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const activeCows = useMemo(
-    () => cows?.filter((c: any) => c.status !== "deceased" && c.status !== "sold") ?? [],
-    [cows]
+  const activeLivestock = useMemo(
+    () => livestock?.filter((c: any) => c.status !== "deceased" && c.status !== "sold") ?? [],
+    [livestock]
   );
 
-  const filteredCows = useMemo(() => {
-    if (!tagSearch.trim()) return activeCows;
+  const filteredLivestock = useMemo(() => {
+    if (!tagSearch.trim()) return activeLivestock;
     const q = tagSearch.toUpperCase();
-    return activeCows.filter(
+    return activeLivestock.filter(
       (c: any) =>
         c.tagNumber.toUpperCase().includes(q) ||
         c.name.toUpperCase().includes(q)
     );
-  }, [activeCows, tagSearch]);
+  }, [activeLivestock, tagSearch]);
 
-  const selectedCow = cows?.find((c: any) => c._id === cowId) ?? null;
+  const selectedLivestock = livestock?.find((c: any) => c._id === livestockId) ?? null;
+
+  const getSpeciesEmoji = (species?: string) => {
+    if (!species) return "🐾";
+    switch (species) {
+      case "cattle": return "🐄";
+      case "goat": return "🐐";
+      case "sheep": return "🐑";
+      case "pig": return "🐖";
+      default: return "🐾";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +57,8 @@ export default function WorkerHealthObservationPage() {
       setError("Not authenticated.");
       return;
     }
-    if (!cowId) {
-      setError("Please select the affected cow.");
+    if (!livestockId) {
+      setError("Please select the affected animal.");
       return;
     }
     if (!title.trim() || !description.trim()) {
@@ -60,7 +71,7 @@ export default function WorkerHealthObservationPage() {
       await addIncidentMutation({
         title: title.trim(),
         department: "dairy",
-        cowId: cowId as any,
+        livestockId: livestockId as any,
         description: description.trim(),
         reportedBy: user._id,
         severity,
@@ -70,7 +81,7 @@ export default function WorkerHealthObservationPage() {
       setSuccess(true);
       setTitle("");
       setDescription("");
-      setCowId("");
+      setLivestockId("");
       setTagSearch("");
       setSeverity("medium");
       setTimeout(() => setSuccess(false), 4000);
@@ -81,7 +92,7 @@ export default function WorkerHealthObservationPage() {
     }
   };
 
-  if (cows === undefined || user === undefined || user === null) {
+  if (livestock === undefined || user === undefined || user === null) {
     return (
       <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">
         Loading registry...
@@ -96,7 +107,7 @@ export default function WorkerHealthObservationPage() {
           Health Event Portal
         </span>
         <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
-          Log Cow Health Observation
+          Log Health Observation
         </h1>
         <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
           Report sick or injured animals · Escalates to veterinary management
@@ -104,10 +115,10 @@ export default function WorkerHealthObservationPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        {/* Left: Cow Selector */}
+        {/* Left: Animal Selector */}
         <div className="system-card p-5 space-y-4">
           <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#5F6368] border-b border-[#DADCE0] pb-3">
-            1 — Affected Cow
+            1 — Affected Animal
           </h2>
 
           <div>
@@ -124,16 +135,16 @@ export default function WorkerHealthObservationPage() {
           </div>
 
           <div className="max-h-72 overflow-y-auto border border-[#DADCE0] divide-y divide-[#DADCE0] custom-scrollbar">
-            {filteredCows.length === 0 ? (
-              <p className="p-4 text-xs text-[#5F6368] italic">No cows match search.</p>
+            {filteredLivestock.length === 0 ? (
+              <p className="p-4 text-xs text-[#5F6368] italic">No animals match search.</p>
             ) : (
-              filteredCows.map((c: any) => {
-                const isSelected = cowId === c._id;
+              filteredLivestock.map((c: any) => {
+                const isSelected = livestockId === c._id;
                 return (
                   <button
                     key={c._id}
                     type="button"
-                    onClick={() => { setCowId(c._id); setError(null); }}
+                    onClick={() => { setLivestockId(c._id); setError(null); }}
                     className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer
                       ${isSelected
                         ? "bg-[#E8F0FE] border-l-4 border-[#1A56DB]"
@@ -142,7 +153,7 @@ export default function WorkerHealthObservationPage() {
                   >
                     <div>
                       <span className="text-xs font-black text-[#202124] block">
-                        {c.tagNumber}
+                        {getSpeciesEmoji(c.species)} {c.tagNumber}
                       </span>
                       <span className="text-[10px] text-[#5F6368] font-semibold">
                         {c.name} · {c.breed}
@@ -163,16 +174,16 @@ export default function WorkerHealthObservationPage() {
             )}
           </div>
 
-          {selectedCow && (
+          {selectedLivestock && (
             <div className="bg-[#F8F9FA] border border-[#DADCE0] p-4 space-y-1">
               <p className="text-[10px] font-black uppercase tracking-wider text-[#5F6368]">
                 Selected Animal
               </p>
               <p className="text-sm font-black text-[#202124]">
-                {selectedCow.tagNumber} — {selectedCow.name}
+                {getSpeciesEmoji(selectedLivestock.species)} {selectedLivestock.tagNumber} — {selectedLivestock.name}
               </p>
               <p className="text-xs text-[#5F6368] font-semibold">
-                {selectedCow.breed} · Lactation #{selectedCow.currentLactationNumber}
+                {selectedLivestock.breed} · Lactation #{selectedLivestock.currentLactationNumber}
               </p>
             </div>
           )}
@@ -255,7 +266,7 @@ export default function WorkerHealthObservationPage() {
 
             <button
               type="submit"
-              disabled={submitting || !cowId}
+              disabled={submitting || !livestockId}
               className="w-full btn-primary h-12 text-[11px] rounded-none uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {submitting ? "Filing observation report..." : "Submit Health Observation"}

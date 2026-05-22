@@ -334,7 +334,7 @@ export const logProductionRecord = mutation({
 
 export const logMilkingSession = mutation({
   args: {
-    cowId: v.id("cows" as any),
+    livestockId: v.id("livestock"),
     session: v.union(v.literal("AM"), v.literal("PM")),
     date: v.string(),
     litres: v.number(),
@@ -343,7 +343,7 @@ export const logMilkingSession = mutation({
   },
   handler: async (ctx, args) => {
     const res = await logProductionRecordInternal(ctx, {
-      livestockId: args.cowId as any,
+      livestockId: args.livestockId,
       type: "milk",
       amount: args.litres,
       session: args.session,
@@ -464,7 +464,7 @@ export const logBirthEvent = mutation({
 
 export const registerCalving = mutation({
   args: {
-    cowId: v.id("cows" as any),
+    livestockId: v.id("livestock"),
     date: v.number(),
     calfSex: v.union(v.literal("M"), v.literal("F")),
     calfTagNumber: v.union(v.string(), v.null()),
@@ -474,7 +474,7 @@ export const registerCalving = mutation({
   },
   handler: async (ctx, args) => {
     return await logBirthEventInternal(ctx, {
-      parentId: args.cowId as any,
+      parentId: args.livestockId,
       date: args.date,
       offspringCount: 1,
       offspringSex: args.calfSex,
@@ -495,6 +495,7 @@ export const listAllTreatments = query({
 
 export const logTreatment = mutation({
   args: {
+    livestockId: v.optional(v.id("livestock")),
     cowId: v.optional(v.id("livestock" as any)),
     groupId: v.optional(v.id("livestockGroups")),
     incidentId: v.optional(v.id("incidents")),
@@ -512,8 +513,10 @@ export const logTreatment = mutation({
     }
     const withholdingUntil = args.date + args.withholdingDays * 24 * 60 * 60 * 1000;
     
-    if (args.cowId) {
-      await ctx.db.patch(args.cowId as any, {
+    const targetId = args.livestockId || args.cowId;
+
+    if (targetId) {
+      await ctx.db.patch(targetId, {
         status: "treatment",
       });
     }
@@ -526,7 +529,7 @@ export const logTreatment = mutation({
     }
 
     return await ctx.db.insert("treatments", {
-      livestockId: args.cowId as any,
+      livestockId: targetId,
       groupId: args.groupId,
       incidentId: args.incidentId,
       date: args.date,
@@ -561,7 +564,7 @@ export const listServices = query({
 
 export const logService = mutation({
   args: {
-    cowId: v.id("cows" as any),
+    livestockId: v.id("livestock"),
     date: v.number(),
     type: v.union(v.literal("AI"), v.literal("natural")),
     bullOrSemenCode: v.string(),
@@ -570,7 +573,7 @@ export const logService = mutation({
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("breedingServices", {
-      livestockId: args.cowId as any,
+      livestockId: args.livestockId,
       date: args.date,
       type: args.type,
       bullOrSemenCode: args.bullOrSemenCode,
@@ -598,7 +601,7 @@ export const listPregnancyDiagnoses = query({
 
 export const logPregnancyDiagnosis = mutation({
   args: {
-    cowId: v.id("cows" as any),
+    livestockId: v.id("livestock"),
     date: v.number(),
     result: v.union(v.literal("pregnant"), v.literal("open"), v.literal("uncertain")),
     expectedCalvingDate: v.union(v.number(), v.null()),
@@ -606,7 +609,7 @@ export const logPregnancyDiagnosis = mutation({
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("pregnancyChecks", {
-      livestockId: args.cowId as any,
+      livestockId: args.livestockId,
       date: args.date,
       result: args.result,
       expectedCalvingDate: args.expectedCalvingDate,
@@ -1013,6 +1016,7 @@ export const clearDatabase = mutation({
       "livestock",
       "livestockGroups",
       "productionRecords",
+      "treatments",
       "breedingServices",
       "pregnancyChecks",
       "birthEvents",
@@ -1105,16 +1109,16 @@ export const deleteRequest = mutation({
 
 export const healCow = mutation({
   args: {
-    cowId: v.id("livestock" as any),
+    livestockId: v.id("livestock"),
     incidentId: v.optional(v.id("incidents")),
     notes: v.string(),
   },
   handler: async (ctx, args) => {
     await enforceRole(ctx, ["manager"]);
-    const cow = await ctx.db.get(args.cowId);
-    if (!cow) throw new Error("Livestock not found");
-    const newStatus = (cow.species === "cattle" || cow.species === "goat") ? "milking" : "dry";
-    await ctx.db.patch(args.cowId, {
+    const animal = await ctx.db.get(args.livestockId);
+    if (!animal) throw new Error("Livestock not found");
+    const newStatus = (animal.species === "cattle" || animal.species === "goat") ? "milking" : "dry";
+    await ctx.db.patch(args.livestockId, {
       status: newStatus as any,
     });
     if (args.incidentId) {
@@ -1125,8 +1129,8 @@ export const healCow = mutation({
       });
     } else {
       const incidents = await ctx.db.query("incidents").collect();
-      const cowIncidents = incidents.filter(i => i.livestockId === args.cowId && i.status !== "resolved");
-      for (const inc of cowIncidents) {
+      const animalIncidents = incidents.filter(i => i.livestockId === args.livestockId && i.status !== "resolved");
+      for (const inc of animalIncidents) {
         await ctx.db.patch(inc._id, {
           status: "resolved",
           resolvedAt: Date.now(),
@@ -1137,4 +1141,6 @@ export const healCow = mutation({
     return { success: true };
   },
 });
+
+export const healLivestock = healCow;
 
