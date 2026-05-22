@@ -5,7 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Plus, X, Tractor, ClipboardList, Check } from "lucide-react";
 
-export default function OwnerOperationsPage() {
+export default function SupervisorOperationsPage() {
   const fields = useQuery(api.records.listFields);
   const contracts = useQuery(api.records.listContracts);
   const deliveries = useQuery(api.records.listAllDeliveries);

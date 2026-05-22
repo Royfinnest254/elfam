@@ -4,36 +4,27 @@
 
 @layer base {
   :root {
-    /* ── Monochromatic - Max Contrast Layout ────── */
-    --navy:         #1A56DB;   /* primary blue */
-    --navy-dark:    #103FA8;   /* pressed - darker hover */
-    --navy-hover:   #1749C0;   /* hover state */
-    --teal:         #1A56DB;   /* accent */
-    --teal-bg:      #E8F0FE;   /* active nav background */
-    --gold:         #4B5563;   /* neutralised */
-    --gold-bg:      #FFFFFF;   /* pure white */
-
-    /* ── Status ─────────────────────────────────── */
-    --success:      #1E8E3E;
-    --success-bg:   #E6F4EA;
-    --success-bdr:  #A8D5B5;
-    --warning:      #E37400;
-    --warning-bg:   #FEF7E0;
-    --warning-bdr:  #F9C945;
-    --danger:       #D93025;
-    --danger-bg:    #FCE8E6;
-    --danger-bdr:   #F5C6C3;
-
-    /* ── Layout ─────────────────────────────────── */
-    --bg:           #FFFFFF;   /* pure solid white background */
-    --surface:      #FFFFFF;   /* pure solid white surface */
-    --border:       #E5E7EB;   /* thin, very light gray divider */
-    --border-strong:#DADCE0;
-    --muted:        #4B5563;   /* charcoal gray descriptive text */
-    --text:         #000000;   /* bold black headers */
-    --text-sub:     #4B5563;   /* charcoal gray body text */
-    --sidebar-bg:   #FFFFFF;   /* pure white sidebar */
-    --sidebar-bdr:  #E5E7EB;   /* thin light divider */
+    /* ── Highland Green & Cream Brand Palette ────── */
+    --ink:          #0f1411;   /* charcoal forest ink */
+    --paper:        #fafaf5;   /* soft cream-paper bg */
+    --paper-2:      #f0efe6;   /* secondary darker paper */
+    --rule:         #d8d6c9;   /* raw rule/border divider line */
+    --moss:         #1f3a2e;   /* highland moss green */
+    --moss-2:       #2d5440;   /* hover/lighter moss */
+    --cream:        #f5f2e3;   /* heritage cream */
+    --pasture:      #6b8e5a;   /* secondary pasture green */
+    --alert:        #a8341f;   /* warning/error rust */
+    
+    /* ── Mappings for components ────────────────── */
+    --bg:           var(--paper);
+    --surface:      var(--paper);
+    --border:       var(--rule);
+    --border-strong: var(--ink);
+    --muted:        #555a56;   /* muted charcoal green */
+    --text:         var(--ink);
+    --text-sub:     #2b332e;   /* dark forest gray body text */
+    --sidebar-bg:   var(--cream);
+    --sidebar-bdr:  var(--rule);
   }
 
   html, body {
@@ -42,54 +33,51 @@
     color: var(--text-sub);
   }
 
-  /* ── Inter for all headings — Ultra-modern style ─── */
+  /* ── Fraunces for headings — Editorial style ─── */
   h1 {
-    font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-  h2 {
-    font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 1.35;
+    font-family: var(--font-display), 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.2;
     letter-spacing: -0.01em;
     color: var(--text);
   }
+  h2 {
+    font-family: var(--font-display), 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.3;
+    color: var(--text);
+  }
   h3 {
-    font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 15px;
+    font-family: var(--font-display), 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 16px;
     line-height: 1.4;
     color: var(--text);
   }
   h4 {
-    font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 13px;
+    font-family: var(--font-display), 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 14px;
     line-height: 1.4;
     color: var(--text);
   }
 
-  /* ── Inter for body — 14px, weight 400 ─────── */
+  /* ── Inter Tight for body ─────── */
   body, p, span, div, td, th, label, input,
   select, textarea, button, a, li {
-    font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 14px;
     color: var(--text-sub);
   }
 }
 
 @layer components {
-
   /* ─── Typography utilities ─────────────────────── */
-
   .label {
-    font-family: var(--font-sans), system-ui, sans-serif;
-    font-weight: 700;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
+    font-weight: 600;
     font-size: 11px;
     line-height: 1.3;
     letter-spacing: 0.05em;
@@ -98,47 +86,46 @@
   }
 
   .body-small {
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
     line-height: 1.5;
     color: var(--text-sub);
   }
 
   .mono {
-    font-family: var(--font-mono), monospace;
+    font-family: var(--font-mono), 'JetBrains Mono', monospace;
     font-size: 12px;
     line-height: 1.4;
+    color: var(--ink);
   }
 
   .text-xs-label {
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--muted);
   }
 
-  /* ─── Cards ── flat style ────────────────── */
-
+  /* ─── Cards ── flat 0px style ────────────────── */
   .system-card, .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: 0px !important;
+    box-shadow: none !important;
   }
 
-  /* ─── Inputs ── flat style ───────────────── */
-
+  /* ─── Inputs ── flat 0px style ───────────────── */
   .input-field {
     display: block;
     width: 100%;
     height: 40px;
     padding: 0 12px;
-    background: var(--surface);
+    background: var(--paper);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    border-radius: 0px !important;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 14px;
     font-weight: 400;
     color: var(--text);
@@ -146,38 +133,42 @@
     outline: none;
   }
 
-  .input-field::placeholder { color: #9AA0A6; }
+  .input-field::placeholder { color: #8c8d82; }
 
   .input-field:focus {
-    border-color: var(--navy);
+    border-color: var(--moss);
+    box-shadow: none !important;
   }
 
   select.input-field { cursor: pointer; }
 
-  /* ─── Buttons ── Google flat style ──────────────── */
-
+  /* ─── Buttons ── Highland flat style ──────────────── */
   .btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 36px;
+    height: 38px;
     padding: 0 16px;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--navy);
-    color: #fff;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    border: 1px solid var(--moss);
+    border-radius: 0px !important;
+    background-color: var(--moss);
+    color: var(--cream);
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.01em;
     cursor: pointer;
-    transition: background-color 130ms;
+    transition: background-color 130ms, border-color 130ms;
   }
   .btn-primary:hover  {
-    background-color: var(--navy-hover);
+    background-color: var(--moss-2);
+    border-color: var(--moss-2);
   }
-  .btn-primary:active { background-color: var(--navy-dark); }
+  .btn-primary:active {
+    background-color: var(--ink);
+    border-color: var(--ink);
+  }
   .btn-primary:disabled { opacity: 0.5; pointer-events: none; }
 
   .btn-secondary {
@@ -185,23 +176,23 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 36px;
+    height: 38px;
     padding: 0 16px;
     border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--surface);
-    color: var(--navy);
-    font-family: var(--font-sans), system-ui, sans-serif;
+    border-radius: 0px !important;
+    background: var(--cream);
+    color: var(--moss);
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 130ms, border-color 130ms;
   }
   .btn-secondary:hover {
-    background-color: var(--teal-bg);
-    border-color: var(--navy);
+    background-color: var(--paper-2);
+    border-color: var(--moss);
   }
-  .btn-secondary:active { background-color: #D2E3FC; }
+  .btn-secondary:active { background-color: var(--border); }
   .btn-secondary:disabled { opacity: 0.5; pointer-events: none; }
 
   .btn-destructive {
@@ -209,96 +200,89 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 36px;
+    height: 38px;
     padding: 0 16px;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--danger);
-    color: #fff;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    border: 1px solid var(--alert);
+    border-radius: 0px !important;
+    background-color: var(--alert);
+    color: var(--paper);
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 130ms;
+    transition: background-color 130ms, border-color 130ms;
   }
-  .btn-destructive:hover   { background-color: #B31412; }
+  .btn-destructive:hover   {
+    background-color: #8c2a19;
+    border-color: #8c2a19;
+  }
   .btn-destructive:disabled { opacity: 0.5; pointer-events: none; }
 
-  /* ─── Status badges ── Google chip style ────────── */
-
+  /* ─── Status badges ── Flat chip style ────────── */
   .badge, .status-badge {
     display: inline-flex;
     align-items: center;
     padding: 2px 8px;
-    border-radius: 100px;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    border-radius: 0px !important;
+    font-family: var(--font-mono), 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     white-space: nowrap;
-    border: 1px solid transparent;
+    border: 1px solid var(--border);
   }
 
   .status-ok {
-    background-color: var(--success-bg);
-    color: var(--success);
-    border-color: var(--success-bdr);
+    background-color: var(--cream);
+    color: var(--moss);
+    border-color: var(--moss);
   }
   .status-low {
-    background-color: var(--warning-bg);
-    color: var(--warning);
-    border-color: var(--warning-bdr);
+    background-color: #fff9e6;
+    color: #b27a00;
+    border-color: #ffd980;
   }
   .status-out, .status-error {
-    background-color: var(--danger-bg);
-    color: var(--danger);
-    border-color: var(--danger-bdr);
+    background-color: #fdf2f0;
+    color: var(--alert);
+    border-color: var(--alert);
   }
 
-  /* ─── Tailwind colour utilities ─────────────────── */
-
-  .text-teal    { color: var(--navy); }        /* teal → blue */
-  .text-gold    { color: var(--gold); }
-  .text-alert   { color: var(--danger); }
+  /* ─── Brand color utilities ─────────────────── */
+  .text-moss    { color: var(--moss); }
+  .text-cream   { color: var(--cream); }
+  .text-alert   { color: var(--alert); }
   .text-muted   { color: var(--muted); }
-  .text-primary { color: var(--navy); }
+  .text-ink     { color: var(--ink); }
 
-  .bg-primary       { background-color: var(--navy); }
-  .bg-primary-dark  { background-color: var(--navy-dark); }
-  .bg-teal          { background-color: var(--navy); }
-  .bg-surface       { background-color: var(--surface); }
-  .bg-paper         { background-color: var(--bg); }
-  .bg-paper-2       { background-color: var(--bg); }
+  .bg-moss      { background-color: var(--moss); }
+  .bg-cream     { background-color: var(--cream); }
+  .bg-paper     { background-color: var(--paper); }
+  .bg-paper-2   { background-color: var(--paper-2); }
+  .bg-pasture   { background-color: var(--pasture); }
 
-  .border-primary   { border-color: var(--navy); }
-  .border-teal      { border-color: var(--navy); }
+  .border-moss  { border-color: var(--moss); }
+  .border-cream { border-color: var(--cream); }
 
-  .hover\:bg-primary-dark:hover { background-color: var(--navy-dark); }
+  /* active nav — Cream/Moss pill */
+  .nav-active-bg  { background-color: var(--moss); }
+  .nav-active-text { color: var(--cream); }
 
-  /* active nav — Google E8F0FE pill */
-  .nav-active-bg  { background-color: var(--teal-bg); }
-  .nav-active-text { color: var(--navy); }
-
-  /* soft blue used in info blocks */
-  .teal-subtle      { background-color: var(--teal-bg); color: var(--navy); }
-  .text-primary-subtle { color: var(--teal-bg); }
-  .primary-subtle   { background-color: var(--teal-bg); color: var(--navy); }
-
-  /* primary subtle bg utility */
-  .bg-primary-subtle { background-color: var(--teal-bg); }
+  /* soft green used in info blocks */
+  .moss-subtle      { background-color: var(--cream); color: var(--moss); }
+  .bg-moss-subtle   { background-color: var(--cream); }
 
   /* ─── Table helpers ─────────────────────────────── */
-
   .table-header-label {
     padding: 10px 16px;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--muted);
-    background-color: #FFFFFF;
+    background-color: var(--paper-2);
     border-bottom: 1px solid var(--border);
   }
 }
@@ -309,7 +293,7 @@
 
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 .table-scroll { overflow-x: auto; width: 100%; }

@@ -21,8 +21,8 @@ export default function WorkerLayout({
       if (!user.profileSetupComplete) {
         router.push("/onboarding");
       } else if (user.role !== "worker") {
-        if (user.role === "owner") {
-          router.push("/owner");
+        if (user.role === "supervisor") {
+          router.push("/supervisor");
         } else if (user.role === "manager") {
           router.push("/manager");
         }

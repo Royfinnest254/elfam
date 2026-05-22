@@ -20,7 +20,7 @@ export default function ManagerLayout({
     } else if (user) {
       if (!user.profileSetupComplete) {
         router.push("/onboarding");
-      } else if (user.role !== "manager" && user.role !== "owner") {
+      } else if (user.role !== "manager" && user.role !== "supervisor") {
         // Redirect workers to their portal
         router.push("/worker");
       }
@@ -35,7 +35,7 @@ export default function ManagerLayout({
     );
   }
 
-  if (user === null || !user.profileSetupComplete || (user.role !== "manager" && user.role !== "owner")) {
+  if (user === null || !user.profileSetupComplete || (user.role !== "manager" && user.role !== "supervisor")) {
     return null;
   }
 

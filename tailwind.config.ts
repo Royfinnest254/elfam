@@ -9,42 +9,42 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ── Monochromatic / Max Contrast Layout ────────────────────
-        ink:        "#000000",         // pure bold black primary text
-        paper:      "#FFFFFF",         // pure solid white background
-        "paper-2":  "#FFFFFF",         // app canvas (pure solid white)
-        rule:       "#E5E7EB",         // very light gray divider
-        navy:       "#1A56DB",         // deep blue primary
-        teal:       "#1A56DB",         // aliased → same blue
-        gold:       "#5F6368",         // neutralised
-        alert:      "#D93025",         // Google red
-        muted:      "#4B5563",         // charcoal gray secondary text
-        background: "#FFFFFF",         // pure solid white background
-        surface:    "#FFFFFF",         // pure solid white surface
+        // ── Highland Green & Cream Theme ──────────────────────────
+        ink:        "#0f1411",         // charcoal forest ink text
+        paper:      "#fafaf5",         // soft cream-paper background
+        "paper-2":  "#f0efe6",         // secondary darker paper
+        rule:       "#d8d6c9",         // raw rule/border divider line
+        moss:       "#1f3a2e",         // highland moss green
+        "moss-2":   "#2d5440",         // hover/lighter moss
+        cream:      "#f5f2e3",         // heritage cream
+        pasture:    "#6b8e5a",         // secondary pasture green
+        alert:      "#a8341f",         // highland warning rust/red
+        
+        background: "#fafaf5",
+        surface:    "#fafaf5",
         primary: {
-          DEFAULT: "#1A56DB",
-          dark:    "#103FA8",
-          light:   "#E8F0FE",
-          subtle:  "#E8F0FE",
+          DEFAULT: "#1f3a2e",
+          dark:    "#14251e",
+          light:   "#f5f2e3",
+          subtle:  "#fcfbf7",
         },
         accent: {
-          DEFAULT: "#1A56DB",
+          DEFAULT: "#6b8e5a",
         },
         // ── Status ──────────────────────────────────
-        success: "#1E8E3E",
-        warning: "#E37400",
-        danger:  "#D93025",
+        success: "#6b8e5a",
+        warning: "#d29034",
+        danger:  "#a8341f",
       },
       fontFamily: {
-        // Inter loaded via next/font/google into --font-sans
-        display: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
-        sans:    ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Fraunces", "serif"],
+        sans:    ["var(--font-sans)", "Inter Tight", "sans-serif"],
         mono:    ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
       fontSize: {
-        display: ["30px", { lineHeight: "1.15", letterSpacing: "0", fontWeight: "500" }],
-        h1:      ["22px", { lineHeight: "1.3",  letterSpacing: "0", fontWeight: "500" }],
-        h2:      ["18px", { lineHeight: "1.35", letterSpacing: "0", fontWeight: "500" }],
+        display: ["32px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "500" }],
+        h1:      ["24px", { lineHeight: "1.2",  letterSpacing: "-0.01em", fontWeight: "500" }],
+        h2:      ["19px", { lineHeight: "1.3", letterSpacing: "0", fontWeight: "500" }],
         body:    ["14px", { lineHeight: "1.5" }],
         small:   ["12px", { lineHeight: "1.4" }],
         mono:    ["12px", { lineHeight: "1.3" }],

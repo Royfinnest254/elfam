@@ -25,7 +25,11 @@ export const getField = query({
       .query("harvestRecords")
       .withIndex("by_field", (q) => q.eq("fieldId", args.fieldId))
       .collect();
-    return { field, applications, harvests };
+    const soilTests = await ctx.db
+      .query("soilTests")
+      .withIndex("by_field", (q) => q.eq("fieldId", args.fieldId))
+      .collect();
+    return { field, applications, harvests, soilTests };
   },
 });
 
@@ -209,10 +213,128 @@ export const createTask = mutation({
   },
 });
 
-// --- 5. Milking Sessions ---
+// --- 5. Milking Sessions & Production Records ---
+async function logProductionRecordInternal(ctx: any, args: {
+  livestockId?: string;
+  groupId?: string;
+  type: "milk" | "eggs" | "wool" | "honey" | "weight";
+  amount: number;
+  session?: "AM" | "PM";
+  date: string;
+  flagged: boolean;
+}) {
+  const user = await enforceRole(ctx, ["worker", "manager"]);
+  if (args.amount < 0) {
+    throw new Error("Production amount cannot be negative");
+  }
+
+  let flagged = args.flagged;
+  let warningMessage: string | undefined;
+
+  // Validations for individual livestock
+  if (args.livestockId) {
+    const animal = await ctx.db.get(args.livestockId as any);
+    if (!animal) {
+      throw new Error("Livestock not found");
+    }
+
+    // Reject milk yields if not dairy (cattle/goat) or status is dry, young, sold, deceased
+    if (args.type === "milk") {
+      if (animal.species !== "cattle" && animal.species !== "goat") {
+        throw new Error("Milk yields can only be logged for dairy species (cattle, goat)");
+      }
+      if (["dry", "young", "sold", "deceased"].includes(animal.status)) {
+        throw new Error(`Cannot log milk yield for an animal in status: ${animal.status}`);
+      }
+    }
+
+    // Flag the record if animal is within an active medication withholding window
+    const now = Date.now();
+    const treatments = await ctx.db
+      .query("treatments")
+      .withIndex("by_livestock", (q: any) => q.eq("livestockId", args.livestockId as any))
+      .collect();
+    const activeTreatment = treatments.find((t: any) => t.withholdingUntil > now);
+    if (activeTreatment) {
+      flagged = true;
+      const dateObj = new Date(activeTreatment.withholdingUntil);
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const formattedDate = `${dateObj.getDate()} ${months[dateObj.getMonth()]}`;
+      warningMessage = `${animal.tagNumber} ${animal.name} — production withheld until ${formattedDate}. Do not add to bulk stock.`;
+    }
+  }
+
+  // Validations for group
+  if (args.groupId) {
+    const group = await ctx.db.get(args.groupId as any);
+    if (!group) {
+      throw new Error("Livestock group not found");
+    }
+
+    // Reject eggs logging if target is not poultry or group is inactive
+    if (args.type === "eggs") {
+      if (group.species !== "poultry") {
+        throw new Error("Egg production can only be logged for poultry groups");
+      }
+      if (group.status !== "active") {
+        throw new Error("Cannot log egg production for an inactive group");
+      }
+    }
+
+    // Flag if group is under withholding
+    const now = Date.now();
+    const treatments = await ctx.db
+      .query("treatments")
+      .withIndex("by_group", (q: any) => q.eq("groupId", args.groupId as any))
+      .collect();
+    const activeTreatment = treatments.find((t: any) => t.withholdingUntil > now);
+    if (activeTreatment) {
+      flagged = true;
+      const dateObj = new Date(activeTreatment.withholdingUntil);
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const formattedDate = `${dateObj.getDate()} ${months[dateObj.getMonth()]}`;
+      warningMessage = `${group.groupCode} ${group.name} — production withheld until ${formattedDate}. Do not use yield.`;
+    }
+  }
+
+  const recordId = await ctx.db.insert("productionRecords", {
+    livestockId: args.livestockId as any,
+    groupId: args.groupId as any,
+    type: args.type,
+    amount: args.amount,
+    session: args.session,
+    date: args.date,
+    flagged,
+    loggedBy: user._id,
+    loggedAt: Date.now(),
+  });
+
+  return {
+    success: true,
+    recordId,
+    flagged,
+    message: warningMessage,
+  };
+}
+
+export const logProductionRecord = mutation({
+  args: {
+    livestockId: v.optional(v.id("livestock")),
+    groupId: v.optional(v.id("livestockGroups")),
+    type: v.union(v.literal("milk"), v.literal("eggs"), v.literal("wool"), v.literal("honey"), v.literal("weight")),
+    amount: v.number(),
+    session: v.optional(v.union(v.literal("AM"), v.literal("PM"))),
+    date: v.string(), // YYYY-MM-DD
+    flagged: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    return await logProductionRecordInternal(ctx, args);
+  },
+});
+
 export const logMilkingSession = mutation({
   args: {
-    cowId: v.id("cows"),
+    cowId: v.id("cows" as any),
     session: v.union(v.literal("AM"), v.literal("PM")),
     date: v.string(),
     litres: v.number(),
@@ -220,41 +342,19 @@ export const logMilkingSession = mutation({
     flagged: v.boolean(),
   },
   handler: async (ctx, args) => {
-    if (args.litres < 0) {
-      throw new Error("[Milking] logMilkingSession failed: yield litres cannot be negative");
-    }
-
-    // Server-side withholding verification (Never trust the client)
-    const now = Date.now();
-    const cowTreatments = await ctx.db
-      .query("treatments")
-      .withIndex("by_cow", (q) => q.eq("cowId", args.cowId))
-      .collect();
-
-    const activeTreatment = cowTreatments.find((t) => t.withholdingUntil > now);
-    let flagged = args.flagged;
-    let warningMessage: string | undefined;
-
-    if (activeTreatment) {
-      flagged = true;
-      const cow = await ctx.db.get(args.cowId);
-      const dateObj = new Date(activeTreatment.withholdingUntil);
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const formattedDate = `${dateObj.getDate()} ${months[dateObj.getMonth()]}`;
-      warningMessage = `${cow?.tagNumber || "EL-UNKNOWN"} ${cow?.name || "Unknown"} — milk withheld until ${formattedDate}. Do not add to bulk tank.`;
-    }
-
-    const sessionId = await ctx.db.insert("milkingSessions", {
-      ...args,
-      flagged,
-      loggedAt: now,
+    const res = await logProductionRecordInternal(ctx, {
+      livestockId: args.cowId as any,
+      type: "milk",
+      amount: args.litres,
+      session: args.session,
+      date: args.date,
+      flagged: args.flagged,
     });
-
     return {
-      success: true,
-      sessionId,
-      flagged,
-      message: warningMessage,
+      success: res.success,
+      sessionId: res.recordId,
+      flagged: res.flagged,
+      message: res.message,
     };
   },
 });
@@ -263,28 +363,108 @@ export const getMilkingAudit = query({
   args: { limit: v.optional(v.number()) },
   handler: async (ctx, args) => {
     const limit = args.limit ?? 50;
-    return await ctx.db.query("milkingSessions").order("desc").take(limit);
+    return await ctx.db.query("productionRecords").order("desc").take(limit);
   },
 });
 
-// --- 6. Calvings & Calves ---
+// --- 6. Birth Events & Offspring / Calvings & Calves ---
 export const listCalvings = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("calvings").order("desc").collect();
+    const events = await ctx.db.query("birthEvents").order("desc").collect();
+    return events.map(e => ({
+      _id: e._id,
+      _creationTime: e._creationTime,
+      cowId: e.parentId,
+      date: e.date,
+      calfSex: e.offspringSex === "mixed" || e.offspringSex === "unknown" ? "F" : e.offspringSex,
+      calfTagNumber: null,
+      sireInfo: "",
+      complications: e.complications,
+      notes: e.notes,
+    }));
   },
 });
 
 export const listCalves = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("calves").order("desc").collect();
+    return await ctx.db.query("offspring").order("desc").collect();
+  },
+});
+
+async function logBirthEventInternal(ctx: any, args: {
+  parentId: any;
+  date: number;
+  offspringCount: number;
+  offspringSex: "M" | "F" | "mixed" | "unknown";
+  complications: string;
+  notes: string;
+  offspringTagNumber?: string;
+}) {
+  await enforceRole(ctx, ["worker", "manager"]);
+  const birthEventId = await ctx.db.insert("birthEvents", {
+    parentId: args.parentId,
+    date: args.date,
+    offspringCount: args.offspringCount,
+    offspringSex: args.offspringSex,
+    complications: args.complications,
+    notes: args.notes,
+  });
+
+  const parentTable = ctx.db.normalizeId("livestock", args.parentId);
+  let damTag = "EL-UNKNOWN";
+  let species = "cattle";
+  let sireInfo = "Unknown";
+  if (parentTable) {
+    const parent = await ctx.db.get(parentTable);
+    if (parent) {
+      damTag = parent.tagNumber;
+      species = parent.species;
+      sireInfo = parent.sireInfo || "Unknown";
+      await ctx.db.patch(parentTable, {
+        lastBirthDate: args.date,
+        currentLactationNumber: parent.currentLactationNumber + 1,
+      });
+    }
+  }
+
+  if (args.offspringTagNumber) {
+    await ctx.db.insert("offspring", {
+      tagNumber: args.offspringTagNumber,
+      species,
+      name: `${species.toUpperCase()} Offspring`,
+      dateOfBirth: args.date,
+      sex: args.offspringSex === "mixed" || args.offspringSex === "unknown" ? "F" : args.offspringSex,
+      damTagNumber: damTag,
+      sireInfo,
+      weaningDate: null,
+      currentWeight: 35,
+      status: "young",
+    });
+  }
+
+  return birthEventId;
+}
+
+export const logBirthEvent = mutation({
+  args: {
+    parentId: v.union(v.id("livestock"), v.id("livestockGroups")),
+    date: v.number(),
+    offspringCount: v.number(),
+    offspringSex: v.union(v.literal("M"), v.literal("F"), v.literal("mixed"), v.literal("unknown")),
+    complications: v.string(),
+    notes: v.string(),
+    offspringTagNumber: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await logBirthEventInternal(ctx, args);
   },
 });
 
 export const registerCalving = mutation({
   args: {
-    cowId: v.id("cows"),
+    cowId: v.id("cows" as any),
     date: v.number(),
     calfSex: v.union(v.literal("M"), v.literal("F")),
     calfTagNumber: v.union(v.string(), v.null()),
@@ -293,29 +473,15 @@ export const registerCalving = mutation({
     notes: v.string(),
   },
   handler: async (ctx, args) => {
-    const calvingId = await ctx.db.insert("calvings", args);
-    
-    // Update the mother's record
-    await ctx.db.patch(args.cowId, {
-      lastCalvingDate: args.date,
+    return await logBirthEventInternal(ctx, {
+      parentId: args.cowId as any,
+      date: args.date,
+      offspringCount: 1,
+      offspringSex: args.calfSex,
+      complications: args.complications,
+      notes: args.notes,
+      offspringTagNumber: args.calfTagNumber || undefined,
     });
-
-    // If tag number is provided, register the calf
-    if (args.calfTagNumber) {
-      await ctx.db.insert("calves", {
-        tagNumber: args.calfTagNumber,
-        name: args.calfSex === "F" ? "Heifer Calf" : "Bull Calf",
-        dateOfBirth: args.date,
-        sex: args.calfSex,
-        damTagNumber: "EL-UNKNOWN", // We can populate this dynamically on read if needed
-        sireInfo: args.sireInfo,
-        weaningDate: null,
-        currentWeight: 40, // standard default
-        status: "active",
-      });
-    }
-
-    return calvingId;
   },
 });
 
@@ -329,7 +495,8 @@ export const listAllTreatments = query({
 
 export const logTreatment = mutation({
   args: {
-    cowId: v.id("cows"),
+    cowId: v.optional(v.id("livestock" as any)),
+    groupId: v.optional(v.id("livestockGroups")),
     incidentId: v.optional(v.id("incidents")),
     date: v.number(),
     condition: v.string(),
@@ -345,10 +512,11 @@ export const logTreatment = mutation({
     }
     const withholdingUntil = args.date + args.withholdingDays * 24 * 60 * 60 * 1000;
     
-    // Update cow status to treatment
-    await ctx.db.patch(args.cowId, {
-      status: "treatment",
-    });
+    if (args.cowId) {
+      await ctx.db.patch(args.cowId as any, {
+        status: "treatment",
+      });
+    }
 
     if (args.incidentId) {
       await ctx.db.patch(args.incidentId, {
@@ -358,8 +526,17 @@ export const logTreatment = mutation({
     }
 
     return await ctx.db.insert("treatments", {
-      ...args,
+      livestockId: args.cowId as any,
+      groupId: args.groupId,
+      incidentId: args.incidentId,
+      date: args.date,
+      condition: args.condition,
+      drugAdministered: args.drugAdministered,
+      dosage: args.dosage,
+      withholdingDays: args.withholdingDays,
       withholdingUntil,
+      administeredBy: args.administeredBy,
+      notes: args.notes,
     });
   },
 });
@@ -368,13 +545,23 @@ export const logTreatment = mutation({
 export const listServices = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("services").order("desc").collect();
+    const list = await ctx.db.query("breedingServices").order("desc").collect();
+    return list.map(s => ({
+      _id: s._id,
+      _creationTime: s._creationTime,
+      cowId: s.livestockId,
+      date: s.date,
+      type: s.type,
+      bullOrSemenCode: s.bullOrSemenCode,
+      performedBy: s.performedBy,
+      notes: s.notes,
+    }));
   },
 });
 
 export const logService = mutation({
   args: {
-    cowId: v.id("cows"),
+    cowId: v.id("cows" as any),
     date: v.number(),
     type: v.union(v.literal("AI"), v.literal("natural")),
     bullOrSemenCode: v.string(),
@@ -382,27 +569,154 @@ export const logService = mutation({
     notes: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("services", args);
+    return await ctx.db.insert("breedingServices", {
+      livestockId: args.cowId as any,
+      date: args.date,
+      type: args.type,
+      bullOrSemenCode: args.bullOrSemenCode,
+      performedBy: args.performedBy,
+      notes: args.notes,
+    });
   },
 });
 
 export const listPregnancyDiagnoses = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("pregnancyDiagnoses").order("desc").collect();
+    const list = await ctx.db.query("pregnancyChecks").order("desc").collect();
+    return list.map(p => ({
+      _id: p._id,
+      _creationTime: p._creationTime,
+      cowId: p.livestockId,
+      date: p.date,
+      result: p.result,
+      expectedCalvingDate: p.expectedCalvingDate,
+      performedBy: p.performedBy,
+    }));
   },
 });
 
 export const logPregnancyDiagnosis = mutation({
   args: {
-    cowId: v.id("cows"),
+    cowId: v.id("cows" as any),
     date: v.number(),
     result: v.union(v.literal("pregnant"), v.literal("open"), v.literal("uncertain")),
     expectedCalvingDate: v.union(v.number(), v.null()),
     performedBy: v.id("users"),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("pregnancyDiagnoses", args);
+    return await ctx.db.insert("pregnancyChecks", {
+      livestockId: args.cowId as any,
+      date: args.date,
+      result: args.result,
+      expectedCalvingDate: args.expectedCalvingDate,
+      performedBy: args.performedBy,
+    });
+  },
+});
+
+// --- New Generalized Animal & Soil Quality Actions ---
+export const registerLivestock = mutation({
+  args: {
+    tagNumber: v.string(),
+    name: v.string(),
+    species: v.union(v.literal("cattle"), v.literal("goat"), v.literal("sheep"), v.literal("pig"), v.literal("other")),
+    breed: v.string(),
+    dateOfBirth: v.number(),
+    sex: v.union(v.literal("M"), v.literal("F")),
+    status: v.union(v.literal("milking"), v.literal("dry"), v.literal("treatment"), v.literal("young"), v.literal("sold"), v.literal("deceased")),
+    currentLactationNumber: v.number(),
+    lastBirthDate: v.union(v.number(), v.null()),
+    sireInfo: v.string(),
+    damTagNumber: v.string(),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["worker", "manager"]);
+    const existing = await ctx.db
+      .query("livestock")
+      .withIndex("by_tag", (q) => q.eq("tagNumber", args.tagNumber))
+      .unique();
+    if (existing) {
+      throw new Error(`Livestock with tag number ${args.tagNumber} already exists`);
+    }
+    return await ctx.db.insert("livestock", args);
+  },
+});
+
+export const registerLivestockGroup = mutation({
+  args: {
+    groupCode: v.string(),
+    name: v.string(),
+    species: v.union(v.literal("poultry"), v.literal("bees"), v.literal("other")),
+    breed: v.string(),
+    status: v.union(v.literal("active"), v.literal("sold"), v.literal("deceased")),
+    count: v.number(),
+    dateAcquiredOrHatched: v.number(),
+    notes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["worker", "manager"]);
+    const existing = await ctx.db
+      .query("livestockGroups")
+      .withIndex("by_group_code", (q) => q.eq("groupCode", args.groupCode))
+      .unique();
+    if (existing) {
+      throw new Error(`Livestock group with code ${args.groupCode} already exists`);
+    }
+    return await ctx.db.insert("livestockGroups", args);
+  },
+});
+
+export const promoteOffspring = mutation({
+  args: {
+    offspringId: v.id("offspring"),
+    status: v.union(v.literal("milking"), v.literal("dry"), v.literal("treatment")),
+    newTagNumber: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await enforceRole(ctx, ["manager"]);
+    const off = await ctx.db.get(args.offspringId);
+    if (!off) throw new Error("Offspring not found");
+    if (off.status === "promoted") throw new Error("Offspring already promoted");
+
+    await ctx.db.patch(args.offspringId, {
+      status: "promoted",
+    });
+
+    return await ctx.db.insert("livestock", {
+      tagNumber: args.newTagNumber,
+      name: off.name,
+      species: off.species as any,
+      breed: "Crossbred",
+      dateOfBirth: off.dateOfBirth,
+      sex: off.sex === "unknown" ? "F" : off.sex as any,
+      status: args.status,
+      currentLactationNumber: 0,
+      lastBirthDate: null,
+      sireInfo: off.sireInfo,
+      damTagNumber: off.damTagNumber,
+      notes: `Promoted from offspring registry. Initial weaning: ${off.weaningDate ? new Date(off.weaningDate).toLocaleDateString() : 'N/A'}.`,
+    });
+  },
+});
+
+export const logSoilTest = mutation({
+  args: {
+    fieldId: v.id("fields"),
+    date: v.number(),
+    ph: v.number(),
+    nitrogen: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    phosphorus: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    potassium: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    recommendations: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await enforceRole(ctx, ["worker", "manager"]);
+    return await ctx.db.insert("soilTests", {
+      ...args,
+      testedBy: user._id,
+    });
   },
 });
 
@@ -480,15 +794,19 @@ export const addIncident = mutation({
   args: {
     title: v.string(),
     department: v.union(v.literal("dairy"), v.literal("cereal"), v.literal("machinery"), v.literal("infrastructure"), v.literal("general")),
-    cowId: v.optional(v.id("cows")),
+    cowId: v.optional(v.id("livestock" as any)),
+    livestockId: v.optional(v.id("livestock")),
     description: v.string(),
     reportedBy: v.id("users"),
     severity: v.union(v.literal("low"), v.literal("medium"), v.literal("critical")),
     notes: v.string(),
   },
   handler: async (ctx, args) => {
+    const { cowId, livestockId, ...rest } = args;
+    const targetLivestockId = livestockId || cowId;
     return await ctx.db.insert("incidents", {
-      ...args,
+      ...rest,
+      livestockId: targetLivestockId as any,
       reportedAt: Date.now(),
       status: "open",
       resolvedAt: null,
@@ -681,15 +999,8 @@ export const addTransaction = mutation({
 export const clearDatabase = mutation({
   args: {},
   handler: async (ctx) => {
-    await enforceRole(ctx, ["manager"]);
+    await enforceRole(ctx, ["supervisor", "manager"]);
     const tables = [
-      "cows",
-      "milkingSessions",
-      "treatments",
-      "services",
-      "pregnancyDiagnoses",
-      "calvings",
-      "calves",
       "fields",
       "fieldApplications",
       "harvestRecords",
@@ -699,19 +1010,20 @@ export const clearDatabase = mutation({
       "vetInventory",
       "tasks",
       "inventoryMovementsLegacy",
-      "inventoryMovements",
       "livestock",
-      "livestockProduction",
-      "livestockHealth",
-      "livestockBreeding",
-      "cropBlocks",
-      "cropActivities",
-      "inventory",
+      "livestockGroups",
+      "productionRecords",
+      "breedingServices",
+      "pregnancyChecks",
+      "birthEvents",
+      "offspring",
+      "soilTests",
       "incidents",
       "machinery",
       "machineryMaintenance",
       "rainfall",
       "financialTransactions",
+      "requests",
     ];
     for (const t of tables) {
       const records = await ctx.db.query(t as any).collect();
@@ -793,31 +1105,32 @@ export const deleteRequest = mutation({
 
 export const healCow = mutation({
   args: {
-    cowId: v.id("cows"),
+    cowId: v.id("livestock" as any),
     incidentId: v.optional(v.id("incidents")),
     notes: v.string(),
   },
   handler: async (ctx, args) => {
     await enforceRole(ctx, ["manager"]);
     const cow = await ctx.db.get(args.cowId);
-    if (!cow) throw new Error("Cow not found");
+    if (!cow) throw new Error("Livestock not found");
+    const newStatus = (cow.species === "cattle" || cow.species === "goat") ? "milking" : "dry";
     await ctx.db.patch(args.cowId, {
-      status: "milking",
+      status: newStatus as any,
     });
     if (args.incidentId) {
       await ctx.db.patch(args.incidentId, {
         status: "resolved",
         resolvedAt: Date.now(),
-        notes: args.notes || "Cow verified healed by supervisor.",
+        notes: args.notes || "Animal verified healed.",
       });
     } else {
       const incidents = await ctx.db.query("incidents").collect();
-      const cowIncidents = incidents.filter(i => i.cowId === args.cowId && i.status !== "resolved");
+      const cowIncidents = incidents.filter(i => i.livestockId === args.cowId && i.status !== "resolved");
       for (const inc of cowIncidents) {
         await ctx.db.patch(inc._id, {
           status: "resolved",
           resolvedAt: Date.now(),
-          notes: args.notes || "Cow verified healed by supervisor.",
+          notes: args.notes || "Animal verified healed.",
         });
       }
     }

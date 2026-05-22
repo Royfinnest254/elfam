@@ -5,7 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
 
-export default function OwnerLayout({
+export default function SupervisorLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export default function OwnerLayout({
   useEffect(() => {
     if (user === null) {
       router.push("/signin");
-    } else if (user && user.role !== "owner") {
+    } else if (user && user.role !== "supervisor") {
       router.push("/manager");
     }
   }, [user, router]);
@@ -29,7 +29,7 @@ export default function OwnerLayout({
     );
   }
 
-  if (user === null || user.role !== "owner") {
+  if (user === null || user.role !== "supervisor") {
     return null;
   }
 

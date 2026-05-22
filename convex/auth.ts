@@ -45,7 +45,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   },
 });
 
-export async function enforceRole(ctx: any, allowedRoles: ("manager" | "worker")[]) {
+export async function enforceRole(ctx: any, allowedRoles: ("supervisor" | "manager" | "worker")[]) {
   const userId = await auth.getUserId(ctx);
   if (userId === null) {
     throw new Error("[Auth] Access denied: Unauthenticated session");
@@ -56,6 +56,3 @@ export async function enforceRole(ctx: any, allowedRoles: ("manager" | "worker")
   }
   return user;
 }
-
-
-

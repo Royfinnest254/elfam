@@ -4,7 +4,7 @@ import React from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 
-export default function OwnerPeoplePage() {
+export default function SupervisorPeoplePage() {
   const users = useQuery(api.users.list);
 
   if (users === undefined) {
@@ -53,7 +53,7 @@ export default function OwnerPeoplePage() {
                   <td className="py-4 font-bold">{staff.name ?? "Registry User"}</td>
                   <td className="py-4">
                     <span className={`status-badge uppercase text-[9px] px-2 py-0.5 ${
-                      staff.role === "owner" ? "bg-primary-subtle text-primary border-primary-subtle" :
+                      staff.role === "supervisor" ? "bg-primary-subtle text-primary border-primary-subtle" :
                       staff.role === "manager" ? "bg-[#FFF0B3] text-[#172B4D] border-[#FFF0B3]" :
                       "bg-[#F8F9FA] text-[#5F6368] border-[#DADCE0]"
                     }`}>

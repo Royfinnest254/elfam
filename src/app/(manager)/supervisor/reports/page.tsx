@@ -7,7 +7,7 @@ import { Printer, Download, FileText } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { getFarmClock } from "@/lib/farmClock";
 
-export default function OwnerReportsPage() {
+export default function SupervisorReportsPage() {
   const reportRef = useRef<HTMLDivElement>(null);
   const { now, yesterdayDateStr } = getFarmClock();
   const cows = useQuery(api.cows.getHerdDashboard, { now, yesterdayDateStr });

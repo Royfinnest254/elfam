@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
+import Wordmark from "@/components/Wordmark";
 import {
   Home,
   Settings,
@@ -19,11 +20,21 @@ import {
   ClipboardCheck,
   Menu,
   X,
+  User,
 } from "lucide-react";
+
+const supervisorNav = [
+  { name: "Executive Overview",  href: "/supervisor",            icon: Home },
+  { name: "Agribusiness Herd",  href: "/supervisor/herd",       icon: Layers },
+  { name: "Cereal Contracts",   href: "/supervisor/operations",   icon: Map },
+  { name: "Gross Revenue",      href: "/supervisor/finances",     icon: Tractor },
+  { name: "Staff Directory",    href: "/supervisor/people",       icon: Users },
+  { name: "Print Reports",      href: "/supervisor/reports",      icon: FileText },
+];
 
 const managerNav = [
   { name: "Dashboard",  href: "/manager",           icon: Home },
-  { name: "Herd",       href: "/manager/herd",      icon: Layers },
+  { name: "Livestock",  href: "/manager/livestock", icon: Layers },
   { name: "Fields",     href: "/manager/fields",    icon: Map },
   { name: "Inventory",  href: "/manager/inventory",  icon: ClipboardList },
   { name: "Equipment",  href: "/manager/equipment",  icon: Tractor },
@@ -34,7 +45,7 @@ const managerNav = [
 
 const workerNav = [
   { name: "Dashboard",    href: "/worker",              icon: Home },
-  { name: "Milk Logging", href: "/worker/milk",         icon: Layers },
+  { name: "Yield Logging", href: "/worker/milk",         icon: Layers },
   { name: "Field Log",    href: "/worker/record/crops", icon: Map },
   { name: "Health Log",   href: "/worker/record/health", icon: ClipboardCheck },
   { name: "Inventory",    href: "/worker/inventory",    icon: ClipboardList },
@@ -53,7 +64,7 @@ function NavItem({
   onClick?: () => void;
 }) {
   const isActive =
-    item.href === "/manager" || item.href === "/worker"
+    item.href === "/manager" || item.href === "/worker" || item.href === "/supervisor"
       ? pathname === item.href
       : pathname === item.href || pathname.startsWith(item.href + "/");
 
@@ -66,17 +77,17 @@ function NavItem({
       id={`nav-${item.href.replace(/\//g, "-")}`}
       className={`
         group flex items-center gap-3 px-3 py-2 rounded-none text-sm font-medium
-        transition-colors duration-100
+        transition-colors duration-100 border border-transparent
         ${
           isActive
-            ? "bg-[#E8F0FE] text-[#1A56DB]"
-            : "text-[#4B5563] hover:bg-gray-50 hover:text-black"
+            ? "bg-moss text-cream border-moss"
+            : "text-ink hover:bg-paper-2 hover:text-ink border-transparent"
         }
       `}
     >
       <Icon
         className={`h-4 w-4 shrink-0 transition-colors ${
-          isActive ? "text-[#1A56DB]" : "text-[#4B5563] group-hover:text-black"
+          isActive ? "text-cream" : "text-muted group-hover:text-ink"
         }`}
       />
       <span className="flex-1 truncate">{item.name}</span>
@@ -101,22 +112,53 @@ export default function Sidebar() {
   };
 
   const role = user?.role ?? "worker";
-  const navItems = role === "worker" ? workerNav : managerNav;
+  
+  let navItems = workerNav;
+  if (role === "supervisor") navItems = supervisorNav;
+  else if (role === "manager") navItems = managerNav;
+
   const settingsHref = role === "worker" ? "/worker/settings" : "/settings";
+
+  // Avatar renderer helper
+  const renderAvatar = () => {
+    if (user?.image && user.image.startsWith("avatar:")) {
+      const parts = user.image.split(":");
+      const type = parts[1];
+      // Inline visual fallback for presetted avatars
+      return (
+        <div className="w-7 h-7 bg-moss flex items-center justify-center shrink-0 border border-cream font-display text-cream text-[10px]">
+          {type.charAt(0).toUpperCase()}
+        </div>
+      );
+    }
+    if (user?.imageUrl) {
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={user.imageUrl}
+          alt={user?.name ?? "PFP"}
+          className="w-7 h-7 rounded-none object-cover shrink-0 border border-rule"
+        />
+      );
+    }
+    return (
+      <div className="w-7 h-7 bg-moss flex items-center justify-center shrink-0 text-cream text-[10px] font-medium font-sans">
+        {(user?.name ?? "U").charAt(0).toUpperCase()}
+      </div>
+    );
+  };
 
   return (
     <>
       {/* ── Mobile top bar ──────────────────────────── */}
-      <header className="md:hidden w-full bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-2.5">
-          <span className="text-[#1A56DB] font-semibold tracking-[0.15em] select-none text-[16px] font-sans">
-            Elfam
-          </span>
+      <header className="md:hidden w-full bg-cream border-b border-rule px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-2">
+          <Wordmark size={20} tone="moss" />
         </div>
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-none hover:bg-gray-50 text-[#4B5563] transition-colors"
+          className="p-2 rounded-none hover:bg-paper-2 text-ink transition-colors"
         >
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -124,7 +166,7 @@ export default function Sidebar() {
 
       {/* ── Mobile drawer ───────────────────────────── */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[57px] bg-white z-30 flex flex-col px-4 py-4 overflow-y-auto">
+        <div className="md:hidden fixed inset-0 top-[49px] bg-paper z-30 flex flex-col px-4 py-4 overflow-y-auto border-t border-rule">
           <nav className="space-y-0.5 flex-1">
             {navItems.map((item) => (
               <NavItem
@@ -141,11 +183,11 @@ export default function Sidebar() {
             />
           </nav>
 
-          <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="mt-6 pt-4 border-t border-rule">
             <button
               type="button"
               onClick={handleSignOut}
-              className="w-full flex items-center justify-center gap-2 h-10 rounded-none border border-gray-200 text-[#4B5563] text-sm font-medium hover:bg-gray-50 hover:text-black transition-colors"
+              className="w-full flex items-center justify-center gap-2 h-10 rounded-none border border-rule text-ink text-sm font-medium hover:bg-paper-2 transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Sign Out
@@ -156,17 +198,15 @@ export default function Sidebar() {
 
       {/* ── Desktop sidebar ─────────────────────────── */}
       <aside
-        className="hidden md:flex flex-col w-[240px] shrink-0 h-screen sticky top-0 z-20 bg-white border-r border-gray-200"
+        className="hidden md:flex flex-col w-[240px] shrink-0 h-screen sticky top-0 z-20 bg-cream border-r border-rule"
       >
         {/* Logo block */}
-        <div className="px-5 py-4 border-b border-gray-200">
-          <div className="flex items-center gap-2.5 mb-2">
-            <span className="text-[#1A56DB] font-semibold tracking-[0.15em] select-none text-[17px] font-sans">
-              Elfam
-            </span>
+        <div className="px-5 py-4 border-b border-rule">
+          <div className="flex items-center gap-2 mb-2">
+            <Wordmark size={22} tone="moss" />
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#4B5563] font-sans">
+            <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted">
               {role} portal
             </span>
           </div>
@@ -178,7 +218,7 @@ export default function Sidebar() {
             <NavItem key={item.href} item={item} pathname={pathname} />
           ))}
 
-          <div className="pt-2 mt-2 border-t border-gray-200">
+          <div className="pt-2 mt-2 border-t border-rule">
             <NavItem
               item={{ name: "Settings", href: settingsHref, icon: Settings }}
               pathname={pathname}
@@ -187,25 +227,21 @@ export default function Sidebar() {
         </nav>
 
         {/* User footer */}
-        <div className="px-3 pb-4 border-t border-gray-200 pt-3 space-y-3">
-          <div className="flex items-center gap-3 px-2 py-2 rounded-none border border-gray-200 bg-white">
-            <div className="w-7 h-7 rounded-full bg-[#1A56DB] flex items-center justify-center shrink-0">
-              <span className="text-white text-[10px] font-medium select-none">
-                {(user?.name ?? "U").charAt(0).toUpperCase()}
-              </span>
-            </div>
+        <div className="px-3 pb-4 border-t border-rule pt-3 space-y-3">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-none border border-rule bg-paper">
+            {renderAvatar()}
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-medium text-black truncate leading-tight">
+              <p className="text-[12px] font-bold text-ink truncate leading-tight">
                 {user?.name ?? "User"}
               </p>
-              <p className="text-[11px] text-[#4B5563] truncate leading-tight">
+              <p className="text-[11px] text-muted truncate leading-tight">
                 {user?.email ?? "loading..."}
               </p>
             </div>
             <Link
               href={settingsHref}
               title="Settings"
-              className="p-1.5 rounded-none hover:bg-gray-100 text-[#4B5563] hover:text-black transition-colors shrink-0"
+              className="p-1.5 rounded-none hover:bg-paper-2 text-ink hover:text-ink transition-colors shrink-0"
             >
               <Settings className="h-3.5 w-3.5" />
             </Link>
@@ -215,7 +251,7 @@ export default function Sidebar() {
             type="button"
             id="signout-btn"
             onClick={handleSignOut}
-            className="w-full flex items-center justify-center gap-2 h-9 rounded-none border border-gray-200 text-[#4B5563] text-[12px] font-medium hover:bg-gray-50 hover:text-black transition-colors"
+            className="w-full flex items-center justify-center gap-2 h-9 rounded-none border border-rule text-ink text-[12px] font-medium hover:bg-paper-2 transition-colors"
           >
             <LogOut className="h-3.5 w-3.5" />
             Sign Out

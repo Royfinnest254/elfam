@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import ConvexClientProvider from "./ConvexClientProvider";
 import "./globals.css";
 
-const inter = Inter({
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const interTight = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400"],
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexAuthNextjsServerProvider>
-      <html lang="en" className={`h-full ${inter.variable} ${jetbrainsMono.variable}`}>
+      <html lang="en" className={`h-full ${fraunces.variable} ${interTight.variable} ${jetbrainsMono.variable}`}>
         <body
           className="font-sans antialiased h-full bg-paper text-ink"
         >

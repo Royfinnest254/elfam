@@ -8,21 +8,22 @@ export default defineSchema({
     name: v.optional(v.string()),
     email: v.optional(v.string()),
     image: v.optional(v.string()),
-    role: v.optional(v.union(v.literal("owner"), v.literal("manager"), v.literal("worker"))), // Keep owner for transitional read compatibility
+    role: v.optional(v.union(v.literal("supervisor"), v.literal("manager"), v.literal("worker"))),
     phone: v.optional(v.string()),
     joinedAt: v.optional(v.number()),
     profileSetupComplete: v.optional(v.boolean()),
   }).index("by_email", ["email"]),
-  
 
-  cows: defineTable({
+  livestock: defineTable({
     tagNumber: v.string(),
     name: v.string(),
+    species: v.union(v.literal("cattle"), v.literal("goat"), v.literal("sheep"), v.literal("pig"), v.literal("other")),
     breed: v.string(),
     dateOfBirth: v.number(),
-    status: v.union(v.literal("milking"), v.literal("dry"), v.literal("treatment"), v.literal("calf"), v.literal("sold"), v.literal("deceased")),
+    sex: v.union(v.literal("M"), v.literal("F")),
+    status: v.union(v.literal("milking"), v.literal("dry"), v.literal("treatment"), v.literal("young"), v.literal("sold"), v.literal("deceased")),
     currentLactationNumber: v.number(),
-    lastCalvingDate: v.union(v.number(), v.null()),
+    lastBirthDate: v.union(v.number(), v.null()),
     sireInfo: v.string(),
     damTagNumber: v.string(),
     notes: v.string(),
@@ -30,20 +31,35 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_tag", ["tagNumber"]),
 
-  milkingSessions: defineTable({
-    cowId: v.id("cows"),
-    session: v.union(v.literal("AM"), v.literal("PM")),
+  livestockGroups: defineTable({
+    groupCode: v.string(),
+    name: v.string(),
+    species: v.union(v.literal("poultry"), v.literal("bees"), v.literal("other")),
+    breed: v.string(),
+    status: v.union(v.literal("active"), v.literal("sold"), v.literal("deceased")),
+    count: v.number(),
+    dateAcquiredOrHatched: v.number(),
+    notes: v.string(),
+  }).index("by_group_code", ["groupCode"]),
+
+  productionRecords: defineTable({
+    livestockId: v.optional(v.id("livestock")),
+    groupId: v.optional(v.id("livestockGroups")),
+    type: v.union(v.literal("milk"), v.literal("eggs"), v.literal("wool"), v.literal("honey"), v.literal("weight")),
+    amount: v.number(),
+    session: v.optional(v.union(v.literal("AM"), v.literal("PM"))),
     date: v.string(), // YYYY-MM-DD
-    litres: v.number(),
     loggedBy: v.id("users"),
     loggedAt: v.number(),
     flagged: v.boolean(),
   })
-    .index("by_cow_and_date", ["cowId", "date"])
+    .index("by_livestock_and_date", ["livestockId", "date"])
+    .index("by_group_and_date", ["groupId", "date"])
     .index("by_date", ["date"]),
 
   treatments: defineTable({
-    cowId: v.id("cows"),
+    livestockId: v.optional(v.id("livestock")),
+    groupId: v.optional(v.id("livestockGroups")),
     incidentId: v.optional(v.id("incidents")),
     date: v.number(),
     condition: v.string(),
@@ -54,46 +70,47 @@ export default defineSchema({
     administeredBy: v.id("users"),
     notes: v.string(),
   })
-    .index("by_cow", ["cowId"])
+    .index("by_livestock", ["livestockId"])
+    .index("by_group", ["groupId"])
     .index("by_withholding_until", ["withholdingUntil"]),
 
-  services: defineTable({
-    cowId: v.id("cows"),
+  breedingServices: defineTable({
+    livestockId: v.id("livestock"),
     date: v.number(),
     type: v.union(v.literal("AI"), v.literal("natural")),
     bullOrSemenCode: v.string(),
     performedBy: v.id("users"),
     notes: v.string(),
-  }).index("by_cow", ["cowId"]),
+  }).index("by_livestock", ["livestockId"]),
 
-  pregnancyDiagnoses: defineTable({
-    cowId: v.id("cows"),
+  pregnancyChecks: defineTable({
+    livestockId: v.id("livestock"),
     date: v.number(),
     result: v.union(v.literal("pregnant"), v.literal("open"), v.literal("uncertain")),
     expectedCalvingDate: v.union(v.number(), v.null()),
     performedBy: v.id("users"),
-  }).index("by_cow", ["cowId"]),
+  }).index("by_livestock", ["livestockId"]),
 
-  calvings: defineTable({
-    cowId: v.id("cows"),
+  birthEvents: defineTable({
+    parentId: v.union(v.id("livestock"), v.id("livestockGroups")),
     date: v.number(),
-    calfSex: v.union(v.literal("M"), v.literal("F")),
-    calfTagNumber: v.union(v.string(), v.null()),
-    sireInfo: v.string(),
+    offspringCount: v.number(),
+    offspringSex: v.union(v.literal("M"), v.literal("F"), v.literal("mixed"), v.literal("unknown")),
     complications: v.string(),
     notes: v.string(),
-  }).index("by_cow", ["cowId"]),
+  }).index("by_parent", ["parentId"]),
 
-  calves: defineTable({
+  offspring: defineTable({
     tagNumber: v.string(),
+    species: v.string(),
     name: v.string(),
     dateOfBirth: v.number(),
-    sex: v.union(v.literal("M"), v.literal("F")),
+    sex: v.union(v.literal("M"), v.literal("F"), v.literal("unknown")),
     damTagNumber: v.string(),
     sireInfo: v.string(),
     weaningDate: v.union(v.number(), v.null()),
     currentWeight: v.number(),
-    status: v.string(),
+    status: v.string(), // "young" | "promoted" | "sold" | "deceased"
   }).index("by_tag", ["tagNumber"]),
 
   fields: defineTable({
@@ -104,6 +121,17 @@ export default defineSchema({
     expectedHarvestDate: v.union(v.number(), v.null()),
     notes: v.string(),
   }),
+
+  soilTests: defineTable({
+    fieldId: v.id("fields"),
+    date: v.number(),
+    ph: v.number(),
+    nitrogen: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    phosphorus: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    potassium: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    recommendations: v.string(),
+    testedBy: v.id("users"),
+  }).index("by_field", ["fieldId"]),
 
   fieldApplications: defineTable({
     fieldId: v.id("fields"),
@@ -182,7 +210,7 @@ export default defineSchema({
   incidents: defineTable({
     title: v.string(),
     department: v.union(v.literal("dairy"), v.literal("cereal"), v.literal("machinery"), v.literal("infrastructure"), v.literal("general")),
-    cowId: v.optional(v.id("cows")),
+    livestockId: v.optional(v.id("livestock")),
     description: v.string(),
     reportedBy: v.id("users"),
     reportedAt: v.number(),
@@ -208,7 +236,7 @@ export default defineSchema({
     type: v.union(v.literal("routine"), v.literal("repair"), v.literal("overhaul")),
     description: v.string(),
     cost: v.number(),
-    performedBy: v.string(), // Legacy format
+    performedBy: v.string(),
     notes: v.string(),
   }).index("by_machinery", ["machineryId"]),
 

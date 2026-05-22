@@ -65,11 +65,11 @@ export const updateProfile = mutation({
   },
 });
 
-// A query to list all users (e.g. for selection or logging purposes) - Manager only
+// A query to list all users (e.g. for selection or logging purposes) - Manager/Supervisor only
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    await enforceRole(ctx, ["manager"]);
+    await enforceRole(ctx, ["supervisor", "manager"]);
     return await ctx.db.query("users").collect();
   },
 });

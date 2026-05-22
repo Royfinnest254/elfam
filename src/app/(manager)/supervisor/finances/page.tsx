@@ -5,7 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { getFarmClock } from "@/lib/farmClock";
 
-export default function OwnerFinancesPage() {
+export default function SupervisorFinancesPage() {
   const { now, yesterdayDateStr } = getFarmClock();
   const user = useQuery(api.users.viewer);
   const cows = useQuery(api.cows.getHerdDashboard, { now, yesterdayDateStr });
