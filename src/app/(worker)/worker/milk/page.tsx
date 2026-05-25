@@ -98,7 +98,7 @@ function WithholdingBanner({ message }: { message: string }) {
 export default function WorkerMilkEntryPage() {
   const user = useQuery(api.users.viewer);
   const livestock = useQuery(api.livestock.list, {});
-  const now = Date.now();
+  const [now] = useState(() => Date.now());
   const activeWithholdings = useQuery(api.livestock.getActiveWithholdings, { now });
   const logMilkingMutation = useMutation(api.records.logMilkingSession);
 

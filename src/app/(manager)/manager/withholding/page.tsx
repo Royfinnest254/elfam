@@ -7,7 +7,7 @@ import { AlertTriangle, Clock } from "lucide-react";
 import { getFarmClock } from "@/lib/farmClock";
 
 export default function WithholdingBoardPage() {
-  const { now } = getFarmClock();
+  const [now] = React.useState(() => Date.now());
   const activeWithholdings = useQuery(api.livestock.getActiveWithholdings, { now });
 
   const sortedWithholdings = useMemo(() => {
