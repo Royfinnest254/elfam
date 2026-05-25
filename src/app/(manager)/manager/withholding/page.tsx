@@ -1,188 +1,110 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useQuery, useMutation } from "convex/react";
+import React, { useMemo } from "react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
-import { ShieldAlert, CheckCircle, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Clock } from "lucide-react";
 import { getFarmClock } from "@/lib/farmClock";
 
-export default function ManagerWithholdingPage() {
+export default function WithholdingBoardPage() {
   const { now } = getFarmClock();
   const activeWithholdings = useQuery(api.livestock.getActiveWithholdings, { now });
-  const healLivestockMutation = useMutation(api.records.healLivestock);
 
-  const [healingLivestockId, setHealingLivestockId] = useState<string | null>(null);
-  const [healNotes, setHealNotes] = useState("");
-  const [healing, setHealing] = useState(false);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  const handleHeal = async (e: React.FormEvent, livestockId: string, tagNumber: string) => {
-    e.preventDefault();
-    setHealing(true);
-    try {
-      await healLivestockMutation({
-        livestockId: livestockId as any,
-        notes: healNotes.trim() || "Animal cleared by supervisor. Withholding override — milking resumed.",
-      });
-      setSuccessMsg(`VERIFIED: ${tagNumber} cleared for milking.`);
-      setHealingLivestockId(null);
-      setHealNotes("");
-      setTimeout(() => setSuccessMsg(null), 4000);
-    } catch (err: any) {
-      alert(`Heal failed: ${err.message}`);
-    } finally {
-      setHealing(false);
-    }
-  };
+  const sortedWithholdings = useMemo(() => {
+    if (!activeWithholdings) return [];
+    return [...activeWithholdings].sort((a, b) => {
+      const aTime = a.treatment.withholdingUntil;
+      const bTime = b.treatment.withholdingUntil;
+      return aTime - bTime; // Sort by earliest clearance first (ascending)
+    });
+  }, [activeWithholdings]);
 
   if (activeWithholdings === undefined) {
-    return <div className="text-xs text-[#5F6368] uppercase font-black tracking-widest p-8 font-sans">Loading warning registers...</div>;
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center font-sans text-muted">
+        <span className="body-small block">Loading withholding board...</span>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-8 font-sans text-[#202124] pb-12">
-      <header className="border-b border-[#DADCE0] pb-6">
-        <span className="text-[10px] font-black uppercase text-[#5F6368] tracking-[0.2em] block mb-2">
-          Quality Control
+    <div className="space-y-8 pb-12 bg-paper text-ink">
+      <header className="border-b border-rule pb-6">
+        <span className="text-[10px] font-mono uppercase text-muted tracking-[0.2em] block mb-2">
+          Safety Safeguards
         </span>
-        <h1 className="font-sans text-2xl font-black uppercase text-[#202124]">
-          Milk Safety Warnings List
+        <h1 className="font-display text-display uppercase text-ink">
+          Withholding Board
         </h1>
-        <p className="text-xs text-[#5F6368] font-semibold mt-1 uppercase tracking-wider">
-          Animals under active drug withdrawal safety lockouts. Milk must NOT enter the main bulk tank.
+        <p className="body-small text-muted mt-1 uppercase tracking-wider font-mono">
+          Morning check-in board | Locked out animals under treatment
         </p>
       </header>
 
-      {successMsg && (
-        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] p-4 flex items-center gap-2 text-xs font-semibold">
-          <CheckCircle className="h-4 w-4 shrink-0" />
-          {successMsg}
-        </div>
-      )}
-
-      {activeWithholdings.length === 0 ? (
-        <div className="bg-[#E3FCEF] border border-[#ABF5D1] text-[#1E8E3E] p-6 rounded-2xl flex items-center gap-4">
-          <CheckCircle className="h-6 w-6 text-[#1E8E3E] shrink-0" />
-          <div className="space-y-1">
-            <h4 className="text-[10px] font-black uppercase text-[#1E8E3E] tracking-wider">All milk clean</h4>
-            <p className="text-xs font-semibold text-[#1E8E3E] opacity-80">
-              Zero animals currently flagged under active medical withholding lockdowns.
-            </p>
-          </div>
+      {sortedWithholdings.length === 0 ? (
+        <div className="border border-rule bg-paper-2 p-12 text-center">
+          <p className="body-small text-muted italic">No animals currently under withholding. All milk is safe for the bulk tank.</p>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="bg-[#FFEBE6] border border-[#FFBDAD] text-[#D93025] p-6 rounded-2xl flex items-start gap-4">
-            <ShieldAlert className="h-6 w-6 text-[#D93025] shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <h4 className="text-[10px] font-black uppercase text-[#D93025] tracking-wider">Lockout Safeguard Active</h4>
-              <p className="text-xs font-semibold text-[#D93025] opacity-80">
-                {activeWithholdings.length} animals/groups are currently under medication withdrawal periods. Check and lock their daily yield buckets during PM and AM milking sessions.
-              </p>
+          <div className="bg-alert/5 border border-alert/20 text-alert p-4 rounded-none flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-alert shrink-0 mt-0.5" />
+            <div className="text-xs leading-relaxed font-sans font-medium">
+              <strong className="text-alert font-bold block mb-1">CRITICAL DIRECTIVE:</strong>
+              Milk or food output from the animals listed below is chemically contaminated. Do NOT siphon into the bulk transport tanks. Any accidental addition requires dumping the entire bulk tank ledger.
             </div>
           </div>
 
-          <div className="system-card p-6 space-y-4">
-            <div className="overflow-x-auto table-scroll custom-scrollbar">
-              <table className="w-full text-left text-xs divide-y divide-[#DADCE0]">
+          <div className="border border-rule bg-paper overflow-hidden">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider bg-[#F8F9FA]">
-                    <th className="p-4">Animal Tag / Group</th>
-                    <th className="p-4">Name / ID</th>
-                    <th className="p-4">Species / Type</th>
-                    <th className="p-4">Condition Treated</th>
-                    <th className="p-4">Medicine Used</th>
-                    <th className="p-4">Safety Date (End)</th>
-                    <th className="p-4">Time Remaining</th>
-                    <th className="p-4">Action</th>
+                  <tr className="border-b border-rule bg-paper-2">
+                    <th className="px-6 py-3 label text-muted font-mono font-bold tracking-wider">Ident / Tag</th>
+                    <th className="px-6 py-3 label text-muted font-bold tracking-wider">Animal / Group</th>
+                    <th className="px-6 py-3 label text-muted font-bold tracking-wider">Condition</th>
+                    <th className="px-6 py-3 label text-muted font-bold tracking-wider">Medication Administered</th>
+                    <th className="px-6 py-3 label text-muted font-mono font-bold tracking-wider">Clearance Date</th>
+                    <th className="px-6 py-3 label text-muted font-mono font-bold tracking-wider text-right">Time Remaining</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DADCE0] font-medium text-[#202124]">
-                  {activeWithholdings.map((item: any) => {
-                    const treatment = item.treatment;
-                    const isGroup = item.type === "group";
-                    const target = isGroup ? item.group : item.livestock;
-                    if (!target) return null;
+                <tbody className="divide-y divide-rule font-sans">
+                  {sortedWithholdings.map((item) => {
+                    const t = item.treatment;
+                    const tag = item.type === "individual" && item.livestock ? item.livestock.tagNumber : item.group?.groupCode;
+                    const name = item.type === "individual" && item.livestock ? item.livestock.name : item.group?.name;
+                    const breed = item.type === "individual" && item.livestock ? item.livestock.breed : item.group?.breed;
+                    const species = item.type === "individual" && item.livestock ? item.livestock.species : item.group?.species;
 
-                    const tagNumber = isGroup ? "GROUP" : target.tagNumber;
-                    const name = target.name;
-                    const typeLabel = isGroup ? "Group" : target.species;
-                    const timeLeftMs = treatment.withholdingUntil - now;
-                    const daysRemaining = Math.ceil(timeLeftMs / (1000 * 60 * 60 * 24));
+                    const msLeft = t.withholdingUntil - now;
+                    const daysLeft = Math.max(0, Math.ceil(msLeft / (24 * 60 * 60 * 1000)));
 
                     return (
-                      <React.Fragment key={treatment._id}>
-                        <tr className="hover:bg-[#F8F9FA]/50 transition-colors">
-                          <td className="p-4 font-mono font-bold text-primary">{tagNumber}</td>
-                          <td className="p-4 font-bold">{name}</td>
-                          <td className="p-4 text-[10px] uppercase font-semibold text-[#5F6368]">{typeLabel}</td>
-                          <td className="p-4">{treatment.condition}</td>
-                          <td className="p-4 font-bold">{treatment.drugAdministered}</td>
-                          <td className="p-4 font-mono text-[#D93025] font-bold">
-                            {new Date(treatment.withholdingUntil).toLocaleDateString("en-GB")}
-                          </td>
-                          <td className="p-4">
-                            <span className="status-badge bg-[#FFEBE6] text-[#D93025] border border-[#FFBDAD] text-[9px] uppercase font-black px-2.5 py-1 rounded-lg">
-                              {daysRemaining} DAYS LOCKED
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            {!isGroup ? (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setHealingLivestockId(healingLivestockId === target._id ? null : target._id);
-                                  setHealNotes("");
-                                }}
-                                className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#ABF5D1] bg-[#E3FCEF] hover:bg-[#C6F6D5] text-[#1E8E3E] flex items-center gap-1 transition-colors cursor-pointer"
-                              >
-                                <ShieldCheck className="h-3 w-3" />
-                                Heal
-                              </button>
-                            ) : (
-                              <span className="text-[10px] text-[#5F6368] italic font-semibold">Automatic Lock</span>
-                            )}
-                          </td>
-                        </tr>
-                        {!isGroup && healingLivestockId === target._id && (
-                          <tr>
-                            <td colSpan={8} className="p-0">
-                              <form
-                                onSubmit={(e) => handleHeal(e, target._id, target.tagNumber)}
-                                className="bg-[#E3FCEF]/40 border-t border-[#ABF5D1] p-4 flex flex-wrap items-end gap-3"
-                              >
-                                <div className="flex-1 min-w-[240px]">
-                                  <label className="text-[9px] font-black text-[#5F6368] uppercase tracking-wider block mb-1">
-                                    Supervisor Clearance Notes
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={healNotes}
-                                    onChange={(e) => setHealNotes(e.target.value)}
-                                    placeholder="e.g. Vet cleared. Udder healthy. Withholding period elapsed."
-                                    className="w-full h-9 border border-[#DADCE0] bg-white px-2.5 text-xs font-semibold text-[#202124] focus:outline-none"
-                                  />
-                                </div>
-                                <button
-                                  type="submit"
-                                  disabled={healing}
-                                  className="h-9 px-4 text-[9px] font-bold uppercase tracking-wider bg-[#1E8E3E] hover:bg-[#166534] text-white transition-colors cursor-pointer disabled:opacity-50"
-                                >
-                                  <ShieldCheck className="h-3 w-3 inline mr-1" />
-                                  VERIFY — Heal & Clear
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setHealingLivestockId(null)}
-                                  className="h-9 px-3 text-[9px] font-bold uppercase tracking-wider border border-[#DADCE0] bg-white hover:bg-[#F8F9FA] text-[#5F6368] transition-colors cursor-pointer"
-                                >
-                                  Cancel
-                                </button>
-                              </form>
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
+                      <tr key={t._id} className="hover:bg-paper-2 transition-colors">
+                        <td className="px-6 py-4 font-mono font-bold text-ink whitespace-nowrap">{tag}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="font-bold text-ink block leading-tight">{name}</span>
+                          <span className="text-[11px] text-muted block capitalize">{species} &middot; {breed}</span>
+                        </td>
+                        <td className="px-6 py-4 font-medium text-ink">{t.condition}</td>
+                        <td className="px-6 py-4">
+                          <span className="font-bold text-ink block leading-tight">{t.drugAdministered}</span>
+                          <span className="text-[11px] text-muted block">Dosage: {t.dosage}</span>
+                        </td>
+                        <td className="px-6 py-4 font-mono text-muted whitespace-nowrap">
+                          {new Date(t.withholdingUntil).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric"
+                          })}
+                        </td>
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 border border-alert text-alert font-mono text-[11px] font-bold rounded-[2px] uppercase">
+                            <Clock className="h-3 w-3" />
+                            <span>{daysLeft} {daysLeft === 1 ? "day" : "days"} left</span>
+                          </span>
+                        </td>
+                      </tr>
                     );
                   })}
                 </tbody>

@@ -36,31 +36,38 @@
   /* ── Fraunces for headings — Editorial style ─── */
   h1 {
     font-family: var(--font-display), 'Fraunces', serif;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-transform: none;
     color: var(--text);
   }
   h2 {
     font-family: var(--font-display), 'Fraunces', serif;
-    font-weight: 500;
-    font-size: 19px;
-    line-height: 1.3;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    text-transform: none;
     color: var(--text);
   }
   h3 {
     font-family: var(--font-display), 'Fraunces', serif;
     font-weight: 500;
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 18px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-transform: none;
     color: var(--text);
   }
   h4 {
     font-family: var(--font-display), 'Fraunces', serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1.4;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-transform: none;
     color: var(--text);
   }
 
@@ -68,43 +75,56 @@
   body, p, span, div, td, th, label, input,
   select, textarea, button, a, li {
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
-    font-size: 14px;
+    font-size: 15px;
+    line-height: 1.5;
     color: var(--text-sub);
   }
 }
 
 @layer components {
   /* ─── Typography utilities ─────────────────────── */
+  .display {
+    font-family: var(--font-display), 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+
   .label {
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 11px;
     line-height: 1.3;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--muted);
   }
 
   .body-small {
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
+    font-weight: 400;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.4;
     color: var(--text-sub);
   }
 
   .mono {
     font-family: var(--font-mono), 'JetBrains Mono', monospace;
-    font-size: 12px;
-    line-height: 1.4;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.3;
     color: var(--ink);
   }
 
   .text-xs-label {
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
-    font-size: 10px;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--muted);
   }
 
@@ -116,7 +136,7 @@
     box-shadow: none !important;
   }
 
-  /* ─── Inputs ── flat 0px style ───────────────── */
+  /* ─── Inputs ── flat 4px style ───────────────── */
   .input-field {
     display: block;
     width: 100%;
@@ -124,9 +144,9 @@
     padding: 0 12px;
     background: var(--paper);
     border: 1px solid var(--border);
-    border-radius: 0px !important;
+    border-radius: 4px !important;
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 400;
     color: var(--text);
     transition: border-color 150ms;
@@ -137,6 +157,8 @@
 
   .input-field:focus {
     border-color: var(--moss);
+    border-width: 2px;
+    padding: 0 11px;
     box-shadow: none !important;
   }
 
@@ -147,19 +169,20 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 38px;
+    gap: 8px;
+    height: 40px;
     padding: 0 16px;
     border: 1px solid var(--moss);
-    border-radius: 0px !important;
+    border-radius: 6px !important;
     background-color: var(--moss);
     color: var(--cream);
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
     cursor: pointer;
-    transition: background-color 130ms, border-color 130ms;
+    transition: background-color 150ms;
   }
   .btn-primary:hover  {
     background-color: var(--moss-2);
@@ -175,22 +198,23 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 38px;
+    gap: 8px;
+    height: 40px;
     padding: 0 16px;
     border: 1px solid var(--border);
-    border-radius: 0px !important;
-    background: var(--cream);
-    color: var(--moss);
+    border-radius: 6px !important;
+    background: transparent;
+    color: var(--ink);
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
     cursor: pointer;
-    transition: background-color 130ms, border-color 130ms;
+    transition: background-color 150ms;
   }
   .btn-secondary:hover {
     background-color: var(--paper-2);
-    border-color: var(--moss);
   }
   .btn-secondary:active { background-color: var(--border); }
   .btn-secondary:disabled { opacity: 0.5; pointer-events: none; }
@@ -199,18 +223,20 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 38px;
+    gap: 8px;
+    height: 40px;
     padding: 0 16px;
     border: 1px solid var(--alert);
-    border-radius: 0px !important;
+    border-radius: 6px !important;
     background-color: var(--alert);
     color: var(--paper);
     font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
     cursor: pointer;
-    transition: background-color 130ms, border-color 130ms;
+    transition: background-color 150ms;
   }
   .btn-destructive:hover   {
     background-color: #8c2a19;
@@ -218,35 +244,30 @@
   }
   .btn-destructive:disabled { opacity: 0.5; pointer-events: none; }
 
-  /* ─── Status badges ── Flat chip style ────────── */
+  /* ─── Status badges ── Outline-only chip style ────────── */
   .badge, .status-badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 8px;
-    border-radius: 0px !important;
-    font-family: var(--font-mono), 'JetBrains Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 2px !important;
+    font-family: var(--font-sans), 'Inter Tight', system-ui, sans-serif;
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     white-space: nowrap;
-    border: 1px solid var(--border);
+    border: 1px solid currentColor;
+    background: transparent;
   }
 
   .status-ok {
-    background-color: var(--cream);
     color: var(--moss);
-    border-color: var(--moss);
   }
   .status-low {
-    background-color: #fff9e6;
     color: #b27a00;
-    border-color: #ffd980;
   }
   .status-out, .status-error {
-    background-color: #fdf2f0;
     color: var(--alert);
-    border-color: var(--alert);
   }
 
   /* ─── Brand color utilities ─────────────────── */

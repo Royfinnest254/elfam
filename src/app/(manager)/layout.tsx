@@ -41,15 +41,14 @@ export default function ManagerLayout({
 
   return (
     <div
-      className="flex flex-col md:flex-row md:h-screen md:w-screen md:overflow-hidden bg-white"
-      style={{ backgroundColor: "#FFFFFF" }}
+      className="flex flex-col md:flex-row md:h-screen md:w-screen md:overflow-hidden bg-paper text-ink"
     >
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main content viewport */}
-      <main className="flex-1 min-h-0 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8">
-        <div className="max-w-[1280px] mx-auto w-full">
+      <main className="flex-1 min-h-0 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8 bg-paper">
+        <div className="max-w-[1180px] mx-auto w-full">
           {children}
         </div>
       </main>

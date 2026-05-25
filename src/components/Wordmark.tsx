@@ -16,7 +16,7 @@ export default function Wordmark({ size = 20, tone = "ink" }: WordmarkProps) {
       className={`font-display font-medium select-none transition-colors ${colorClass}`}
       style={{ fontSize: `${size}px` }}
     >
-      Elfam
+      elfam
     </span>
   );
 }
