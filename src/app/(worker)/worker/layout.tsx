@@ -17,7 +17,11 @@ export default function WorkerLayout({
     if (user === null) {
       router.push("/signin");
     } else if (user && (user.role || "worker") !== "worker") {
-      router.push("/dashboard");
+      if (user.role === "supervisor") {
+        router.push("/owner");
+      } else {
+        router.push("/manager");
+      }
     }
   }, [user, router]);
 

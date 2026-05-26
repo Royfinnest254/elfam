@@ -22,7 +22,7 @@ export default function WorkerLayout({
         router.push("/onboarding");
       } else if (user.role !== "worker") {
         if (user.role === "supervisor") {
-          router.push("/supervisor");
+          router.push("/owner");
         } else if (user.role === "manager") {
           router.push("/manager");
         }

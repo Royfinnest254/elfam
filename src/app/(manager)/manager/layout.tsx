@@ -17,7 +17,11 @@ export default function ManagerLayout({
     if (user === null) {
       router.push("/signin");
     } else if (user && user.role !== "manager") {
-      router.push("/dashboard");
+      if (user.role === "supervisor") {
+        router.push("/owner");
+      } else {
+        router.push("/worker");
+      }
     }
   }, [user, router]);
 

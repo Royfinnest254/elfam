@@ -473,7 +473,7 @@ export default function SupervisorDashboardPage() {
           <div className="pt-4 border-t border-rule flex justify-between items-center text-xs">
             <span className="font-semibold text-muted">Full operational audits</span>
             <Link 
-              href="/supervisor/reports" 
+              href="/owner/reports" 
               className="text-moss hover:underline font-mono text-[10px] uppercase font-bold flex items-center gap-1 border border-moss px-2.5 py-1 bg-cream hover:bg-paper-2"
             >
               <FileText className="h-3.5 w-3.5" />

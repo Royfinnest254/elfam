@@ -16,7 +16,7 @@ export default function RootPage() {
       if (!user.profileSetupComplete) {
         router.replace("/onboarding");
       } else if (user.role === "supervisor") {
-        router.replace("/supervisor");
+        router.replace("/owner");
       } else if (user.role === "manager") {
         router.replace("/manager");
       } else {

@@ -91,7 +91,7 @@ export default function OnboardingPage() {
     if (user) {
       if (user.profileSetupComplete) {
         if (user.role === "supervisor") {
-          router.replace("/supervisor");
+          router.replace("/owner");
         } else if (user.role === "manager") {
           router.replace("/manager");
         } else {
@@ -184,7 +184,7 @@ export default function OnboardingPage() {
 
       // Redirect to correct dashboard
       if (user?.role === "supervisor") {
-        router.push("/supervisor");
+        router.push("/owner");
       } else if (user?.role === "manager") {
         router.push("/manager");
       } else {
